@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.sqrtf.common.view.FixedAspectRatioFrameLayout
+        <co.bangumi.common.view.FixedAspectRatioFrameLayout
             android:id="@+id/fixedAspectRatioFrameLayout"
             android:layout_width="94dp"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
                 android:scaleType="centerCrop" />
 
 
-        </com.sqrtf.common.view.FixedAspectRatioFrameLayout>
+        </co.bangumi.common.view.FixedAspectRatioFrameLayout>
 
         <TextView
             android:id="@+id/recommended"

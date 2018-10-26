@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">めぐみん</string>
+    <string name="app_name">Cygnus</string>
+
+    <string name="first_config_description">Start by logging in with your 番組Collection account.</string>
+    <string name="first_config_username">ユーザー名</string>
+    <string name="first_config_password">パスワード</string>
+
     <string name="navigation_drawer_open">ナビゲーションドロワーを開ける</string>
     <string name="navigation_drawer_close">ナビゲーションドロワーを閉める</string>
     <string name="action_settings">設定</string>
@@ -21,8 +26,8 @@
 
     <string-array name="array_bangumi_type">
         <item>全部</item>
-        <item>アニメ</item>
-        <item>ドラマ</item>
+        <item>中国語字幕</item>
+        <item>RAW</item>
     </string-array>
 
     <string name="others">その他</string>

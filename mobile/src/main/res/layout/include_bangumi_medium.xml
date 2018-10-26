@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.sqrtf.common.view.FixedAspectRatioFrameLayout
+        <co.bangumi.common.view.FixedAspectRatioFrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:aspectRatio="0.715">
@@ -31,7 +31,7 @@
                 android:scaleType="centerCrop" />
 
 
-        </com.sqrtf.common.view.FixedAspectRatioFrameLayout>
+        </co.bangumi.common.view.FixedAspectRatioFrameLayout>
 
         <TextView
             android:id="@+id/title"

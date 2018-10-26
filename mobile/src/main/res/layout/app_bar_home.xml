@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sqrtf.megumin.HomeActivity">
+    tools:context="co.bangumi.Cygnus.HomeActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

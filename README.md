@@ -1,6 +1,6 @@
 # Megumin
 
-[![Get On Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/store/apps/details?id=com.sqrtf.megumin)
+[![Get On Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/store/apps/details?id=bangumi.megumin)
 
 An android client for [Albireo](https://github.com/lordfriend/Albireo). Written in Kotlin.
 

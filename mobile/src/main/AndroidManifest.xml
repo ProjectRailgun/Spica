@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.sqrtf.megumin"
+    package="co.bangumi.Cygnus"
     tools:ignore="ImpliedTouchscreenHardware">
 
     <uses-feature
@@ -12,14 +12,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="com.sqrtf.common.MeguminApplocation"
+        android:name="co.bangumi.common.CygnusApplication"
         android:allowBackup="true"
         android:banner="@mipmap/launcher_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".StartPaddingActivity"
+            android:name="co.bangumi.Cygnus.StartPaddingActivity"
             android:theme="@style/PaddingViewTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,28 +29,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name="co.bangumi.Cygnus.DetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".HomeActivity"
+            android:name="co.bangumi.Cygnus.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".FirstConfigActivity"
+            android:name="co.bangumi.Cygnus.FirstConfigActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".PlayerActivity"
+            android:name="co.bangumi.Cygnus.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_player"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".FavoriteActivity" />
-        <activity android:name=".AllBangumiActivity" />
+        <activity android:name="co.bangumi.Cygnus.FavoriteActivity" />
+        <activity android:name="co.bangumi.Cygnus.AllBangumiActivity" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->
         <!-- android:label="@string/title_activity_settings" -->
         <!-- android:theme="@style/AppThemeActionBar" /> -->
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name="co.bangumi.Cygnus.SearchActivity"></activity>
     </application>
 
 </manifest>
