@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="co.bangumi.Cygnus"
+    package="co.bangumi.Cassiopeia"
     tools:ignore="ImpliedTouchscreenHardware">
 
     <uses-feature
@@ -10,6 +10,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name="co.bangumi.common.CygnusApplication"
@@ -19,7 +22,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="co.bangumi.Cygnus.StartPaddingActivity"
+            android:name="co.bangumi.Cassiopeia.StartPaddingActivity"
             android:theme="@style/PaddingViewTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,30 +30,69 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bangumi.co"
+                    android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bangumi.page.link"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
         <activity
-            android:name="co.bangumi.Cygnus.DetailActivity"
+            android:name="co.bangumi.Cassiopeia.DetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="co.bangumi.Cygnus.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name="co.bangumi.Cassiopeia.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"></activity>
         <activity
-            android:name="co.bangumi.Cygnus.FirstConfigActivity"
+            android:name="co.bangumi.Cassiopeia.FirstConfigActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="co.bangumi.Cygnus.PlayerActivity"
+            android:name="co.bangumi.Cassiopeia.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_player"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name="co.bangumi.Cygnus.FavoriteActivity" />
-        <activity android:name="co.bangumi.Cygnus.AllBangumiActivity" />
+        <activity android:name="co.bangumi.Cassiopeia.FavoriteActivity" />
+        <activity android:name="co.bangumi.Cassiopeia.AllBangumiActivity" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->
         <!-- android:label="@string/title_activity_settings" -->
         <!-- android:theme="@style/AppThemeActionBar" /> -->
-        <activity android:name="co.bangumi.Cygnus.SearchActivity"></activity>
+        <activity android:name="co.bangumi.Cassiopeia.SearchActivity" />
+
+        <service android:name=".service.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.AppIndexingUpdateService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver
+            android:name=".service.AppIndexingUpdateReceiver"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.APPINDEXING">
+            <intent-filter>
+                <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

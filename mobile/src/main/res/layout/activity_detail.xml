@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/detailBackground"
     android:fitsSystemWindows="true"
-    tools:context="co.bangumi.Cygnus.DetailActivity">
+    tools:context="co.bangumi.Cassiopeia.DetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

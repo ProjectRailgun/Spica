@@ -4,8 +4,6 @@ package co.bangumi.common.activity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import co.bangumi.common.R
-import co.bangumi.common.api.ApiClient
 import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -19,7 +17,7 @@ open class BaseFragment : co.bangumi.common.activity.RxLifecycleFragment() {
 
     var thisView: View? = null
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.thisView = view
     }
@@ -54,7 +52,7 @@ open class BaseFragment : co.bangumi.common.activity.RxLifecycleFragment() {
                 }
 
                 if (message?.message() != null) {
-                    errorMessage = message.message()
+                    errorMessage = message.message()!!
                 }
             }
 

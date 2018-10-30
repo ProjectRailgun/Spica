@@ -2,6 +2,7 @@ package co.bangumi.common
 
 import android.text.TextUtils
 import co.bangumi.common.model.Bangumi
+import co.bangumi.common.model.Episode
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -32,7 +33,7 @@ class StringUtil {
 
         }
 
-        fun mainTitle(bangumi: Bangumi): String {
+        fun getName(bangumi: Bangumi): String {
             return if (Locale.getDefault().displayLanguage == Locale.CHINESE.displayLanguage) {
                 if (!TextUtils.isEmpty(bangumi.name_cn)) {
                     bangumi.name_cn
@@ -45,6 +46,14 @@ class StringUtil {
                 } else {
                     bangumi.name_cn
                 }
+            }
+        }
+
+        fun getName(episode: Episode): String {
+            return if (Locale.getDefault().displayLanguage == Locale.CHINESE.displayLanguage) {
+                if (TextUtils.isEmpty(episode.name_cn)) episode.name else episode.name_cn
+            } else {
+                if (TextUtils.isEmpty(episode.name)) episode.name_cn else episode.name
             }
         }
 

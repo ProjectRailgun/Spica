@@ -1,25 +1,24 @@
-package co.bangumi.Cygnus
+package co.bangumi.Cassiopeia
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.AppCompatSpinner
-import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import co.bangumi.common.activity.BaseActivity
-import co.bangumi.common.api.ApiClient
 import co.bangumi.common.api.LoginRequest
 import co.bangumi.common.cache.CygnusPreferences
+import com.google.firebase.analytics.FirebaseAnalytics
 import retrofit2.HttpException
+
 
 class FirstConfigActivity : co.bangumi.common.activity.BaseActivity() {
 
-    private val spinner by lazy { findViewById(co.bangumi.Cygnus.R.id.spinner) as AppCompatSpinner }
+    private val spinner by lazy { findViewById(R.id.spinner) as AppCompatSpinner }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(co.bangumi.Cygnus.R.layout.activity_first_config)
+        setContentView(R.layout.activity_first_config)
 
         /**
         val sp = ArrayAdapter.createFromResource(this,
@@ -31,13 +30,13 @@ class FirstConfigActivity : co.bangumi.common.activity.BaseActivity() {
         textServer.setText(CygnusPreferences.getServer(), TextView.BufferType.EDITABLE)
         **/
 
-        val textUser = findViewById(co.bangumi.Cygnus.R.id.user) as EditText
-        val textPw = findViewById(co.bangumi.Cygnus.R.id.pw) as EditText
+        val textUser = findViewById(R.id.user) as EditText
+        val textPw = findViewById(R.id.pw) as EditText
 
 
-        val toast = Toast.makeText(this, getString(co.bangumi.Cygnus.R.string.connecting), Toast.LENGTH_LONG)
+        val toast = Toast.makeText(this, getString(R.string.connecting), Toast.LENGTH_LONG)
 
-        findViewById(co.bangumi.Cygnus.R.id.floatingActionButton).setOnClickListener {
+        (findViewById(R.id.floatingActionButton) as FloatingActionButton).setOnClickListener {
             /**
             val host = StringBuilder()
             val domain = textServer.text.toString()
@@ -60,7 +59,7 @@ class FirstConfigActivity : co.bangumi.common.activity.BaseActivity() {
                 host.append("/")
             **/
 
-            toast.setText(getString(co.bangumi.Cygnus.R.string.connecting))
+            toast.setText(getString(R.string.connecting))
             toast.show()
 
             co.bangumi.common.api.ApiClient.init(this, host.toString())
@@ -70,10 +69,14 @@ class FirstConfigActivity : co.bangumi.common.activity.BaseActivity() {
                         CygnusPreferences.setServer(host.toString())
                         CygnusPreferences.setUsername(textUser.text.toString())
                         startActivity(Intent(this, HomeActivity::class.java))
+                        val bundle = Bundle()
+                        bundle.putString(FirebaseAnalytics.Param.METHOD, "origin")
+                        FirebaseAnalytics.getInstance(this)
+                            .logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
                         toast.cancel()
                         finish()
                     }, {
-                        var errorMessage = getString(co.bangumi.Cygnus.R.string.network_error)
+                        var errorMessage = getString(R.string.network_error)
 
                         if (it is HttpException) {
                             val body = it.response().errorBody()

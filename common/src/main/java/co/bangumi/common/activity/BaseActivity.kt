@@ -3,8 +3,6 @@ package co.bangumi.common.activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import co.bangumi.common.R
-import co.bangumi.common.api.ApiClient
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
 import io.reactivex.Observable
@@ -30,7 +28,7 @@ open class BaseActivity : co.bangumi.common.activity.RxLifecycleActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    protected fun showToast(s: String, t: Int = Toast.LENGTH_LONG) {
+    public fun showToast(s: String, t: Int = Toast.LENGTH_LONG) {
         Toast.makeText(this, s, t).show()
     }
 

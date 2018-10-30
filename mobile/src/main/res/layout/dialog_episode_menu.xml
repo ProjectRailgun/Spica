@@ -26,17 +26,6 @@
         android:textColor="@color/textColorPrimary"
         android:textSize="16sp" />
 
-    <!--<TextView-->
-        <!--android:id="@+id/button_mark_all_watched"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:background="?attr/selectableItemBackground"-->
-        <!--android:gravity="center_vertical"-->
-        <!--android:paddingLeft="12dp"-->
-        <!--android:text="@string/mark_all_before_as_watched"-->
-        <!--android:textColor="@color/textColorPrimary"-->
-        <!--android:textSize="16sp" />-->
-
     <TextView
         android:id="@+id/button_open_external"
         android:layout_width="match_parent"
@@ -45,6 +34,17 @@
         android:gravity="center_vertical"
         android:paddingLeft="12dp"
         android:text="@string/open_with_external_player"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/button_download"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:paddingLeft="12dp"
+        android:text="@string/download"
         android:textColor="@color/textColorPrimary"
         android:textSize="16sp" />
 
