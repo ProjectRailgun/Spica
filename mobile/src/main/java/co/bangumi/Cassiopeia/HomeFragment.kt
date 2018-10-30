@@ -1,4 +1,4 @@
-package co.bangumi.Cygnus
+package co.bangumi.Cassiopeia
 
 
 import android.content.Context
@@ -13,16 +13,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import co.bangumi.common.StringUtil
-import co.bangumi.common.activity.BaseFragment
-import co.bangumi.common.api.ApiClient
+import co.bangumi.Cassiopeia.homefragment.HomeData
+import co.bangumi.Cassiopeia.homefragment.HomeHorizontalAdapter
+import co.bangumi.Cassiopeia.homefragment.HomeLargeAdapter
 import co.bangumi.common.api.ListResponse
 import co.bangumi.common.model.Announce
 import co.bangumi.common.model.Bangumi
-import co.bangumi.Cygnus.homefragment.HomeData
-import co.bangumi.Cygnus.homefragment.HomeHorizontalAdapter
-import co.bangumi.Cygnus.homefragment.HomeLargeAdapter
+import com.bumptech.glide.Glide
 import io.reactivex.Observable
 import io.reactivex.functions.Function3
 import java.text.SimpleDateFormat
@@ -31,19 +28,20 @@ import java.util.*
 
 class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
-    private val recyclerView by lazy { findViewById(co.bangumi.Cygnus.R.id.recycler_view) as RecyclerView }
-    private val swipeRefresh by lazy { findViewById(co.bangumi.Cygnus.R.id.swipe_refresh) as SwipeRefreshLayout }
+    private val recyclerView by lazy { findViewById(R.id.recycler_view) as RecyclerView }
+    private val swipeRefresh by lazy { findViewById(R.id.swipe_refresh) as SwipeRefreshLayout }
     private val homeDataAdapter by lazy { HomeDataAdapter(this) }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(co.bangumi.Cygnus.R.layout.fragment_home, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View? {
+        return inflater!!.inflate(R.layout.fragment_home, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        swipeRefresh.setColorSchemeResources(co.bangumi.Cygnus.R.color.meguminRed)
+        swipeRefresh.setColorSchemeResources(R.color.meguminRed)
         homeDataAdapter.attachTo(recyclerView)
 
         swipeRefresh.setOnRefreshListener {
@@ -59,9 +57,9 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getAnnounceBangumi()),
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi()),
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getAllBangumi()),
-                Function3({ t1: ListResponse<Announce>, t2: ListResponse<Bangumi>, t3: ListResponse<Bangumi> ->
+            Function3 { t1: ListResponse<Announce>, t2: ListResponse<Bangumi>, t3: ListResponse<Bangumi> ->
                     arrayOf(t1.getData().map { it.bangumi }, t2.getData(), t3.getData())
-                }))
+            })
                 .subscribe({
                     val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     homeDataAdapter.list.clear()
@@ -76,16 +74,15 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                                 val week = (System.currentTimeMillis() - format.parse(it.air_date).time) / 604800000
                                 return@filter week <= it.eps + 1
                             }
-                            .sortedBy { it.unwatched_count }
+                        .sortedBy { -it.unwatched_count }
 
                     if (todayUpdate.isNotEmpty()) {
-                        homeDataAdapter.list.add(HomeData(getString(co.bangumi.Cygnus.R.string.releasing)))
-                        homeDataAdapter.list.add(HomeData(todayUpdate
-                                .filter { it.unwatched_count >= 1 }))
+                        homeDataAdapter.list.add(HomeData(getString(R.string.releasing)))
+                        homeDataAdapter.list.add(HomeData(todayUpdate))
                     }
 
                     if (it[2].isNotEmpty()) {
-                        homeDataAdapter.list.add(HomeData(getString(co.bangumi.Cygnus.R.string.title_bangumi)))
+                        homeDataAdapter.list.add(HomeData(getString(R.string.title_bangumi)))
                         homeDataAdapter.list.addAll(it[2].map { HomeData(it) })
                     }
 
@@ -99,7 +96,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
     }
 
     private class HomeDataAdapter(val parent: Fragment) {
-        val spanCount = parent.resources.getInteger(co.bangumi.Cygnus.R.integer.home_screen_span_count)
+        val spanCount = parent.resources.getInteger(R.integer.home_screen_span_count)
         val list = arrayListOf<HomeData>()
         val adapter = HomeAdapter()
         val lm = LinearLayoutManager(parent.context)
@@ -114,24 +111,26 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         }
 
         class HomeLineHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var recyclerView: RecyclerView = itemView.findViewById(co.bangumi.Cygnus.R.id.recyclerView) as RecyclerView
+            var recyclerView: RecyclerView =
+                itemView.findViewById(R.id.recyclerView) as RecyclerView
         }
 
         class HomeLargeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var recyclerView: RecyclerView = itemView.findViewById(co.bangumi.Cygnus.R.id.recyclerView) as RecyclerView
+            var recyclerView: RecyclerView =
+                itemView.findViewById(R.id.recyclerView) as RecyclerView
         }
 
         private class WideCardHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val image = view.findViewById(co.bangumi.Cygnus.R.id.imageView) as ImageView
-            val title = view.findViewById(co.bangumi.Cygnus.R.id.title) as TextView
-            val subtitle = view.findViewById(co.bangumi.Cygnus.R.id.subtitle) as TextView
-            val info = view.findViewById(co.bangumi.Cygnus.R.id.info) as TextView
-            val state = view.findViewById(co.bangumi.Cygnus.R.id.state) as TextView
-            val info2 = view.findViewById(co.bangumi.Cygnus.R.id.info2) as TextView
+            val image = view.findViewById(R.id.imageView) as ImageView
+            val title = view.findViewById(R.id.title) as TextView
+            val subtitle = view.findViewById(R.id.subtitle) as TextView
+            val info = view.findViewById(R.id.info) as TextView
+            val state = view.findViewById(R.id.state) as TextView
+            val info2 = view.findViewById(R.id.info2) as TextView
         }
 
         private class TitleHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val text = view.findViewById(co.bangumi.Cygnus.R.id.textView) as TextView
+            val text = view.findViewById(R.id.textView) as TextView
         }
 
         private class TailHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -141,7 +140,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         }
 
         private class PaddingItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
-            val dp = context.resources.getDimensionPixelSize(co.bangumi.Cygnus.R.dimen.dp_8)
+            val dp = context.resources.getDimensionPixelSize(R.dimen.dp_8)
 
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val position = parent.getChildAdapterPosition(view)
@@ -155,7 +154,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         }
 
         private inner class HomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-            override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder?, position: Int) {
+            override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
                 val bangumi = list[position].bangumi
                 when (viewHolder) {
@@ -186,13 +185,15 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                             return
                         }
 
-                        viewHolder.title.text = co.bangumi.common.StringUtil.mainTitle(bangumi)
+                        viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
                         viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
-                        viewHolder.info.text = viewHolder.info.resources.getString(co.bangumi.Cygnus.R.string.update_info)
+                        viewHolder.info.text =
+                                viewHolder.info.resources.getString(R.string.update_info)
                                 ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
 
                         if (bangumi.favorite_status > 0) {
-                            val array = viewHolder.state.resources.getStringArray(co.bangumi.Cygnus.R.array.array_favorite)
+                            val array =
+                                viewHolder.state.resources.getStringArray(R.array.array_favorite)
                             if (array.size > bangumi.favorite_status) {
                                 viewHolder.state.text = array[bangumi.favorite_status]
                             }
@@ -216,13 +217,43 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                 }
             }
 
-            override fun onCreateViewHolder(p0: ViewGroup?, p1: Int): RecyclerView.ViewHolder {
+            override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
                 return when (p1) {
-                    HomeData.TYPE.TITLE.value -> TitleHolder(LayoutInflater.from(p0!!.context).inflate(co.bangumi.Cygnus.R.layout.include_home_title, p0, false))
-                    HomeData.TYPE.WIDE.value -> WideCardHolder(LayoutInflater.from(p0!!.context).inflate(co.bangumi.Cygnus.R.layout.include_bangumi_wide, p0, false))
-                    HomeData.TYPE.LARGE.value -> HomeLargeHolder(LayoutInflater.from(p0!!.context).inflate(co.bangumi.Cygnus.R.layout.include_home_line_container, p0, false))
-                    HomeData.TYPE.CONTAINER.value -> HomeLineHolder(LayoutInflater.from(p0!!.context).inflate(co.bangumi.Cygnus.R.layout.include_home_line_container, p0, false))
-                    HomeData.TYPE.TAIL.value -> TailHolder(LayoutInflater.from(p0!!.context).inflate(co.bangumi.Cygnus.R.layout.include_home_tail, p0, false))
+                    HomeData.TYPE.TITLE.value -> TitleHolder(
+                        LayoutInflater.from(p0!!.context).inflate(
+                            R.layout.include_home_title,
+                            p0,
+                            false
+                        )
+                    )
+                    HomeData.TYPE.WIDE.value -> WideCardHolder(
+                        LayoutInflater.from(p0!!.context).inflate(
+                            R.layout.include_bangumi_wide,
+                            p0,
+                            false
+                        )
+                    )
+                    HomeData.TYPE.LARGE.value -> HomeLargeHolder(
+                        LayoutInflater.from(p0!!.context).inflate(
+                            R.layout.include_home_line_container,
+                            p0,
+                            false
+                        )
+                    )
+                    HomeData.TYPE.CONTAINER.value -> HomeLineHolder(
+                        LayoutInflater.from(p0!!.context).inflate(
+                            R.layout.include_home_line_container,
+                            p0,
+                            false
+                        )
+                    )
+                    HomeData.TYPE.TAIL.value -> TailHolder(
+                        LayoutInflater.from(p0!!.context).inflate(
+                            R.layout.include_home_tail,
+                            p0,
+                            false
+                        )
+                    )
                     else -> throw RuntimeException("unknown type")
                 }
             }

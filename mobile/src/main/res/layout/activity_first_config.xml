@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="co.bangumi.Cygnus.FirstConfigActivity">
+        tools:context="co.bangumi.Cassiopeia.FirstConfigActivity">
 
         <TextView
             android:layout_width="match_parent"

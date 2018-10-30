@@ -3,7 +3,6 @@ package co.bangumi.common.api
 import co.bangumi.common.model.Announce
 import co.bangumi.common.model.Bangumi
 import co.bangumi.common.model.UserInfo
-import co.bangumi.common.model.*
 import io.reactivex.Observable
 import retrofit2.http.*
 
@@ -47,11 +46,11 @@ interface ApiService {
 
     @GET("/api/home/bangumi")
     fun getSearchBangumi(
-            @Query("page") page: Int,
-            @Query("count") count: Int,
-            @Query("sort_field") sortField: String?,
-            @Query("sort_order") sortOrder: String?,
-            @Query("name") name: String?
+        @Query("page") page: Int?,
+        @Query("count") count: Int?,
+        @Query("sort_field") sortField: String?,
+        @Query("sort_order") sortOrder: String?,
+        @Query("name") name: String?
     ): Observable<co.bangumi.common.api.ListResponse<Bangumi>>
 
     @GET("/api/home/bangumi/{id}")

@@ -1,4 +1,4 @@
-package co.bangumi.Cygnus
+package co.bangumi.Cassiopeia
 
 import android.app.Activity
 import android.content.Context
@@ -7,25 +7,24 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.CoordinatorLayout
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import co.bangumi.common.player.CygnusExoPlayer
+import co.bangumi.common.view.FastForwardBar
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import co.bangumi.common.player.CygnusExoPlayer
-import co.bangumi.common.view.FastForwardBar
 
 
 class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
-    val playerController by lazy { findViewById(co.bangumi.Cygnus.R.id.play_controller) }
-    val playerView by lazy { findViewById(co.bangumi.Cygnus.R.id.player_content) as CygnusExoPlayer }
-    val root by lazy { findViewById(co.bangumi.Cygnus.R.id.root) }
+    val playerController by lazy { (findViewById(R.id.play_controller) as FrameLayout) }
+    val playerView by lazy { findViewById(R.id.player_content) as CygnusExoPlayer }
+    val root by lazy { (findViewById(R.id.root) as CoordinatorLayout) }
 
     val mHidePart2Runnable = Runnable {
         playerView.systemUiVisibility =
@@ -65,7 +64,7 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(co.bangumi.Cygnus.R.layout.activity_player)
+        setContentView(R.layout.activity_player)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 //        playerView.postDelayed({
 //            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
@@ -80,8 +79,9 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         Log.i(this.localClassName, "playing:" + fixedUrl)
 
         checkMultiWindowMode()
-        findViewById(co.bangumi.Cygnus.R.id.play_close).setOnClickListener { finish() }
-        (findViewById(co.bangumi.Cygnus.R.id.fast_forward_bar) as FastForwardBar).callback = object : FastForwardBar.FastForwardEventCallback {
+        (findViewById(R.id.play_close) as ImageButton).setOnClickListener { finish() }
+        (findViewById(R.id.fast_forward_bar) as FastForwardBar).callback =
+                object : FastForwardBar.FastForwardEventCallback {
             override fun onFastForward(range: Int) {
                 playerView.seekOffsetTo(range * 1000)
             }
@@ -95,11 +95,13 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         playerView.setControllerView(
                 CygnusExoPlayer.ControllerViews(
                         playerController,
-                        findViewById(co.bangumi.Cygnus.R.id.play_button) as co.bangumi.common.view.CheckableImageButton,
-                        findViewById(co.bangumi.Cygnus.R.id.play_screen) as co.bangumi.common.view.CheckableImageButton?,
-                        findViewById(co.bangumi.Cygnus.R.id.play_progress) as SeekBar,
-                        findViewById(co.bangumi.Cygnus.R.id.play_position) as TextView,
-                        findViewById(co.bangumi.Cygnus.R.id.play_duration) as TextView))
+                    findViewById(R.id.play_button) as co.bangumi.common.view.CheckableImageButton,
+                    findViewById(R.id.play_screen) as co.bangumi.common.view.CheckableImageButton?,
+                    findViewById(R.id.play_progress) as SeekBar,
+                    findViewById(R.id.play_position) as TextView,
+                    findViewById(R.id.play_duration) as TextView
+                )
+        )
 
         playerView.setControllerCallback(object : CygnusExoPlayer.ControllerCallback {
             override fun onControllerVisibilityChange(visible: Boolean) {
@@ -112,7 +114,10 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         })
 
 
-        val dataSourceFactory = DefaultDataSourceFactory(this, Util.getUserAgent(this, co.bangumi.Cygnus.BuildConfig.APPLICATION_ID))
+        val dataSourceFactory = DefaultDataSourceFactory(
+            this,
+            Util.getUserAgent(this, co.bangumi.Cassiopeia.BuildConfig.APPLICATION_ID)
+        )
         val extractorsFactory = DefaultExtractorsFactory()
         val videoSource = ExtractorMediaSource(Uri.parse(fixedUrl), dataSourceFactory, extractorsFactory, null, null)
 
@@ -250,7 +255,11 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         val isForward = keyPressingCode == KeyEvent.KEYCODE_DPAD_RIGHT
         val s = times * 10
 
-        mToast.setText(getString(if (isForward) co.bangumi.Cygnus.R.string.toast_forward else co.bangumi.Cygnus.R.string.toast_backward).format(s))
+        mToast.setText(
+            getString(if (isForward) R.string.toast_forward else R.string.toast_backward).format(
+                s
+            )
+        )
         mToast.show()
 
         if (isFinish) {

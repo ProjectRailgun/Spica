@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cygnus</string>
+    <string name="app_name">番組Collection</string>
 
     <string name="first_config_description">Start by logging in with your 番組Collection account.</string>
     <string name="first_config_username">ユーザー名</string>
@@ -36,6 +36,7 @@
     <string name="mark_as_watched">「鑑賞完了」にする</string>
     <string name="mark_all_before_as_watched">今まで「鑑賞完了」にする</string>
     <string name="open_with_external_player">外部プレーヤーで再生</string>
+    <string name="download">ダウンロード</string>
     <string name="action_search">検索</string>
     <string name="empty">No content</string>
     <string name="connecting">接続する…</string>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cygnus</string>
+    <string name="app_name">番组Collection</string>
 
-    <string name="first_config_description">登入您的 番組Collection 账户以开始。</string>
+    <string name="first_config_description">登入您的 番组Collection 账户以开始。</string>
     <string name="first_config_username">用户名</string>
     <string name="first_config_password">密码</string>
 
@@ -36,6 +36,7 @@
     <string name="mark_as_watched">标记为已看</string>
     <string name="mark_all_before_as_watched">标记之前的为已看</string>
     <string name="open_with_external_player">外部播放器中打开</string>
+    <string name="download">下载</string>
     <string name="action_search">搜索</string>
     <string name="empty">无内容</string>
     <string name="connecting">连接中…</string>

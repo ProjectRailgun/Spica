@@ -1,4 +1,4 @@
-package co.bangumi.Cygnus
+package co.bangumi.Cassiopeia
 
 import android.content.res.Configuration
 import android.os.Bundle

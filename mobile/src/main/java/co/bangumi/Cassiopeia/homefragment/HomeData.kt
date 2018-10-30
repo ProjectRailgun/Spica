@@ -1,4 +1,4 @@
-package co.bangumi.Cygnus.homefragment
+package co.bangumi.Cassiopeia.homefragment
 
 import co.bangumi.common.model.Bangumi
 

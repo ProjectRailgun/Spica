@@ -20,6 +20,7 @@ public class EpisodeDetail {
     public Long create_time;
     public String duration;
     public String id;
+    public Bangumi bangumi;
 
     public List<VideoFile> video_files;
 }

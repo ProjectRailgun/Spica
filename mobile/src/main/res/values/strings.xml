@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cygnus</string>
+    <string name="app_name">番組Collection</string>
     <string name="space" translatable="false"> </string>
     <string name="title_activity_home" translatable="false">HomeActivity</string>
 
@@ -53,6 +53,7 @@
     <string name="mark_as_watched">Mark as watched</string>
     <string name="mark_all_before_as_watched">Mark all before as watched</string>
     <string name="open_with_external_player">Open with external player</string>
+    <string name="download">Download</string>
 
     <string name="toast_forward" translatable="false">+%ds</string>
     <string name="toast_backward" translatable="false">-%ds</string>

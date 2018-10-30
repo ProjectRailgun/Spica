@@ -1,5 +1,7 @@
 package co.bangumi.common.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by roya on 2017/5/30.
  */
@@ -8,7 +10,8 @@ public class VideoFile {
     public String torrentId;
     public Integer status;
     public String url;
-    public Object fileName;
+    @SerializedName("file_name")
+    public String fileName;
     public Integer resolutionW;
     public Object downloadUrl;
     public String episodeId;
