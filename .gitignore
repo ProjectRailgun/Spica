@@ -42,7 +42,7 @@ captures/
 
 # Intellij
 *.iml
-.idea
+.idea/*
 
 # Keystore files
 keystore
@@ -52,6 +52,7 @@ keystore
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+global_tracker.xml
 
 # Freeline
 freeline.py

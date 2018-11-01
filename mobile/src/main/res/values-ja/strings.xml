@@ -33,16 +33,21 @@
     <string name="others">その他</string>
     <string name="logout">ログアウト</string>
     <string name="releasing">放送中</string>
+    <string name="my_collection">私のコレクション</string>
+    <string name="all_bangumi">全ての番組</string>
     <string name="mark_as_watched">「鑑賞完了」にする</string>
     <string name="mark_all_before_as_watched">今まで「鑑賞完了」にする</string>
     <string name="open_with_external_player">外部プレーヤーで再生</string>
     <string name="download">ダウンロード</string>
+    <string name="delete">削除</string>
+    <string name="delete_success">削除成功</string>
+    <string name="delete_failed">削除失敗</string>
     <string name="action_search">検索</string>
-    <string name="empty">No content</string>
+    <string name="empty">コンテンツなし</string>
     <string name="connecting">接続する…</string>
-    <string name="network_error">Network Error</string>
+    <string name="network_error">ネットワークエラー</string>
     <string name="less">△</string>
     <string name="recommended">おすすめ</string>
-    <string name="eps_all">%d eps</string>
+    <string name="eps_all">%d エピソード</string>
 
 </resources>
