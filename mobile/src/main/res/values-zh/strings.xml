@@ -33,10 +33,15 @@
     <string name="others">其他</string>
     <string name="logout">退出登录</string>
     <string name="releasing">放送中</string>
+    <string name="my_collection">我的收藏</string>
+    <string name="all_bangumi">全部番組</string>
     <string name="mark_as_watched">标记为已看</string>
     <string name="mark_all_before_as_watched">标记之前的为已看</string>
     <string name="open_with_external_player">外部播放器中打开</string>
     <string name="download">下载</string>
+    <string name="delete">删除</string>
+    <string name="delete_success">删除成功</string>
+    <string name="delete_failed">删除失败</string>
     <string name="action_search">搜索</string>
     <string name="empty">无内容</string>
     <string name="connecting">连接中…</string>
