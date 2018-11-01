@@ -15,21 +15,7 @@ android {
         versionName "0.9.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        debug {
-            storeFile file('../keystore')
-            storePassword 'KEYStore.byShadowySpirits'
-            keyAlias 'sspirits_debug'
-            keyPassword 'debug.byShadowySpirits'
-        }
 
-        release {
-            storeFile file('../keystore')
-            storePassword 'KEYStore.byShadowySpirits'
-            keyAlias 'sspirits_release'
-            keyPassword 'Cassiopeia.byShadowySpirits'
-        }
-    }
     buildTypes {
         release {
             debuggable false
@@ -64,4 +50,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-dynamic-links:16.1.2'
     implementation 'com.google.firebase:firebase-appindexing:16.0.2'
     implementation 'com.youth.banner:banner:1.4.10'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.4'
 }
