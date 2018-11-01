@@ -41,8 +41,8 @@ interface ApiService {
     @GET("/api/home/announce")
     fun getAnnounceBangumi(): Observable<co.bangumi.common.api.ListResponse<Announce>>
 
-    @GET("/api/home/on_air")
-    fun getAllBangumi(): Observable<co.bangumi.common.api.ListResponse<Bangumi>>
+    @GET("/api/home/on_air?type=1001")
+    fun getOnAir(): Observable<co.bangumi.common.api.ListResponse<Bangumi>>
 
     @GET("/api/home/bangumi")
     fun getSearchBangumi(

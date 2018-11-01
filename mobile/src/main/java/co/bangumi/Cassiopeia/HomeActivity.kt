@@ -1,18 +1,26 @@
 package co.bangumi.Cassiopeia
 
-import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
-import co.bangumi.common.PermissionUtil
+import co.bangumi.common.model.Announce
+import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.youth.banner.loader.ImageLoader
+import kotlinx.android.synthetic.main.app_bar_home.*
 import retrofit2.HttpException
 
 
@@ -25,6 +33,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
+        toolbar.bringToFront()
         setSupportActionBar(toolbar)
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
@@ -34,7 +43,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        (findViewById(R.id.fab_search) as FloatingActionButton).setOnClickListener { search() }
+        (findViewById(R.id.fabSearch) as FloatingActionButton).setOnClickListener { search() }
 
         val navigationView = findViewById(R.id.nav_view) as NavigationView
         val navHeaderT1 = navigationView.getHeaderView(0).findViewById(R.id.textView1) as TextView
@@ -46,7 +55,6 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, HomeFragment())
             .commit()
-        PermissionUtil.checkOrRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         co.bangumi.common.api.ApiClient.getInstance().getUserInfo()
             .withLifecycle()
@@ -60,6 +68,29 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
                     logout()
                 }
             })
+    }
+
+    public fun setBanner(list: List<Announce>) {
+        banner.visibility = View.VISIBLE
+        banner.setImageLoader(GlideImageLoader())
+        .setImages(list.map { it.imageUrl })
+        .setOnBannerListener{
+            val uri = Uri.parse(list.get(it).content)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(intent)
+        }.start()
+    }
+
+    public fun addListener(recyclerView: RecyclerView) {
+        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (fabSearch.visibility == View.VISIBLE) fabSearch.visibility = View.GONE
+                } else{
+                    if (fabSearch.visibility == View.GONE) fabSearch.visibility = View.VISIBLE
+                }
+            }
+        })
     }
 
     private fun search() {
@@ -111,6 +142,22 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     private fun logout() {
         co.bangumi.common.CygnusApplication.logout(this)
         finishAffinity()
+    }
+
+    private inner class GlideImageLoader : ImageLoader() {
+
+        override fun displayImage(
+            context: Context?,
+            path: Any?,
+            imageView: ImageView?
+        ) {
+            Glide.with(context)
+                .load(path)
+                .placeholder(R.drawable.banner_placeholder)
+                .error(R.drawable.banner_placeholder)
+                .thumbnail(0.1f)
+                .into(imageView);
+        }
     }
 
 }

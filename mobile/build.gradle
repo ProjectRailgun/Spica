@@ -51,4 +51,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-appindexing:16.0.2'
     implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha06'
     implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha06'
+    implementation 'com.youth.banner:banner:1.4.10'
 }

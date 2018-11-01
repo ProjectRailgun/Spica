@@ -18,7 +18,9 @@ open class Bangumi(val id: String,
                    var favorite_status: Int,
                    val unwatched_count: Int,
                    val update_time: Long,
-                   val bgm_id: Long) {
+                   val bgm_id: Long): BaseEntity() {
+    enum class Status(val value: Int) { WISH(1), WATCHED(2), WATCHING(3), PAUSE(4), ABANDONED(5)}
+
     override fun hashCode(): Int {
         return id.hashCode()
     }

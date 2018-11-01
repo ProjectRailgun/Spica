@@ -3,6 +3,7 @@ package co.bangumi.common
 import android.text.TextUtils
 import co.bangumi.common.model.Bangumi
 import co.bangumi.common.model.Episode
+import co.bangumi.common.model.EpisodeDetail
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -54,6 +55,14 @@ class StringUtil {
                 if (TextUtils.isEmpty(episode.name_cn)) episode.name else episode.name_cn
             } else {
                 if (TextUtils.isEmpty(episode.name)) episode.name_cn else episode.name
+            }
+        }
+
+        fun getName(episodeDetail: EpisodeDetail): String {
+            return if (Locale.getDefault().displayLanguage == Locale.CHINESE.displayLanguage) {
+                if (TextUtils.isEmpty(episodeDetail.name_cn)) episodeDetail.name else episodeDetail.name_cn
+            } else {
+                if (TextUtils.isEmpty(episodeDetail.name)) episodeDetail.name_cn else episodeDetail.name
             }
         }
 

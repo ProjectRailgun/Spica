@@ -6,35 +6,47 @@
     android:layout_height="match_parent"
     tools:context="co.bangumi.Cassiopeia.HomeActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/backgroundSecondary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:elevation="0dp"/>
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/actionBarSize"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="0dp">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+
+        <com.youth.banner.Banner
+            android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/backgroundSecondary"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="77dp"
+            android:visibility="gone"
+            app:layout_scrollFlags="scroll|snap"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_collapseParallaxMultiplier="0.7"/>
 
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_home" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_search"
+        android:id="@+id/fabSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:layout_gravity="end|bottom"
         android:layout_margin="24dp"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/ic_search_black_24dp"
         android:tint="@android:color/white"
-        app:fabSize="normal" />
+        app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

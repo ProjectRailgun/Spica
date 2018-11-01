@@ -56,7 +56,7 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private fun search(s: String) {
-        ApiClient.getInstance().getSearchBangumi(null, null, "air_date", "desc", null)
+        ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s)
                 .withLifecycle()
                 .onlyRunOneInstance(SearchActivity.TASK_ID_LOAD, true)
                 .subscribe(Consumer {

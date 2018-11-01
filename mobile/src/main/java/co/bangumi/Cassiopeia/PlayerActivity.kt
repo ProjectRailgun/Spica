@@ -74,8 +74,8 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
 
         val url = intent.getStringExtra(INTENT_KEY_URL)
         if (TextUtils.isEmpty(url)) throw IllegalArgumentException("Required url")
-
-        val fixedUrl = Uri.encode(co.bangumi.common.api.ApiHelper.fixHttpUrl(url), "@#&=*+-_.,:!?()/~'%")
+//        val fixedUrl = Uri.encode(co.bangumi.common.api.ApiHelper.fixHttpUrl(url), "@#&=*+-_.,:!?()/~'%")
+        val fixedUrl = Uri.encode(url, "@#&=*+-_.,:!?()/~'%")
         Log.i(this.localClassName, "playing:" + fixedUrl)
 
         checkMultiWindowMode()
