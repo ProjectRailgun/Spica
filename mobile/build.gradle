@@ -5,17 +5,31 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "co.bangumi.Cassiopeia"
         minSdkVersion 23
-        targetSdkVersion 26
-        versionCode 16
-        versionName "0.1.2"
+        targetSdkVersion 27
+        versionCode 1
+        versionName "0.9.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        debug {
+            storeFile file('../keystore')
+            storePassword 'KEYStore.byShadowySpirits'
+            keyAlias 'sspirits_debug'
+            keyPassword 'debug.byShadowySpirits'
+        }
 
+        release {
+            storeFile file('../keystore')
+            storePassword 'KEYStore.byShadowySpirits'
+            keyAlias 'sspirits_release'
+            keyPassword 'Cassiopeia.byShadowySpirits'
+        }
+    }
     buildTypes {
         release {
             debuggable false
@@ -35,21 +49,19 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
-    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
     androidTestImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation project(':common')
-    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-dynamic-links:16.1.2'
     implementation 'com.google.firebase:firebase-appindexing:16.0.2'
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha06'
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha06'
     implementation 'com.youth.banner:banner:1.4.10'
 }
