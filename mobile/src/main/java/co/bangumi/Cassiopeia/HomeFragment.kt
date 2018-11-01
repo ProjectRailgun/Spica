@@ -35,13 +35,14 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefresh.setColorSchemeResources(R.color.meguminRed)
+        (activity as HomeActivity).addListener(recyclerView)
         homeDataAdapter.attachTo(recyclerView)
 
         swipeRefresh.setOnRefreshListener {
@@ -56,36 +57,52 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         Observable.zip(
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getAnnounceBangumi()),
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi()),
-                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getAllBangumi()),
+                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getOnAir()),
             Function3 { t1: ListResponse<Announce>, t2: ListResponse<Bangumi>, t3: ListResponse<Bangumi> ->
-                    arrayOf(t1.getData().map { it.bangumi }, t2.getData(), t3.getData())
+                    arrayOf(t1.getData(), t2.getData(), t3.getData())
             })
                 .subscribe({
                     val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     homeDataAdapter.list.clear()
 
-                    if (it[0].isNotEmpty()) {
-                        homeDataAdapter.list.add(HomeData(HomeData.TYPE.LARGE, null, null, it[0]))
+                    // TODO 待重构
+                    val t1 = it[0] as List<Announce>
+                    val t2 = it[1] as List<Bangumi>
+                    val t3 = it[2] as List<Bangumi>
+
+                    if (t1.isNotEmpty()) {
+                        val announceMap = t1.toHashSet()
+                            .filter { return@filter true }
+                            .sortedBy { it.sortOrder }
+                            .groupBy { it.position }
+                        homeDataAdapter.list.add(HomeData(getString(R.string.recommended)))
+                        homeDataAdapter.list.add(HomeData(HomeData.TYPE.LARGE, null, null,
+                            announceMap.get(Announce.Type.RECOMMENDATION.value)?.map { it.bangumi }))
+                        homeDataAdapter.list.add(HomeData(HomeData.TYPE.MY_COLLECTION))
+
+                        announceMap.get(Announce.Type.NOTICE.value)?.let {
+                            (activity as HomeActivity).setBanner(it)
+                        }
                     }
 
-                    val todayUpdate = it[1]
-                            .toHashSet()
-                            .filter {
-                                val week = (System.currentTimeMillis() - format.parse(it.air_date).time) / 604800000
-                                return@filter week <= it.eps + 1
-                            }
+                    val todayUpdate = t2.toHashSet()
+                        .filter {
+                            return@filter it.favorite_status == Bangumi.Status.WATCHING.value
+                        }
                         .sortedBy { -it.unwatched_count }
 
                     if (todayUpdate.isNotEmpty()) {
-                        homeDataAdapter.list.add(HomeData(getString(R.string.releasing)))
+                        homeDataAdapter.list.add(HomeData(resources.getStringArray(R.array.array_favorite)[Bangumi.Status.WATCHING.value]))
                         homeDataAdapter.list.add(HomeData(todayUpdate))
                     }
 
-                    if (it[2].isNotEmpty()) {
-                        homeDataAdapter.list.add(HomeData(getString(R.string.title_bangumi)))
-                        homeDataAdapter.list.addAll(it[2].map { HomeData(it) })
+                    if (t3.isNotEmpty()) {
+                        homeDataAdapter.list.add(HomeData(getString(R.string.releasing)))
+                        homeDataAdapter.list.addAll(t3.map { HomeData(it) })
+                        homeDataAdapter.list.add(HomeData())
                     }
 
+                    // TODO
                     homeDataAdapter.list.add(HomeData())
                     homeDataAdapter.notifyDataSetChanged()
                     swipeRefresh.isRefreshing = false
@@ -133,9 +150,15 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
             val text = view.findViewById(R.id.textView) as TextView
         }
 
-        private class TailHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private class AllBangumiHolder(view: View) : RecyclerView.ViewHolder(view) {
             init {
                 view.setOnClickListener { view.context.startActivity(AllBangumiActivity.intent(view.context)) }
+            }
+        }
+        private class MyCollectionHolder(view: View) : RecyclerView.ViewHolder(view) {
+            init {
+                (view as TextView).text = view.context.getString(R.string.my_collection)
+                view.setOnClickListener { view.context.startActivity(FavoriteActivity.intent(view.context)) }
             }
         }
 
@@ -220,34 +243,41 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
             override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
                 return when (p1) {
                     HomeData.TYPE.TITLE.value -> TitleHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_title,
                             p0,
                             false
                         )
                     )
                     HomeData.TYPE.WIDE.value -> WideCardHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_bangumi_wide,
                             p0,
                             false
                         )
                     )
                     HomeData.TYPE.LARGE.value -> HomeLargeHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_line_container,
                             p0,
                             false
                         )
                     )
                     HomeData.TYPE.CONTAINER.value -> HomeLineHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_line_container,
                             p0,
                             false
                         )
                     )
-                    HomeData.TYPE.TAIL.value -> TailHolder(
+                    HomeData.TYPE.ALL_BANGUMI.value -> AllBangumiHolder(
+                        LayoutInflater.from(p0!!.context).inflate(
+                            R.layout.include_home_tail,
+                            p0,
+                            false
+                        )
+                    )
+                    HomeData.TYPE.MY_COLLECTION.value -> MyCollectionHolder(
                         LayoutInflater.from(p0!!.context).inflate(
                             R.layout.include_home_tail,
                             p0,

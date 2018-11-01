@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="co.bangumi.Cassiopeia.StartPaddingActivity"
+            android:name=".StartPaddingActivity"
             android:theme="@style/PaddingViewTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,29 +52,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="co.bangumi.Cassiopeia.DetailActivity"
+            android:name=".DetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="co.bangumi.Cassiopeia.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"></activity>
+            android:name=".HomeActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="co.bangumi.Cassiopeia.FirstConfigActivity"
+            android:name=".FirstConfigActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="co.bangumi.Cassiopeia.PlayerActivity"
+            android:name=".PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_player"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name="co.bangumi.Cassiopeia.FavoriteActivity" />
-        <activity android:name="co.bangumi.Cassiopeia.AllBangumiActivity" />
+        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".AllBangumiActivity" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->
         <!-- android:label="@string/title_activity_settings" -->
         <!-- android:theme="@style/AppThemeActionBar" /> -->
-        <activity android:name="co.bangumi.Cassiopeia.SearchActivity" />
+        <activity android:name=".SearchActivity" />
 
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
@@ -93,6 +93,16 @@
                 <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="co.bangumi.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

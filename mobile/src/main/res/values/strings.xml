@@ -50,15 +50,23 @@
     <string name="logout">Logout</string>
     <string name="recommended">Recommended</string>
     <string name="releasing">Releasing</string>
+    <string name="my_collection">My Collection</string>
+    <string name="all_bangumi">All Bangumi</string>
     <string name="mark_as_watched">Mark as watched</string>
     <string name="mark_all_before_as_watched">Mark all before as watched</string>
     <string name="open_with_external_player">Open with external player</string>
     <string name="download">Download</string>
+    <string name="delete">Delete</string>
+    <string name="delete_success">Delete Success</string>
+    <string name="delete_failed">Delete Failed</string>
 
     <string name="toast_forward" translatable="false">+%ds</string>
     <string name="toast_backward" translatable="false">-%ds</string>
 
     <string name="connecting">Connecting…</string>
     <string name="network_error">Network Error</string>
+
+
+    <string name="fading_behavior">co.bangumi.Cassiopeia.FadingBehavior</string>
 
 </resources>

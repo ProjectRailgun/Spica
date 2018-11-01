@@ -1,15 +1,16 @@
 package co.bangumi.Cassiopeia
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.BottomSheetDialog
+import android.support.v4.content.FileProvider
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
@@ -20,13 +21,13 @@ import android.view.ViewGroup
 import android.widget.*
 import co.bangumi.common.FileUtil
 import co.bangumi.common.PackageUtil
-import co.bangumi.common.PermissionUtil
 import co.bangumi.common.StringUtil
 import co.bangumi.common.api.FavoriteChangeRequest
 import co.bangumi.common.api.HistoryChangeItem
 import co.bangumi.common.api.HistoryChangeRequest
 import co.bangumi.common.cache.JsonUtil
 import co.bangumi.common.model.Bangumi
+import co.bangumi.common.model.EpisodeDetail
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.appindexing.FirebaseAppIndex
@@ -37,12 +38,12 @@ import com.google.firebase.dynamiclinks.ShortDynamicLink
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 import java.util.*
 
 class DetailActivity : co.bangumi.common.activity.BaseActivity() {
+    // TODO 重构
     val iv by lazy { findViewById(R.id.image) as ImageView? }
-    //    val ivCover by lazy { findViewById(R.id.image_cover) as ImageView }
-//    val ctitle by lazy { findViewById(R.id.title) as TextView }
     val subtitle by lazy { findViewById(R.id.subtitle) as TextView }
     val info by lazy { findViewById(R.id.info) as TextView }
     val summary by lazy { findViewById(R.id.summary) as TextView }
@@ -131,20 +132,41 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
         co.bangumi.common.api.ApiClient.getInstance().getEpisodeDetail(episode.id)
                 .withLifecycle()
                 .subscribe({
-                    startActivityForResult(PlayerActivity.intent(this,
-                            it.video_files[0].url,
-                            episode.id,
-                            episode.bangumi_id),
-                            DetailActivity.REQUEST_CODE)
+                    val url = it.video_files[0].url
+                    val path = this.getExternalFilesDir(
+                        Environment.DIRECTORY_DOWNLOADS
+                                + '/' + StringUtil.getName(it.bangumi))
+                    val file = File(path, url.substring(url.lastIndexOf('/')))
+                    if (FileUtil.isFileExist(file)) {
+                        startActivityForResult(
+                            PlayerActivity.intent(
+                                this,
+                                file.path,
+                                episode.id,
+                                episode.bangumi_id
+                            ),
+                            DetailActivity.REQUEST_CODE
+                        )
+                        return@subscribe
+                    }
+                        startActivityForResult(
+                            PlayerActivity.intent(
+                                this,
+                                url,
+                                episode.id,
+                                episode.bangumi_id
+                            ),
+                            DetailActivity.REQUEST_CODE
+                        )
                 }, {
                     toastErrors()
                 })
     }
 
-    private fun markWatched(episode: co.bangumi.common.model.Episode) {
+    private fun markWatched(episodeDetail: EpisodeDetail) {
         co.bangumi.common.api.ApiClient.getInstance().uploadWatchHistory(
-                HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(episode.bangumi_id,
-                        episode.id,
+                HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(episodeDetail.bangumi_id,
+                        episodeDetail.id,
                         System.currentTimeMillis(),
                         0,
                         1f,
@@ -153,82 +175,90 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         Consumer {
-                            loadData(episode.bangumi_id)
+                            loadData(episodeDetail.bangumi_id)
                         },
                         ignoreErrors())
     }
 
-    private fun openWith(episode: co.bangumi.common.model.Episode) {
-        co.bangumi.common.api.ApiClient.getInstance().getEpisodeDetail(episode.id)
-                .withLifecycle()
-                .subscribe({
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    val url = Uri.encode(co.bangumi.common.api.ApiHelper.fixHttpUrl(it.video_files[0]!!.url), "@#&=*+-_.,:!?()/~'%")
-                    intent.setDataAndType(Uri.parse(url), "video/mp4")
-                    startActivity(intent)
-                }, {
-                    toastErrors()
-                })
+    private fun openWith(file: File) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        if (Build.VERSION.SDK_INT >= 24) {
+            val contentUri = FileProvider.getUriForFile(this, "co.bangumi.fileprovider", file)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.setDataAndType(contentUri, "video/*")
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "video/*")
+        }
+        startActivity(intent)
+    }
+
+    private fun downloadBgm(episodeDetail: EpisodeDetail) {
+        // TODO 待重构
+        val bgmName = StringUtil.getName(episodeDetail.bangumi)
+        val url = episodeDetail.video_files[0].url
+        val dir = Environment.DIRECTORY_DOWNLOADS + '/' + StringUtil.getName(episodeDetail.bangumi)
+
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        val request = DownloadManager.Request(Uri.parse(url))
+            .setDestinationInExternalFilesDir(this, dir, url.substring(url.lastIndexOf('/') + 1))
+            .setTitle(bgmName + " - " + episodeDetail.episode_no)
+            .setDescription(StringUtil.getName(episodeDetail))
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            .setMimeType("video/*")
+        request.allowScanningByMediaScanner();
+        downloadManager.enqueue(request);
     }
 
     @SuppressLint("SetTextI18n")
-    private fun openMenu(episode: co.bangumi.common.model.Episode) {
+    private fun openMenu(episodeDetail: EpisodeDetail) {
         val dialog = BottomSheetDialog(this, R.style.BottomSheetDialog)
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_episode_menu, null, false)
 
-        val episodeName = StringUtil.getName(episode)
+        val videoUrl = episodeDetail.video_files[0].url
+        val path = this.getExternalFilesDir(
+            Environment.DIRECTORY_DOWNLOADS
+                    + '/' + StringUtil.getName(episodeDetail.bangumi))
+        val file = File(path, videoUrl.substring(videoUrl.lastIndexOf('/')))
 
-        (view.findViewById(R.id.title) as TextView).text =
-                "${episode.episode_no}. $episodeName"
+        val episodeName = StringUtil.getName(episodeDetail)
 
-        (view.findViewById(R.id.button_mark_watched) as TextView).setOnClickListener {
-            markWatched(episode)
+        val btnMarkWatched = view.findViewById(R.id.button_mark_watched) as TextView
+        val btnDownload = view.findViewById(R.id.button_download) as TextView
+        val btnOpenExternal = view.findViewById(R.id.button_open_external) as TextView
+
+        btnMarkWatched.setOnClickListener {
+            markWatched(episodeDetail)
             dialog.dismiss()
         }
 
-        (view.findViewById(R.id.button_open_external) as TextView).setOnClickListener {
-            openWith(episode)
+        (view.findViewById(R.id.title) as TextView).text = "${episodeDetail.episode_no}. $episodeName"
+
+        btnDownload.setOnClickListener {
+            downloadBgm(episodeDetail)
             dialog.dismiss()
+
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodeDetail.id)
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, StringUtil.getName(episodeDetail.bangumi))
+            bundle.putString(
+                FirebaseAnalytics.Param.ITEM_LOCATION_ID,
+                episodeDetail.episode_no.toString()
+            )
+            FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
         }
 
-        (view.findViewById(R.id.button_download) as TextView).setOnClickListener {
-            if (
-                !PermissionUtil.checkOrRequestPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            ) return@setOnClickListener
-            co.bangumi.common.api.ApiClient.getInstance().getEpisodeDetail(episode.id)
-                .withLifecycle()
-                .subscribe({
-                    val bgmName = StringUtil.getName(it.bangumi)
-                    val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-                    val request = DownloadManager.Request(Uri.parse(it.video_files[0].url))
-                    val dir = Environment.DIRECTORY_DOWNLOADS + "bangumi" + bgmName
-                    FileUtil.checkOrCreateFolder(dir)
-                    request.setDestinationInExternalPublicDir(dir, it.video_files[0].fileName)
-                    request.setTitle(bgmName + " - " + it.episode_no)
-                    request.setDescription(episodeName)
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                    request.setMimeType("video/*");
-                    request.allowScanningByMediaScanner();
-                    downloadManager.enqueue(request);
-                    dialog.dismiss()
-
-
-                    val bundle = Bundle()
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episode.id)
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, bgmName)
-                    bundle.putString(
-                        FirebaseAnalytics.Param.ITEM_LOCATION_ID,
-                        it.episode_no.toString()
-                    )
-                    FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
-                }, {
-                    toastErrors()
-                    dialog.dismiss()
-                })
+        if (FileUtil.isFileExist(file)) {
+            btnOpenExternal.visibility = View.VISIBLE
+            btnOpenExternal.setOnClickListener {
+                openWith(file)
+                dialog.dismiss()
+            }
+            btnDownload.text = getString(R.string.delete)
+            btnDownload.setOnClickListener {
+                showToast(getString(if (file.delete()) R.string.delete_success else R.string.delete_failed))
+                dialog.dismiss()
+            }
         }
 
         dialog.setContentView(view)
@@ -407,6 +437,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
         }
 
         inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+            // TODO 重构
             val view = v
             val tv = v.findViewById(R.id.tv) as TextView
             val image = v.findViewById(R.id.image) as ImageView
@@ -445,7 +476,14 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                 }
 
                 holder.view.setOnLongClickListener {
-                    if (d.status != 0) openMenu(d)
+                    if (d.status != 0)
+                        co.bangumi.common.api.ApiClient.getInstance().getEpisodeDetail(d.id)
+                            .withLifecycle()
+                            .subscribe({
+                                openMenu(it)
+                            }, {
+                                toastErrors()
+                            })
                     true
                 }
 

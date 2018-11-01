@@ -14,7 +14,7 @@
     app:cardElevation="3dp">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -52,12 +52,13 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
             android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/fixedAspectRatioFrameLayout"
@@ -66,10 +67,11 @@
 
         <TextView
             android:id="@+id/subtitle"
-            android:layout_width="wrap_content"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:maxLines="1"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textColor="@color/textColorSecondary"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/fixedAspectRatioFrameLayout"
