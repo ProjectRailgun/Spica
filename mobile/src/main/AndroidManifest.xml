@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="co.bangumi.common.CygnusApplication"
+        android:name=".AnalyticsApplication"
         android:allowBackup="true"
         android:banner="@mipmap/launcher_banner"
         android:icon="@mipmap/ic_launcher"
@@ -45,7 +45,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="bangumi.page.link"
+                    android:host="cygnus.page.link"
                     android:scheme="https" />
             </intent-filter>
         </activity>

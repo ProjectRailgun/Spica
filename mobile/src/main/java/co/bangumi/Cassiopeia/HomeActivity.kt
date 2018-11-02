@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import co.bangumi.common.model.Announce
 import com.bumptech.glide.Glide
+import com.google.android.gms.analytics.HitBuilders
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.youth.banner.loader.ImageLoader
 import kotlinx.android.synthetic.main.app_bar_home.*
@@ -28,6 +29,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     NavigationView.OnNavigationItemSelectedListener {
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
+    private lateinit var analyticsApplication: AnalyticsApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,9 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         val navHeaderT2 = navigationView.getHeaderView(0).findViewById(R.id.textView2) as TextView
         navigationView.setNavigationItemSelectedListener(this)
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        // TODO compare Firebase Analytics and Google Analytics
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        analyticsApplication = application as AnalyticsApplication
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, HomeFragment())
@@ -59,8 +63,15 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         co.bangumi.common.api.ApiClient.getInstance().getUserInfo()
             .withLifecycle()
             .subscribe({
-                navHeaderT1.text = it.getData().name
-                navHeaderT2.text = it.getData().email
+                val userInfo = it.getData()
+                navHeaderT1.text = userInfo.name
+                navHeaderT2.text = userInfo.email
+                analyticsApplication.defaultTracker.set("&uid", userInfo.id)
+                (application as AnalyticsApplication).defaultTracker
+                    .send(HitBuilders.EventBuilder()
+                            .setCategory("Origin")
+                            .setAction("User Sign In")
+                            .build())
             }, {
                 toastErrors().accept(it)
 

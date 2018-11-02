@@ -1,7 +1,6 @@
 package co.bangumi.Cassiopeia
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import co.bangumi.common.PackageUtil
@@ -19,15 +18,14 @@ class StartPaddingActivity : co.bangumi.common.activity.BaseActivity() {
         val isConfigured = CygnusPreferences.configured()
         val intent = intent;
         if (isConfigured && intent.action == Intent.ACTION_VIEW) {
-            val url = intent.dataString
+            var url = intent.dataString
             FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
                 .addOnSuccessListener(
                     this
                 ) { pendingDynamicLinkData ->
-                    var deepLink: Uri? = null
                     if (pendingDynamicLinkData != null) {
-                        deepLink = pendingDynamicLinkData!!.link
+                        url = pendingDynamicLinkData.link.toString()
                         if (pendingDynamicLinkData.minimumAppVersion
                             > PackageUtil.getVersionCode(this)
                         ) {
