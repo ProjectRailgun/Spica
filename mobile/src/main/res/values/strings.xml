@@ -65,8 +65,4 @@
 
     <string name="connecting">Connecting…</string>
     <string name="network_error">Network Error</string>
-
-
-    <string name="fading_behavior">co.bangumi.Cassiopeia.FadingBehavior</string>
-
 </resources>
