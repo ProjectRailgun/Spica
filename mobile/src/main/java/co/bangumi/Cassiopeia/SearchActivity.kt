@@ -2,6 +2,9 @@ package co.bangumi.Cassiopeia
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
@@ -17,6 +20,7 @@ import android.widget.TextView
 import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
+import com.google.android.gms.analytics.HitBuilders
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.reactivex.functions.Consumer
 
@@ -65,6 +69,12 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, s)
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
+
+        (application as CassiopeiaApplication).defaultTracker.send(
+            HitBuilders.EventBuilder()
+                .setAction("Search")
+                .setLabel(s)
+                .build())
     }
 
     private fun display(data: List<Bangumi>) {
@@ -120,9 +130,15 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
+            val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
+
             Glide.with(this@SearchActivity)
-                    .load(bangumi.image)
-                    .into(viewHolder.image)
+                .load(bangumi.image)
+                .thumbnail(0.1f)
+                .placeholder(BitmapDrawable(resources, bitmap))
+                .crossFade()
+                .into(viewHolder.image)
 
             viewHolder.itemView.setOnClickListener {
                 this@SearchActivity.startActivity(bangumi.let { it1 -> DetailActivity.intent(this@SearchActivity, it1) })

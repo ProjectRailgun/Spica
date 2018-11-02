@@ -2,7 +2,10 @@ package co.bangumi.Cassiopeia
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,14 +21,14 @@ import com.bumptech.glide.Glide
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 
-class FavoriteActivity : co.bangumi.common.activity.BaseActivity() {
+class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
 
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
 
     companion object {
         fun intent(context: Context): Intent {
-            val i = Intent(context, FavoriteActivity::class.java)
+            val i = Intent(context, MyCollectionActivity::class.java)
             return i
         }
     }
@@ -132,7 +135,7 @@ class FavoriteActivity : co.bangumi.common.activity.BaseActivity() {
 
     private inner class HomeAdapter : RecyclerView.Adapter<WideCardHolder>() {
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): WideCardHolder = WideCardHolder(
-            LayoutInflater.from(this@FavoriteActivity).inflate(
+            LayoutInflater.from(this@MyCollectionActivity).inflate(
                 R.layout.include_bangumi_wide,
                 p0,
                 false
@@ -157,12 +160,17 @@ class FavoriteActivity : co.bangumi.common.activity.BaseActivity() {
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
-            Glide.with(this@FavoriteActivity)
-                    .load(bangumi.image)
-                    .into(viewHolder.image)
+            val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
+            Glide.with(this@MyCollectionActivity)
+                .load(bangumi.image)
+                .thumbnail(0.1f)
+                .placeholder(BitmapDrawable(resources, bitmap))
+                .crossFade()
+                .into(viewHolder.image)
 
             viewHolder.itemView.setOnClickListener {
-                this@FavoriteActivity.startActivity(bangumi.let { it1 -> DetailActivity.intent(this@FavoriteActivity, it1) })
+                this@MyCollectionActivity.startActivity(bangumi.let { it1 -> DetailActivity.intent(this@MyCollectionActivity, it1) })
             }
         }
 

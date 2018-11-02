@@ -2,7 +2,10 @@ package co.bangumi.Cassiopeia
 
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -158,7 +161,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         private class MyCollectionHolder(view: View) : RecyclerView.ViewHolder(view) {
             init {
                 (view as TextView).text = view.context.getString(R.string.my_collection)
-                view.setOnClickListener { view.context.startActivity(FavoriteActivity.intent(view.context)) }
+                view.setOnClickListener { view.context.startActivity(MyCollectionActivity.intent(view.context)) }
             }
         }
 
@@ -226,9 +229,15 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
                         viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
+                        val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
+                        bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
+
                         Glide.with(parent)
-                                .load(bangumi.image)
-                                .into(viewHolder.image)
+                            .load(bangumi.image)
+                            .thumbnail(0.1f)
+                            .placeholder(BitmapDrawable(parent.resources, bitmap))
+                            .crossFade()
+                            .into(viewHolder.image)
 
                         viewHolder.itemView.setOnClickListener {
                             parent.startActivity(bangumi.let { it1 -> DetailActivity.intent(parent.context, it1) })
