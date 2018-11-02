@@ -29,9 +29,9 @@ import co.bangumi.common.cache.JsonUtil
 import co.bangumi.common.model.Bangumi
 import co.bangumi.common.model.EpisodeDetail
 import com.bumptech.glide.Glide
+import com.google.android.gms.analytics.HitBuilders
+import com.google.android.gms.analytics.Tracker
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.appindexing.FirebaseAppIndex
-import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
@@ -56,6 +56,9 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
     val imgShare by lazy { (findViewById(R.id.img_share) as ImageView) }
 
     val episodeAdapter by lazy { EpisodeAdapter() }
+
+    private lateinit var analyticsApplication: AnalyticsApplication
+    private lateinit var mTracker: Tracker
 
     companion object {
         fun intent(context: Context?, bgm: Bangumi): Intent {
@@ -91,18 +94,27 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
         val name = StringUtil.getName(bgm)
         title = name
 
-        val index = Indexables.digitalDocumentBuilder()
-            .setName(name)
-            .setText(bgm.summary)
-            .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
-            .setImage(bgm.image)
-            .build()
-        FirebaseAppIndex.getInstance().update(index)
+        // TODO compare Firebase Analytics and Google Analytics
+        analyticsApplication = application as AnalyticsApplication
+        mTracker = analyticsApplication.defaultTracker
 
+//        val index = Indexables.digitalDocumentBuilder()
+//            .setName(name)
+//            .setText(bgm.summary)
+//            .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
+//            .setImage(bgm.image)
+//            .build()
+//        FirebaseAppIndex.getInstance().update(index)
+//
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
         FirebaseAnalytics.getInstance(this).logEvent("view_detail", bundle)
+
+        mTracker.send(HitBuilders.EventBuilder()
+            .setAction("view_detail")
+            .setLabel(bgm.name_cn)
+            .build())
     }
 
     private fun loadData(bgmId: String) {
@@ -137,6 +149,9 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                         Environment.DIRECTORY_DOWNLOADS
                                 + '/' + StringUtil.getName(it.bangumi))
                     val file = File(path, url.substring(url.lastIndexOf('/')))
+                    val builder =  HitBuilders.EventBuilder()
+                        .setAction("play_video")
+                        .setLabel("${it.bangumi.name_cn} - ${it.episode_no}")
                     if (FileUtil.isFileExist(file)) {
                         startActivityForResult(
                             PlayerActivity.intent(
@@ -147,6 +162,9 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                             ),
                             DetailActivity.REQUEST_CODE
                         )
+                        mTracker.send(builder
+                            .setCategory("local")
+                            .build())
                         return@subscribe
                     }
                         startActivityForResult(
@@ -158,6 +176,9 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                             ),
                             DetailActivity.REQUEST_CODE
                         )
+                    mTracker.send(builder
+                        .setCategory("online")
+                        .build())
                 }, {
                     toastErrors()
                 })
@@ -246,6 +267,11 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                 episodeDetail.episode_no.toString()
             )
             FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
+
+            mTracker.send(HitBuilders.EventBuilder()
+                .setAction("download_video")
+                .setLabel("${episodeDetail.bangumi.name_cn} - ${episodeDetail.episode_no}")
+                .build())
         }
 
         if (FileUtil.isFileExist(file)) {

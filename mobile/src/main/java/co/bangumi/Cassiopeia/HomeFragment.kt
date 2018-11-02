@@ -78,7 +78,6 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                         homeDataAdapter.list.add(HomeData(getString(R.string.recommended)))
                         homeDataAdapter.list.add(HomeData(HomeData.TYPE.LARGE, null, null,
                             announceMap.get(Announce.Type.RECOMMENDATION.value)?.map { it.bangumi }))
-                        homeDataAdapter.list.add(HomeData(HomeData.TYPE.MY_COLLECTION))
 
                         announceMap.get(Announce.Type.NOTICE.value)?.let {
                             (activity as HomeActivity).setBanner(it)
@@ -94,16 +93,17 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                     if (todayUpdate.isNotEmpty()) {
                         homeDataAdapter.list.add(HomeData(resources.getStringArray(R.array.array_favorite)[Bangumi.Status.WATCHING.value]))
                         homeDataAdapter.list.add(HomeData(todayUpdate))
+                        homeDataAdapter.list.add(HomeData(HomeData.TYPE.MY_COLLECTION))
                     }
 
                     if (t3.isNotEmpty()) {
                         homeDataAdapter.list.add(HomeData(getString(R.string.releasing)))
                         homeDataAdapter.list.addAll(t3.map { HomeData(it) })
-                        homeDataAdapter.list.add(HomeData())
                     }
 
                     // TODO
                     homeDataAdapter.list.add(HomeData())
+                    homeDataAdapter.list.add(HomeData(HomeData.TYPE.MY_COLLECTION))
                     homeDataAdapter.notifyDataSetChanged()
                     swipeRefresh.isRefreshing = false
                 }, {
