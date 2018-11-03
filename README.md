@@ -9,10 +9,10 @@ Designed to browse and play anime powered by 番組Collection server, so it only
 
 
 Features:
-- Continue from where you left off: automatic sync your watch progress accross all devices
-- Never miss new episodes: anime update notifications (testing)
-- Watch anytime & anywhere: download & play videos offline
-- Share with friends: short link sharing, support viewing without installing client
+ - Continue from where you left off: automatic sync your watch progress accross all devices
+ - Never miss new episodes: anime update notifications (testing)
+ - Watch anytime & anywhere: download & play videos offline
+ - Share with friends: short link sharing, support viewing without installing client
 
 
 
@@ -32,4 +32,4 @@ Gradle 4.6
 ![home](http://storage.shadowyspirits.cn/image/list.png?imageMogr2/thumbnail/!30p)
 ![home](http://storage.shadowyspirits.cn/image/detail.png?imageMogr2/thumbnail/!30p)
 ![home](http://storage.shadowyspirits.cn/image/download.png?imageMogr2/thumbnail/!30p)
-![home](http://storage.shadowyspirits.cn/image/player.png?imageMogr2/thumbnail/!50p)
+![home](http://storage.shadowyspirits.cn/image/player.png?imageMogr2/thumbnail/!60p)
