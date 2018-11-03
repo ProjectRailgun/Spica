@@ -29,7 +29,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     NavigationView.OnNavigationItemSelectedListener {
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
-    private lateinit var analyticsApplication: AnalyticsApplication
+    private lateinit var cassiopeiaApplication: CassiopeiaApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
 
         // TODO compare Firebase Analytics and Google Analytics
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        analyticsApplication = application as AnalyticsApplication
+        cassiopeiaApplication = application as CassiopeiaApplication
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, HomeFragment())
@@ -66,8 +66,8 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
                 val userInfo = it.getData()
                 navHeaderT1.text = userInfo.name
                 navHeaderT2.text = userInfo.email
-                analyticsApplication.defaultTracker.set("&uid", userInfo.id)
-                (application as AnalyticsApplication).defaultTracker
+                cassiopeiaApplication.defaultTracker.set("&uid", userInfo.id)
+                (application as CassiopeiaApplication).defaultTracker
                     .send(HitBuilders.EventBuilder()
                             .setCategory("Origin")
                             .setAction("User Sign In")
@@ -132,7 +132,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_favorite -> {
-                startActivity(FavoriteActivity.intent(this))
+                startActivity(MyCollectionActivity.intent(this))
             }
             R.id.nav_bangmuni -> {
                 startActivity(AllBangumiActivity.intent(this))
@@ -164,9 +164,11 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         ) {
             Glide.with(context)
                 .load(path)
-                .placeholder(R.drawable.banner_placeholder)
+                    // TODO 占位图会带来加载错位问题
+                //.placeholder(R.drawable.banner_placeholder)
                 .error(R.drawable.banner_placeholder)
                 .thumbnail(0.1f)
+                .crossFade()
                 .into(imageView);
         }
     }

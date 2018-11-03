@@ -1,5 +1,7 @@
 package co.bangumi.common.model
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * Created by roya on 2017/5/24.
  */
@@ -9,6 +11,8 @@ open class Bangumi(val id: String,
                    val name_cn: String,
                    val image: String,
                    val cover: String,
+                   @SerializedName("cover_color")
+                   val coverColor: String,
                    val summary: String,
                    val air_weekday: Int,
                    val air_date: String,

@@ -1,5 +1,7 @@
 package co.bangumi.common.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by roya on 2017/5/27.
  */
@@ -14,6 +16,8 @@ public class Episode {
     public String airdate;
     public String name_cn;
     public String thumbnail;
+    @SerializedName("thumbnail_color")
+    public String thumbnailColor;
     public Long delete_mark;
     public Long create_time;
     public String duration;

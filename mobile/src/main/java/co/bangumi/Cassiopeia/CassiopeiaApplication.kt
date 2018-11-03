@@ -15,7 +15,7 @@ import com.google.firebase.appindexing.FirebaseAppIndex
  * This is a subclass of [Application] used to provide shared objects for this app, such as
  * the [Tracker].
  */
-class AnalyticsApplication : Application() {
+class CassiopeiaApplication : Application() {
 
     companion object {
 

@@ -3,7 +3,10 @@ package co.bangumi.Cassiopeia
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.widget.AppCompatSpinner
 import android.support.v7.widget.LinearLayoutManager
@@ -195,9 +198,14 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
+            val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
             Glide.with(this@AllBangumiActivity)
-                    .load(bangumi.image)
-                    .into(viewHolder.image)
+                .load(bangumi.image)
+                .thumbnail(0.1f)
+                .placeholder(BitmapDrawable(resources, bitmap))
+                .crossFade()
+                .into(viewHolder.image)
 
             viewHolder.itemView.setOnClickListener {
                 this@AllBangumiActivity.startActivity(bangumi.let { it1 -> DetailActivity.intent(this@AllBangumiActivity, it1) })

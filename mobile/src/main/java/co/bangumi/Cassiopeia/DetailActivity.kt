@@ -5,6 +5,9 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -57,7 +60,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
 
     val episodeAdapter by lazy { EpisodeAdapter() }
 
-    private lateinit var analyticsApplication: AnalyticsApplication
+    private lateinit var cassiopeiaApplication: CassiopeiaApplication
     private lateinit var mTracker: Tracker
 
     companion object {
@@ -95,8 +98,8 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
         title = name
 
         // TODO compare Firebase Analytics and Google Analytics
-        analyticsApplication = application as AnalyticsApplication
-        mTracker = analyticsApplication.defaultTracker
+        cassiopeiaApplication = application as CassiopeiaApplication
+        mTracker = cassiopeiaApplication.defaultTracker
 
 //        val index = Indexables.digitalDocumentBuilder()
 //            .setName(name)
@@ -112,7 +115,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
         FirebaseAnalytics.getInstance(this).logEvent("view_detail", bundle)
 
         mTracker.send(HitBuilders.EventBuilder()
-            .setAction("view_detail")
+            .setAction("View Detail")
             .setLabel(bgm.name_cn)
             .build())
     }
@@ -150,7 +153,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                                 + '/' + StringUtil.getName(it.bangumi))
                     val file = File(path, url.substring(url.lastIndexOf('/')))
                     val builder =  HitBuilders.EventBuilder()
-                        .setAction("play_video")
+                        .setAction("Play Video")
                         .setLabel("${it.bangumi.name_cn} - ${it.episode_no}")
                     if (FileUtil.isFileExist(file)) {
                         startActivityForResult(
@@ -269,7 +272,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
             FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
 
             mTracker.send(HitBuilders.EventBuilder()
-                .setAction("download_video")
+                .setAction("Download Video")
                 .setLabel("${episodeDetail.bangumi.name_cn} - ${episodeDetail.episode_no}")
                 .build())
         }
@@ -319,10 +322,17 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
     private fun setData(detail: Bangumi) {
         recyclerView.isNestedScrollingEnabled = false
 
-        iv?.let { Glide.with(this).load(detail.image).into(iv) }
-//        Glide.with(this).load(detail.image).into(ivCover)
+        iv?.let {
+            val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(Color.parseColor(detail.coverColor))
+            Glide.with(this)
+                .load(detail.image)
+                .thumbnail(0.1f)
+                .placeholder(BitmapDrawable(resources, bitmap))
+                .crossFade()
+                .into(iv)
+        }
 
-//        ctitle.text = StringUtil.getName(detail)
         subtitle.text = co.bangumi.common.StringUtil.subTitle(detail)
         info.text = resources.getString(R.string.update_info)
                 ?.format(detail.eps, co.bangumi.common.StringUtil.dayOfWeek(detail.air_weekday), detail.air_date)
@@ -484,9 +494,14 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                 }
                 holder.progress.setProgress(d.watch_progress?.percentage ?: 0f)
 
+                val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+                bitmap.eraseColor(Color.parseColor(if(d.thumbnailColor != null) d.thumbnailColor else "#00000000"))
                 Glide.with(this@DetailActivity)
-                        .load(co.bangumi.common.api.ApiHelper.fixHttpUrl(d.thumbnail))
-                        .into(holder.image)
+                    .load(co.bangumi.common.api.ApiHelper.fixHttpUrl(d.thumbnail))
+                    .thumbnail(0.1f)
+                    .placeholder(BitmapDrawable(resources, bitmap))
+                    .crossFade()
+                    .into(holder.image)
 
                 holder.tv.alpha = if (d.status != 0) 1f else 0.2f
                 holder.view.setOnClickListener {
