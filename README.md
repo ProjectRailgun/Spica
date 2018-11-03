@@ -4,9 +4,9 @@
 
 An android client for [番組Collection](https://bangumi.co). Written in Kotlin.
 
-Designed to browse and play anime powered by 番組Collection server, so it only available to bangumi users
+Designed to browse and play anime powered by 番組Collection server, so it only available to 番組Collection users
 
-
+</br>
 
 Features:
  - Continue from where you left off: automatic sync your watch progress accross all devices
@@ -14,7 +14,7 @@ Features:
  - Watch anytime & anywhere: download & play videos offline
  - Share with friends: short link sharing, support viewing without installing client
 
-
+</br></br>
 
 ## Build
 
@@ -24,7 +24,7 @@ JDK8
 
 Gradle 4.6
 
-
+</br></br>
 
 ## Screenshot
 
