@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".AnalyticsApplication"
+        android:name=".CassiopeiaApplication"
         android:allowBackup="true"
         android:banner="@mipmap/launcher_banner"
         android:icon="@mipmap/ic_launcher"
@@ -66,7 +66,7 @@
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".MyCollectionActivity" />
         <activity android:name=".AllBangumiActivity" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->

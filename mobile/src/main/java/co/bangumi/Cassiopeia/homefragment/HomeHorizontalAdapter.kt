@@ -1,5 +1,8 @@
 package co.bangumi.Cassiopeia.homefragment
 
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -30,9 +33,14 @@ open class HomeHorizontalAdapter(private var datas: HomeData,
             .format(bangumi.unwatched_count)
         holder.eps?.text = holder.itemView.resources.getString(R.string.eps_all).format(bangumi.eps)
 
+        val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
         Glide.with(holder.image.context)
-                .load(bangumi.image)
-                .into(holder.image)
+            .load(bangumi.image)
+            .thumbnail(0.1f)
+            .placeholder(BitmapDrawable(holder.image.resources, bitmap))
+            .crossFade()
+            .into(holder.image)
 
         holder.itemView.setOnClickListener { callback.invoke(bangumi) }
     }
