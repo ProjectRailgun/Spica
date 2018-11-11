@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.BottomSheetDialog
+import android.support.v4.app.FragmentManager
 import android.support.v4.content.FileProvider
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -25,26 +26,31 @@ import android.widget.*
 import co.bangumi.common.FileUtil
 import co.bangumi.common.PackageUtil
 import co.bangumi.common.StringUtil
-import co.bangumi.common.api.FavoriteChangeRequest
-import co.bangumi.common.api.HistoryChangeItem
-import co.bangumi.common.api.HistoryChangeRequest
+import co.bangumi.common.api.*
 import co.bangumi.common.cache.JsonUtil
 import co.bangumi.common.model.Bangumi
 import co.bangumi.common.model.EpisodeDetail
 import com.bumptech.glide.Glide
 import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.yalantis.contextmenu.lib.ContextMenuDialogFragment
+import com.yalantis.contextmenu.lib.MenuObject
+import com.yalantis.contextmenu.lib.MenuParams
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.content_detail.*
 import java.io.File
 import java.util.*
 
-class DetailActivity : co.bangumi.common.activity.BaseActivity() {
+class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClickListener {
     // TODO 重构
     val iv by lazy { findViewById(R.id.image) as ImageView? }
     val subtitle by lazy { findViewById(R.id.subtitle) as TextView }
@@ -52,7 +58,6 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
     val summary by lazy { findViewById(R.id.summary) as TextView }
     val summary2 by lazy { findViewById(R.id.summary2) as TextView }
     val more by lazy { findViewById(R.id.button_more) as TextView }
-    val spinner by lazy { findViewById(R.id.spinner) as Spinner }
     val recyclerView by lazy { findViewById(R.id.recycler_view) as RecyclerView }
     val summaryLayout by lazy { (findViewById(R.id.summary_layout) as LinearLayout) }
     val btnBgmTv by lazy { (findViewById(R.id.button_bgm_tv) as Button) }
@@ -62,6 +67,9 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
 
     private lateinit var cassiopeiaApplication: CassiopeiaApplication
     private lateinit var mTracker: Tracker
+    private lateinit var mMenuDialogFragment: ContextMenuDialogFragment
+    private lateinit var bgm: Bangumi
+    private lateinit var fragmentManager: FragmentManager
 
     companion object {
         fun intent(context: Context?, bgm: Bangumi): Intent {
@@ -85,13 +93,14 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
 
         recyclerView.layoutManager = co.bangumi.common.view.ScrollStartLayoutManager(this, co.bangumi.common.view.ScrollStartLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = episodeAdapter
+        fragmentManager = supportFragmentManager
 
         val json = intent.getStringExtra(INTENT_KEY_BANGMUMI)
         checkNotNull(json)
-        val bgm = JsonUtil.fromJson(json, Bangumi::class.java)
+        bgm = JsonUtil.fromJson(json, Bangumi::class.java)!!
         checkNotNull(bgm)
-
-        setData(bgm!!)
+        initMenuFragment()
+        setData(bgm)
         loadData(bgm.id)
 
         val name = StringUtil.getName(bgm)
@@ -120,8 +129,46 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
             .build())
     }
 
+    private fun initMenuFragment() {
+        val menuParams = MenuParams()
+        menuParams.actionBarSize = resources.getDimension(R.dimen.context_menu_height).toInt()
+        val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
+        val contextMenuList = ArrayList<MenuObject>()
+        collectionStatusArray.forEachIndexed { index,value ->
+            val menuObject = MenuObject(value)
+            menuObject.resource = when(index) {
+                0 -> R.drawable.ic_watchlist
+                1 -> R.drawable.ic_wish
+                2 -> R.drawable.ic_watched
+                3 -> R.drawable.ic_watching
+                4 -> R.drawable.ic_paused
+                5 -> R.drawable.ic_abandoned
+                else -> R.drawable.ic_wish
+            }
+            contextMenuList.add(menuObject)
+        }
+        menuParams.menuObjects = contextMenuList
+        menuParams.isClosableOutside = true
+        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams)
+        mMenuDialogFragment.setItemClickListener(this)
+    }
+
+    override fun onMenuItemClick(v: View?, position: Int) {
+        if (collectionStatusText.text == resources.getStringArray(R.array.array_favorite).get(position)) return
+
+        collectionStatusText.text = resources.getStringArray(R.array.array_favorite).get(position)
+        ApiClient.getInstance().uploadFavoriteStatus(bgm.id, FavoriteChangeRequest(position))
+                .withLifecycle()
+                .subscribe({
+                    bgm.favorite_status = position
+                }, {
+                    toastErrors()
+                    collectionStatusText.text = resources.getStringArray(R.array.array_favorite).get(bgm.favorite_status)
+                })
+    }
+
     private fun loadData(bgmId: String) {
-        co.bangumi.common.api.ApiClient.getInstance().getBangumiDetail(bgmId)
+        ApiClient.getInstance().getBangumiDetail(bgmId)
                 .withLifecycle()
                 .subscribe({
                     setData(it.getData())
@@ -144,7 +191,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
     private fun playVideo(episode: co.bangumi.common.model.Episode) {
         assert(!TextUtils.isEmpty(episode.id))
 
-        co.bangumi.common.api.ApiClient.getInstance().getEpisodeDetail(episode.id)
+        ApiClient.getInstance().getEpisodeDetail(episode.id)
                 .withLifecycle()
                 .subscribe({
                     val url = it.video_files[0].url
@@ -188,7 +235,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private fun markWatched(episodeDetail: EpisodeDetail) {
-        co.bangumi.common.api.ApiClient.getInstance().uploadWatchHistory(
+        ApiClient.getInstance().uploadWatchHistory(
                 HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(episodeDetail.bangumi_id,
                         episodeDetail.id,
                         System.currentTimeMillis(),
@@ -230,8 +277,8 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
             .setMimeType("video/*")
-        request.allowScanningByMediaScanner();
-        downloadManager.enqueue(request);
+        request.allowScanningByMediaScanner()
+        downloadManager.enqueue(request)
     }
 
     @SuppressLint("SetTextI18n")
@@ -302,7 +349,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
             val bgmId = data.getStringExtra(PlayerActivity.RESULT_KEY_ID_2)
             val duration = data.getLongExtra(PlayerActivity.RESULT_KEY_DURATION, 0)
             val position = data.getLongExtra(PlayerActivity.RESULT_KEY_POSITION, 0)
-            co.bangumi.common.api.ApiClient.getInstance().uploadWatchHistory(
+            ApiClient.getInstance().uploadWatchHistory(
                     HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(bgmId,
                             id,
                             System.currentTimeMillis(),
@@ -351,6 +398,13 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
         }
 
         imgShare.setOnClickListener {
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+                val textIntent = Intent(Intent.ACTION_SEND)
+                textIntent.type = "text/plain"
+                textIntent.putExtra(Intent.EXTRA_TEXT, Constant.DETAIL_URL_PREFIX + detail.id)
+                startActivity(Intent.createChooser(textIntent, StringUtil.getName(detail)))
+                return@setOnClickListener
+            }
             FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse(Constant.DETAIL_URL_PREFIX + detail.id))
                 .setDomainUriPrefix(Constant.DYNAMIC_LINK_PREFIX)
@@ -369,7 +423,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
                 .buildShortDynamicLink(ShortDynamicLink.Suffix.SHORT)
                 .addOnCompleteListener(this) {
                     if (it.isSuccessful) {
-                        val shortLink = it.result!!.shortLink;
+                        val shortLink = it.result!!.shortLink
                         val textIntent = Intent(Intent.ACTION_SEND)
                         textIntent.type = "text/plain"
                         textIntent.putExtra(Intent.EXTRA_TEXT, shortLink.toString())
@@ -419,28 +473,13 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
             R.array.array_favorite, R.layout.spinner_item
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
-        spinner.setSelection(detail.favorite_status)
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+        collectionStatus.setOnClickListener {
+            if (fragmentManager.findFragmentByTag(ContextMenuDialogFragment.TAG) == null) {
+                mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG)
             }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (detail.favorite_status == position) {
-                    return
-                }
-
-                co.bangumi.common.api.ApiClient.getInstance().uploadFavoriteStatus(detail.id, FavoriteChangeRequest(position))
-                        .withLifecycle()
-                        .subscribe({
-                            detail.favorite_status = position
-                        }, {
-                            toastErrors()
-                            spinner.setSelection(detail.favorite_status)
-                        })
-            }
-
         }
+        val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
+        collectionStatusText.text = collectionStatusArray.get(detail.favorite_status)
 
         if (detail is co.bangumi.common.model.BangumiDetail && detail.episodes != null && detail.episodes.isNotEmpty()) {
             episodeAdapter.setEpisodes(detail.episodes)
@@ -518,7 +557,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
 
                 holder.view.setOnLongClickListener {
                     if (d.status != 0)
-                        co.bangumi.common.api.ApiClient.getInstance().getEpisodeDetail(d.id)
+                        ApiClient.getInstance().getEpisodeDetail(d.id)
                             .withLifecycle()
                             .subscribe({
                                 openMenu(it)
@@ -533,7 +572,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity() {
 
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
             return VH(
-                LayoutInflater.from(p0!!.context).inflate(
+                LayoutInflater.from(p0.context).inflate(
                     R.layout.rv_item_episode,
                     p0,
                     false

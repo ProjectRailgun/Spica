@@ -1,8 +1,5 @@
 package co.bangumi.common.model
 
-/**
- * Created by roya on 2017/6/4.
- */
 data class UserInfo(
     val id: String,
     val name: String,
