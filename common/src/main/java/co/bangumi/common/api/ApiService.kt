@@ -2,8 +2,10 @@ package co.bangumi.common.api
 
 import co.bangumi.common.model.Announce
 import co.bangumi.common.model.Bangumi
+import co.bangumi.common.model.DnsResponse
 import co.bangumi.common.model.UserInfo
 import io.reactivex.Observable
+import retrofit2.Call
 import retrofit2.http.*
 
 /**
@@ -16,6 +18,15 @@ interface ApiService {
         val BANGUMI_TYPE_CN = 1001
         val BANGUMI_TYPE_RAW = 1002
     }
+
+    /**
+     * DOH
+     */
+    @GET("dns-query")
+    fun getIpByHost(
+            @Query("name") host: String,
+            @Query("type") type: String
+                    ): Call<DnsResponse>
 
     /**
      * Users

@@ -2,20 +2,20 @@ package co.bangumi.common.api
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import co.bangumi.common.BuildConfig
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
+import okhttp3.TlsVersion
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.IllegalStateException
-import okhttp3.ConnectionSpec
-import okhttp3.TlsVersion
-import android.os.Build
 import javax.net.ssl.SSLContext
 
 
@@ -52,8 +52,7 @@ object ApiClient {
             throw IllegalStateException("ApiClient Not being initialized")
         }
 
-        val errorConverter: Converter<ResponseBody, co.bangumi.common.api.MessageResponse>
-                = (co.bangumi.common.api.ApiClient.retrofit as Retrofit).responseBodyConverter(co.bangumi.common.api.MessageResponse::class.java, arrayOfNulls<Annotation>(0))
+        val errorConverter: Converter<ResponseBody, co.bangumi.common.api.MessageResponse> = (co.bangumi.common.api.ApiClient.retrofit as Retrofit).responseBodyConverter(co.bangumi.common.api.MessageResponse::class.java, arrayOfNulls<Annotation>(0))
 
         try {
             return errorConverter.convert(error)
@@ -64,7 +63,7 @@ object ApiClient {
     }
 
     @SuppressLint("ObsoleteSdkInt")
-    private fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builder {
+    fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builder {
         if (Build.VERSION.SDK_INT in 16..21) {
             try {
                 val sc = SSLContext.getInstance("TLSv1.2")
@@ -97,13 +96,14 @@ object ApiClient {
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .retryOnConnectionFailure(true)
+                .dns(HttpsDns())
                 .cookieJar(co.bangumi.common.api.ApiClient.cookieJar)
                 .addInterceptor {
                     val request = it.request()
                     val response = it.proceed(request)
                     val body = response.body()
                     val bodyString = body?.string()
-                    Log.i("TAG", response.toString() + " Body:" + bodyString)
+                    if (BuildConfig.DEBUG) Log.i("TAG", response.toString() + " Body:" + bodyString)
                     response.newBuilder()
                             .headers(response.headers())
                             .body(ResponseBody.create(body?.contentType(), bodyString))
