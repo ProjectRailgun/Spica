@@ -8,5 +8,5 @@ data class DnsResponse (
         @SerializedName("Answer")
         val answer: List<Answer>
 ) {
-    data class Answer(val name: String, val type: String, val TTL: String, val data: String)
+    data class Answer(val name: String, val type: Int, val TTL: String, val data: String)
 }

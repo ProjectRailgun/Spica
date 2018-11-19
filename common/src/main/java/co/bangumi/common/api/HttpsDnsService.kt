@@ -1,8 +1,9 @@
-package co.bangumi.common
+package co.bangumi.common.api
 
 import android.util.Log
+import co.bangumi.common.BuildConfig
+import co.bangumi.common.Constant
 import co.bangumi.common.api.ApiClient.enableTls12OnPreLollipop
-import co.bangumi.common.api.ApiService
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
@@ -41,7 +42,7 @@ class HttpsDnsService {
                 .create(ApiService::class.java)
     }
 
-    fun query(hostname: String): List<String>? {
+    fun lookup(hostname: String): List<String>? {
         return apiClient.getIpByHost(hostname, "A").execute().body()?.let {
             return@let it.answer.map {
                 return@map it.data
