@@ -18,7 +18,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import co.bangumi.common.model.Announce
 import com.bumptech.glide.Glide
-import com.google.android.gms.analytics.HitBuilders
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.youth.banner.loader.ImageLoader
 import kotlinx.android.synthetic.main.app_bar_home.*
@@ -29,7 +28,6 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     NavigationView.OnNavigationItemSelectedListener {
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
-    private lateinit var cassiopeiaApplication: CassiopeiaApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,9 +50,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         val navHeaderT2 = navigationView.getHeaderView(0).findViewById(R.id.textView2) as TextView
         navigationView.setNavigationItemSelectedListener(this)
 
-        // TODO compare Firebase Analytics and Google Analytics
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        cassiopeiaApplication = application as CassiopeiaApplication
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, HomeFragment())
@@ -66,12 +62,6 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
                 val userInfo = it.getData()
                 navHeaderT1.text = userInfo.name
                 navHeaderT2.text = userInfo.email
-                cassiopeiaApplication.defaultTracker.set("&uid", userInfo.id)
-                (application as CassiopeiaApplication).defaultTracker
-                    .send(HitBuilders.EventBuilder()
-                            .setCategory("Origin")
-                            .setAction("User Sign In")
-                            .build())
             }, {
                 toastErrors().accept(it)
 

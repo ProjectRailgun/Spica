@@ -31,11 +31,11 @@ import co.bangumi.common.cache.JsonUtil
 import co.bangumi.common.model.Bangumi
 import co.bangumi.common.model.EpisodeDetail
 import com.bumptech.glide.Glide
-import com.google.android.gms.analytics.HitBuilders
-import com.google.android.gms.analytics.Tracker
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.appindexing.FirebaseAppIndex
+import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
@@ -65,8 +65,6 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
 
     private val episodeAdapter by lazy { EpisodeAdapter() }
 
-    private lateinit var cassiopeiaApplication: CassiopeiaApplication
-    private lateinit var mTracker: Tracker
     private lateinit var mMenuDialogFragment: ContextMenuDialogFragment
     private lateinit var bgm: Bangumi
     private lateinit var fragmentManager: FragmentManager
@@ -106,27 +104,18 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
         val name = StringUtil.getName(bgm)
         title = name
 
-        // TODO compare Firebase Analytics and Google Analytics
-        cassiopeiaApplication = application as CassiopeiaApplication
-        mTracker = cassiopeiaApplication.defaultTracker
+        val index = Indexables.digitalDocumentBuilder()
+            .setName(name)
+            .setText(bgm.summary)
+            .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
+            .setImage(bgm.image)
+            .build()
+        FirebaseAppIndex.getInstance().update(index)
 
-//        val index = Indexables.digitalDocumentBuilder()
-//            .setName(name)
-//            .setText(bgm.summary)
-//            .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
-//            .setImage(bgm.image)
-//            .build()
-//        FirebaseAppIndex.getInstance().update(index)
-//
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
         FirebaseAnalytics.getInstance(this).logEvent("view_detail", bundle)
-
-        mTracker.send(HitBuilders.EventBuilder()
-            .setAction("View Detail")
-            .setLabel(bgm.name_cn)
-            .build())
     }
 
     private fun initMenuFragment() {
@@ -199,9 +188,6 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                         Environment.DIRECTORY_DOWNLOADS
                                 + '/' + StringUtil.getName(it.bangumi))
                     val file = File(path, url.substring(url.lastIndexOf('/')))
-                    val builder =  HitBuilders.EventBuilder()
-                        .setAction("Play Video")
-                        .setLabel("${it.bangumi.name_cn} - ${it.episode_no}")
                     if (FileUtil.isFileExist(file)) {
                         startActivityForResult(
                             PlayerActivity.intent(
@@ -212,9 +198,6 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                             ),
                             REQUEST_CODE
                         )
-                        mTracker.send(builder
-                            .setCategory("local")
-                            .build())
                         return@subscribe
                     }
                         startActivityForResult(
@@ -226,9 +209,6 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                             ),
                             REQUEST_CODE
                         )
-                    mTracker.send(builder
-                        .setCategory("online")
-                        .build())
                 }, {
                     toastErrors()
                 })
@@ -317,11 +297,6 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                 episodeDetail.episode_no.toString()
             )
             FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
-
-            mTracker.send(HitBuilders.EventBuilder()
-                .setAction("Download Video")
-                .setLabel("${episodeDetail.bangumi.name_cn} - ${episodeDetail.episode_no}")
-                .build())
         }
 
         if (FileUtil.isFileExist(file)) {

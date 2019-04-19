@@ -49,6 +49,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-dynamic-links:16.1.8'
     implementation 'com.youth.banner:banner:1.4.10'
-    implementation 'com.google.android.gms:play-services-analytics:16.0.8'
     implementation 'com.github.Yalantis:Context-Menu.Android:1.0.8'
 }

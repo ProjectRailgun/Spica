@@ -20,7 +20,6 @@ import android.widget.TextView
 import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
-import com.google.android.gms.analytics.HitBuilders
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.reactivex.functions.Consumer
 
@@ -68,12 +67,6 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, s)
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
-
-        (application as CassiopeiaApplication).defaultTracker.send(
-            HitBuilders.EventBuilder()
-                .setAction("Search")
-                .setLabel(s)
-                .build())
     }
 
     private fun display(data: List<Bangumi>) {
