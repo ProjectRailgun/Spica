@@ -1,6 +1,8 @@
 package co.bangumi.common.model
 
 import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by roya on 2017/5/24.
@@ -26,6 +28,7 @@ open class Bangumi(val id: String,
                    val update_time: Long,
                    val bgm_id: Long): BaseEntity() {
     enum class Status(val value: Int) { WISH(1), WATCHED(2), WATCHING(3), PAUSE(4), ABANDONED(5)}
+    enum class Type(val value: Int) { SUB(1001), RAW(1002)}
 
     data class CoverImage(
             val value: Int,
@@ -46,5 +49,14 @@ open class Bangumi(val id: String,
         }
 
         return false
+    }
+
+    fun isOnAir(): Boolean {
+        val airDate = SimpleDateFormat("yyyy-MM-dd", Locale.JAPAN).parse(air_date)
+        val calendar = Calendar.getInstance(Locale.JAPAN)
+        val rightNow = calendar.time
+        calendar.time = airDate
+        calendar.add(Calendar.WEEK_OF_YEAR, eps)
+        return rightNow.before(calendar.time)
     }
 }

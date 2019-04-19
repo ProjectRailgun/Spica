@@ -49,5 +49,9 @@
     <string name="less">△</string>
     <string name="recommended">おすすめ</string>
     <string name="eps_all">%d エピソード</string>
+    <string name="on_air">連載中</string>
+    <string name="finished">完結</string>
+    <string name="bangumi_type_raw">"  字幕無し  "</string>
+    <string name="bangumi_type_cn">"  中国語字幕  "</string>
 
 </resources>

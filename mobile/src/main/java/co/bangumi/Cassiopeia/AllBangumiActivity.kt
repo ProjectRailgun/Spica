@@ -149,12 +149,14 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private class WideCardHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val image = view.findViewById(R.id.imageView) as ImageView
-        val title = view.findViewById(R.id.title) as TextView
-        val subtitle = view.findViewById(R.id.subtitle) as TextView
-        val info = view.findViewById(R.id.info) as TextView
-        val state = view.findViewById(R.id.state) as TextView
-        val info2 = view.findViewById(R.id.info2) as TextView
+        val image = view.findViewById<ImageView>(R.id.imageView)
+        val title = view.findViewById<TextView>(R.id.title)
+        val subtitle = view.findViewById<TextView>(R.id.subtitle)
+        val info = view.findViewById<TextView>(R.id.info)
+        val state = view.findViewById<TextView>(R.id.state)
+        val info2 = view.findViewById<TextView>(R.id.info2)
+        val typeSub = view.findViewById<TextView>(R.id.type_sub)
+        val typeRaw = view.findViewById<TextView>(R.id.type_raw)
     }
 
     private class PaddingItemDecoration : RecyclerView.ItemDecoration() {
@@ -185,7 +187,8 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
             viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                            if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)
@@ -194,6 +197,12 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
                 }
             } else {
                 viewHolder.state.text = ""
+            }
+
+            if (bangumi.type == Bangumi.Type.RAW.value) {
+                viewHolder.typeRaw.visibility = View.VISIBLE
+            } else{
+                viewHolder.typeSub.visibility = View.VISIBLE
             }
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")

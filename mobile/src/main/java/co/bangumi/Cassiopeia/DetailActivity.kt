@@ -55,6 +55,8 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
     private val iv by lazy { findViewById<ImageView?>(R.id.image) }
     private val subtitle by lazy { findViewById<TextView>(R.id.subtitle) }
     private val info by lazy { findViewById<TextView>(R.id.info) }
+    private val typeSub by lazy { findViewById<TextView>(R.id.type_sub) }
+    private val typeRaw by lazy { findViewById<TextView>(R.id.type_raw) }
     private val summary by lazy { findViewById<TextView>(R.id.summary) }
     private val summary2 by lazy { findViewById<TextView>(R.id.summary2) }
     private val more by lazy { findViewById<TextView>(R.id.button_more) }
@@ -358,6 +360,12 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
         subtitle.text = StringUtil.subTitle(detail)
         info.text = resources.getString(R.string.update_info)
                 .format(detail.eps, StringUtil.dayOfWeek(detail.air_weekday), detail.air_date)
+
+        if (detail.type == Bangumi.Type.RAW.value) {
+            typeRaw.visibility = View.VISIBLE
+        } else{
+            typeSub.visibility = View.VISIBLE
+        }
 
         btnBgmTv.visibility = if (detail.bgm_id > 0) View.VISIBLE else View.GONE
 

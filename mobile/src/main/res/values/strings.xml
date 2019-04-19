@@ -29,8 +29,8 @@
 
     <string-array name="array_bangumi_type">
         <item>All</item>
-        <item>CN</item>
-        <item>RAW</item>
+        <item>@string/bangumi_type_cn</item>
+        <item>@string/bangumi_type_raw</item>
     </string-array>
 
     <string-array name="array_link_type" translatable="false">
@@ -59,6 +59,11 @@
     <string name="delete">Delete</string>
     <string name="delete_success">Delete Success</string>
     <string name="delete_failed">Delete Failed</string>
+
+    <string name="bangumi_type_cn">"  CN  "</string>
+    <string name="bangumi_type_raw">"  RAW  "</string>
+    <string name="on_air">onAir</string>
+    <string name="finished">Finished</string>
 
     <string name="toast_forward" translatable="false">+%ds</string>
     <string name="toast_backward" translatable="false">-%ds</string>

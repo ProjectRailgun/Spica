@@ -2,7 +2,9 @@
 <resources>
     <color name="meguminRed">#d43b3e</color>
     <color name="meguminRedDark">#a92f31</color>
+    <color name="dangerRed">#db2828</color>
     <color name="aquaBlue">#5e9fdf</color>
+    <color name="primaryBlue">#1c84c6</color>
 
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#181818</color>
