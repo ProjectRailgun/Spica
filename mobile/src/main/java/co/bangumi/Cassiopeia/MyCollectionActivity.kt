@@ -162,7 +162,7 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
             val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
             bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
             Glide.with(this@MyCollectionActivity)
-                .load(bangumi.image)
+                .load(bangumi.coverImage.url)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()

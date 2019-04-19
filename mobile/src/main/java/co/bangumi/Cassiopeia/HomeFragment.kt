@@ -233,7 +233,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                         bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
 
                         Glide.with(parent)
-                            .load(bangumi.image)
+                            .load(bangumi.cover)
                             .thumbnail(0.1f)
                             .placeholder(BitmapDrawable(parent.resources, bitmap))
                             .crossFade()

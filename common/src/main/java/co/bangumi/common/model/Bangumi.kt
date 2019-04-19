@@ -11,6 +11,8 @@ open class Bangumi(val id: String,
                    val name_cn: String,
                    val image: String,
                    val cover: String,
+                   @SerializedName("cover_image")
+                   val coverImage: CoverImage,
                    @SerializedName("cover_color")
                    val coverColor: String,
                    val summary: String,
@@ -24,6 +26,15 @@ open class Bangumi(val id: String,
                    val update_time: Long,
                    val bgm_id: Long): BaseEntity() {
     enum class Status(val value: Int) { WISH(1), WATCHED(2), WATCHING(3), PAUSE(4), ABANDONED(5)}
+
+    data class CoverImage(
+            val value: Int,
+            val dominant_color: String,
+            val height: Int,
+            val width: Int,
+            val url: String
+
+    )
 
     override fun hashCode(): Int {
         return id.hashCode()

@@ -201,7 +201,7 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
             bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
             Glide.with(this@AllBangumiActivity)
-                .load(bangumi.image)
+                .load(bangumi.cover)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()

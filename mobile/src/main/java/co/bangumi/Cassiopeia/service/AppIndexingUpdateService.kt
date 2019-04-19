@@ -42,7 +42,7 @@ class AppIndexingUpdateService : JobIntentService() {
                 .setName(StringUtil.getName(bangumi))
                 .setText(bangumi.summary)
                 .setUrl(Constant.DETAIL_URL_PREFIX + bangumi.id)
-                .setImage(bangumi.image)
+                .setImage(bangumi.cover)
                 .build()
 
             firebaseAppIndex.update(index)

@@ -348,7 +348,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
             val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
             bitmap.eraseColor(Color.parseColor(detail.coverColor))
             Glide.with(this)
-                .load(detail.image)
+                .load(detail.cover)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()

@@ -126,7 +126,7 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
             bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
 
             Glide.with(this@SearchActivity)
-                .load(bangumi.image)
+                .load(bangumi.cover)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()
