@@ -92,14 +92,14 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private class WideCardHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val image = view.findViewById<ImageView>(R.id.imageView)
-        val title = view.findViewById<TextView>(R.id.title)
-        val subtitle = view.findViewById<TextView>(R.id.subtitle)
-        val info = view.findViewById<TextView>(R.id.info)
-        val state = view.findViewById<TextView>(R.id.state)
-        val info2 = view.findViewById<TextView>(R.id.info2)
-        val typeSub = view.findViewById<TextView>(R.id.type_sub)
-        val typeRaw = view.findViewById<TextView>(R.id.type_raw)
+        val image: ImageView = view.findViewById(R.id.imageView)
+        val title: TextView = view.findViewById(R.id.title)
+        val subtitle: TextView = view.findViewById(R.id.subtitle)
+        val info: TextView = view.findViewById(R.id.info)
+        val state: TextView = view.findViewById(R.id.state)
+        val info2: TextView = view.findViewById(R.id.info2)
+        val typeSub: TextView = view.findViewById(R.id.type_sub)
+        val typeRaw: TextView = view.findViewById(R.id.type_raw)
     }
 
     private inner class HomeAdapter : RecyclerView.Adapter<WideCardHolder>() {

@@ -1,6 +1,7 @@
 package co.bangumi.common
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Resources
 import com.kaopiz.kprogresshud.KProgressHUD
 
@@ -25,6 +26,24 @@ class DisplayUtil {
                     .setCancellable(false)
                     .setAnimationSpeed(2)
                     .setDimAmount(0.5f)
+        }
+
+        fun createCancellableHud(context: Context, label: String, listener: DialogInterface.OnCancelListener): KProgressHUD {
+            return KProgressHUD.create(context)
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                    .setLabel(label)
+                    .setCancellable(listener)
+                    .setAnimationSpeed(2)
+                    .setDimAmount(0.5f)
+        }
+
+        fun createCancellableHud(context: Context, label: String): KProgressHUD {
+            return KProgressHUD.create(context)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel(label)
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f)
         }
     }
 }
