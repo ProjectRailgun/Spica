@@ -29,22 +29,21 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
 
     companion object {
         fun intent(context: Context): Intent {
-            val intent = Intent(context, SearchActivity::class.java)
-            return intent
+            return Intent(context, SearchActivity::class.java)
         }
 
-        public val TASK_ID_LOAD = 0x01
+        public const val TASK_ID_LOAD = 0x01
     }
 
-    private val recyclerView by lazy { findViewById(R.id.recycler_view) as RecyclerView }
-    private val edit by lazy { findViewById(R.id.edit) as EditText }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
+    private val edit by lazy { findViewById<EditText>(R.id.edit) }
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        (findViewById(R.id.back) as AppCompatImageButton).setOnClickListener { super.onBackPressed() }
+        (findViewById<AppCompatImageButton>(R.id.back)).setOnClickListener { super.onBackPressed() }
 
         val mLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = mLayoutManager
@@ -62,7 +61,7 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
     private fun search(s: String) {
         ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s)
                 .withLifecycle()
-                .onlyRunOneInstance(SearchActivity.TASK_ID_LOAD, true)
+                .onlyRunOneInstance(TASK_ID_LOAD, true)
                 .subscribe(Consumer {
                     display(it.getData())
                 }, toastErrors())
@@ -117,7 +116,7 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = bangumi.name_cn
             viewHolder.subtitle.text = bangumi.name
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)

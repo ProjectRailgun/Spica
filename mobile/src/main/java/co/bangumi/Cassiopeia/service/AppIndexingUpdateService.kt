@@ -16,7 +16,7 @@ class AppIndexingUpdateService : JobIntentService() {
     companion object {
 
         fun enqueueWork(context: Context) {
-            JobIntentService.enqueueWork(
+            enqueueWork(
                 context,
                 AppIndexingUpdateService::class.java,
                 Constant.UPDATE_INDEX_ALL_BANGUMI,
@@ -27,7 +27,7 @@ class AppIndexingUpdateService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         Log.d("IndexingUpdateService", "onHandleWorkStart")
-        var allBangumi: List<Bangumi> = ArrayList();
+        var allBangumi: List<Bangumi> = ArrayList()
 
         ApiClient.getInstance()
             .getSearchBangumi(1, 300, "air_date", "desc", null)
@@ -35,8 +35,8 @@ class AppIndexingUpdateService : JobIntentService() {
                 allBangumi = it.getData()
             }
 
-        if (allBangumi.isEmpty()) return;
-        val firebaseAppIndex: FirebaseAppIndex = FirebaseAppIndex.getInstance();
+        if (allBangumi.isEmpty()) return
+        val firebaseAppIndex: FirebaseAppIndex = FirebaseAppIndex.getInstance()
         for (bangumi in allBangumi) {
             val index = Indexables.digitalDocumentBuilder()
                 .setName(StringUtil.getName(bangumi))

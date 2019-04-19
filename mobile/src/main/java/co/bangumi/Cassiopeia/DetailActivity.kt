@@ -52,18 +52,18 @@ import java.util.*
 
 class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClickListener {
     // TODO 重构
-    val iv by lazy { findViewById(R.id.image) as ImageView? }
-    val subtitle by lazy { findViewById(R.id.subtitle) as TextView }
-    val info by lazy { findViewById(R.id.info) as TextView }
-    val summary by lazy { findViewById(R.id.summary) as TextView }
-    val summary2 by lazy { findViewById(R.id.summary2) as TextView }
-    val more by lazy { findViewById(R.id.button_more) as TextView }
-    val recyclerView by lazy { findViewById(R.id.recycler_view) as RecyclerView }
-    val summaryLayout by lazy { (findViewById(R.id.summary_layout) as LinearLayout) }
-    val btnBgmTv by lazy { (findViewById(R.id.button_bgm_tv) as Button) }
-    val imgShare by lazy { (findViewById(R.id.img_share) as ImageView) }
+    private val iv by lazy { findViewById<ImageView?>(R.id.image) }
+    private val subtitle by lazy { findViewById<TextView>(R.id.subtitle) }
+    private val info by lazy { findViewById<TextView>(R.id.info) }
+    private val summary by lazy { findViewById<TextView>(R.id.summary) }
+    private val summary2 by lazy { findViewById<TextView>(R.id.summary2) }
+    private val more by lazy { findViewById<TextView>(R.id.button_more) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
+    private val summaryLayout by lazy { (findViewById<LinearLayout>(R.id.summary_layout)) }
+    private val btnBgmTv by lazy { (findViewById<Button>(R.id.button_bgm_tv)) }
+    private val imgShare by lazy { (findViewById<ImageView>(R.id.img_share)) }
 
-    val episodeAdapter by lazy { EpisodeAdapter() }
+    private val episodeAdapter by lazy { EpisodeAdapter() }
 
     private lateinit var cassiopeiaApplication: CassiopeiaApplication
     private lateinit var mTracker: Tracker
@@ -79,14 +79,14 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
             return intent
         }
 
-        private val INTENT_KEY_BANGMUMI = "INTENT_KEY_BANGMUMI"
-        private val REQUEST_CODE = 0x81
+        private const val INTENT_KEY_BANGMUMI = "INTENT_KEY_BANGMUMI"
+        private const val REQUEST_CODE = 0x81
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = ""
@@ -154,16 +154,16 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
     }
 
     override fun onMenuItemClick(v: View?, position: Int) {
-        if (collectionStatusText.text == resources.getStringArray(R.array.array_favorite).get(position)) return
+        if (collectionStatusText.text == resources.getStringArray(R.array.array_favorite)[position]) return
 
-        collectionStatusText.text = resources.getStringArray(R.array.array_favorite).get(position)
+        collectionStatusText.text = resources.getStringArray(R.array.array_favorite)[position]
         ApiClient.getInstance().uploadFavoriteStatus(bgm.id, FavoriteChangeRequest(position))
                 .withLifecycle()
                 .subscribe({
                     bgm.favorite_status = position
                 }, {
                     toastErrors()
-                    collectionStatusText.text = resources.getStringArray(R.array.array_favorite).get(bgm.favorite_status)
+                    collectionStatusText.text = resources.getStringArray(R.array.array_favorite)[bgm.favorite_status]
                 })
     }
 
@@ -179,12 +179,12 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -210,7 +210,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                                 episode.id,
                                 episode.bangumi_id
                             ),
-                            DetailActivity.REQUEST_CODE
+                            REQUEST_CODE
                         )
                         mTracker.send(builder
                             .setCategory("local")
@@ -224,7 +224,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                                 episode.id,
                                 episode.bangumi_id
                             ),
-                            DetailActivity.REQUEST_CODE
+                            REQUEST_CODE
                         )
                     mTracker.send(builder
                         .setCategory("online")
@@ -342,7 +342,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == DetailActivity.REQUEST_CODE
+        if (requestCode == REQUEST_CODE
                 && resultCode == Activity.RESULT_OK
                 && data != null) {
             val id = data.getStringExtra(PlayerActivity.RESULT_KEY_ID)
@@ -380,9 +380,9 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                 .into(iv)
         }
 
-        subtitle.text = co.bangumi.common.StringUtil.subTitle(detail)
+        subtitle.text = StringUtil.subTitle(detail)
         info.text = resources.getString(R.string.update_info)
-                ?.format(detail.eps, co.bangumi.common.StringUtil.dayOfWeek(detail.air_weekday), detail.air_date)
+                .format(detail.eps, StringUtil.dayOfWeek(detail.air_weekday), detail.air_date)
 
         btnBgmTv.visibility = if (detail.bgm_id > 0) View.VISIBLE else View.GONE
 
@@ -479,11 +479,12 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
             }
         }
         val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
-        collectionStatusText.text = collectionStatusArray.get(detail.favorite_status)
+        collectionStatusText.text = collectionStatusArray[detail.favorite_status]
 
         if (detail is co.bangumi.common.model.BangumiDetail && detail.episodes != null && detail.episodes.isNotEmpty()) {
             episodeAdapter.setEpisodes(detail.episodes)
             detail.episodes
+                    .asSequence()
                     .map { it?.watch_progress?.last_watch_time }
                     .withIndex()
                     .filter { it.value != null }
@@ -500,7 +501,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
 
     inner class EpisodeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-        private var episodes: List<co.bangumi.common.model.Episode> = java.util.ArrayList()
+        private var episodes: List<co.bangumi.common.model.Episode> = ArrayList()
 
         fun setEpisodes(ep: List<co.bangumi.common.model.Episode>) {
             episodes = ep
@@ -536,7 +537,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                 val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
                 bitmap.eraseColor(Color.parseColor(if(d.thumbnailColor != null) d.thumbnailColor else "#00000000"))
                 Glide.with(this@DetailActivity)
-                    .load(co.bangumi.common.api.ApiHelper.fixHttpUrl(d.thumbnail))
+                    .load(ApiHelper.fixHttpUrl(d.thumbnail))
                     .thumbnail(0.1f)
                     .placeholder(BitmapDrawable(resources, bitmap))
                     .crossFade()

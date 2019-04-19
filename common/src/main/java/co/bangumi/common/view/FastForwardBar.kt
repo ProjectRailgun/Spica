@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import co.bangumi.common.DisplayUtil
 
 /**
  * Created by roya on 2017/8/9.
@@ -84,10 +83,10 @@ class FastForwardBar(context: Context?,
 
         fun toRangeDisplay(): String {
             val range = calcRange(distance)
-            if (range >= 0) {
-                return "+" + range + "s"
+            return if (range >= 0) {
+                "+" + range + "s"
             } else {
-                return "" + range + "s"
+                "" + range + "s"
             }
         }
 

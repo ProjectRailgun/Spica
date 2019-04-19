@@ -64,7 +64,7 @@ open class BaseActivity : co.bangumi.common.activity.RxLifecycleActivity() {
             })
 
             if (!obs.isDisposed) {
-                runningMap.put(taskId, obs)
+                runningMap[taskId] = obs
             }
         }
     }

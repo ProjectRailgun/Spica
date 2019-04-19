@@ -30,7 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@drawable/controls_toolbar"
-            android:clickable="true" />
+            android:clickable="true"
+            android:focusable="true" />
 
         <ImageButton
             android:id="@+id/play_close"
@@ -47,6 +48,7 @@
             android:layout_gravity="bottom"
             android:background="@drawable/controls_background"
             android:clickable="true"
+            android:focusable="true"
             android:paddingBottom="8dp"
             android:paddingTop="8dp">
 
@@ -56,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="00:00"
+                tools:text="00:00"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -67,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
-                android:text="00:00"
+                tools:text="00:00"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

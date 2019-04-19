@@ -28,8 +28,7 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
 
     companion object {
         fun intent(context: Context): Intent {
-            val i = Intent(context, MyCollectionActivity::class.java)
-            return i
+            return Intent(context, MyCollectionActivity::class.java)
         }
     }
 
@@ -37,19 +36,19 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setTitle(R.string.title_favorite)
 
-        val recyclerView = findViewById(R.id.recycler_view) as RecyclerView
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val mLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = mLayoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(PaddingItemDecoration())
 
         val mScrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val visibleItemCount = mLayoutManager.childCount
                 val totalItemCount = mLayoutManager.itemCount
                 val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
@@ -82,26 +81,26 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
     var loaded = false
 
     fun onLoadData(): Observable<List<Bangumi>> {
-        if (!loaded) {
+        return if (!loaded) {
             loaded = true
-            return co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(3)
+            co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(3)
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(1))
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(2))
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(4))
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(5))
                     .flatMap { Observable.just(it.getData()) }
         } else {
-            return Observable.create<List<Bangumi>> { it.onComplete() }
+            Observable.create<List<Bangumi>> { it.onComplete() }
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -120,15 +119,15 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private class PaddingItemDecoration : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
-            val position = parent!!.getChildAdapterPosition(view)
-            val childCount = state!!.itemCount
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            val position = parent.getChildAdapterPosition(view)
+            val childCount = state.itemCount
             if (position == 0) {
-                outRect?.top =
-                        outRect?.top?.plus(view!!.resources.getDimensionPixelSize(R.dimen.spacing_list))
+                outRect.top =
+                        outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
             } else if (position + 1 == childCount) {
-                outRect?.bottom =
-                        outRect?.bottom?.plus(view!!.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
+                outRect.bottom =
+                        outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
             }
         }
     }
@@ -147,7 +146,7 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
             viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)

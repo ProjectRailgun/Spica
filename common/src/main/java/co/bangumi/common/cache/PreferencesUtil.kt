@@ -3,10 +3,8 @@ package co.bangumi.common.cache
 import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
-
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
-import co.bangumi.common.BuildConfig
 
 class PreferencesUtil private constructor(context: Context) {
     private val preferences: SharedPreferences
@@ -56,11 +54,11 @@ class PreferencesUtil private constructor(context: Context) {
 
     fun putObject(k: String, v: Any) {
         val json = JsonUtil.toJson(v)
-        preferences.edit().putString("Object" + k, json).apply()
+        preferences.edit().putString("Object$k", json).apply()
     }
 
     fun <T> getObject(k: String, classOfT: Class<T>): T? {
-        val json = preferences.getString("Object" + k, null)
+        val json = preferences.getString("Object$k", null)
         if (TextUtils.isEmpty(json)) return null
         var output: T? = null
         try {
@@ -73,11 +71,11 @@ class PreferencesUtil private constructor(context: Context) {
 
     fun putObject(k: String, src: List<*>) {
         val json = JsonUtil.toJson(src)
-        preferences.edit().putString("List" + k, json).apply()
+        preferences.edit().putString("List$k", json).apply()
     }
 
     fun <T> getObject(k: String, typeToken: TypeToken<*>): T? {
-        val json = preferences.getString("List" + k, null)
+        val json = preferences.getString("List$k", null)
         if (TextUtils.isEmpty(json)) return null
         var output: T? = null
         try {
@@ -93,7 +91,7 @@ class PreferencesUtil private constructor(context: Context) {
     }
 
     companion object {
-        private val TAG_KEY = co.bangumi.common.BuildConfig.APPLICATION_ID
+        private const val TAG_KEY = co.bangumi.common.BuildConfig.APPLICATION_ID
         private var mInstance: PreferencesUtil? = null
 
         fun init(context: Context) {

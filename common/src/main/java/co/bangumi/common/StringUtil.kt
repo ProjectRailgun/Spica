@@ -19,7 +19,7 @@ class StringUtil {
         private const val oneDay = 86400000
 
         fun dayOfWeek(day: Int): String {
-            return co.bangumi.common.StringUtil.Companion.dayFormatter.format(day * co.bangumi.common.StringUtil.Companion.oneDay + 3 * co.bangumi.common.StringUtil.Companion.oneDay)
+            return dayFormatter.format(day * oneDay + 3 * oneDay)
         }
 
         private fun addPadding(string: String): String {
@@ -27,9 +27,9 @@ class StringUtil {
         }
 
         fun microsecondFormat(ms: Long): String {
-            return co.bangumi.common.StringUtil.Companion.addPadding("" + TimeUnit.MILLISECONDS.toMinutes(ms)) +
+            return addPadding("" + TimeUnit.MILLISECONDS.toMinutes(ms)) +
                     ":" +
-                    co.bangumi.common.StringUtil.Companion.addPadding("" + (TimeUnit.MILLISECONDS.toSeconds(ms) -
+                    addPadding("" + (TimeUnit.MILLISECONDS.toSeconds(ms) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))))
 
         }

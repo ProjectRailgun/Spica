@@ -25,7 +25,7 @@ class CassiopeiaApplication : Application() {
         fun logout(context: Context) {
             PreferencesUtil.getInstance().clear()
             co.bangumi.common.api.ApiClient.deinit()
-            FirebaseAppIndex.getInstance().removeAll();
+            FirebaseAppIndex.getInstance().removeAll()
             val i = context.applicationContext.packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             context.startActivity(i)

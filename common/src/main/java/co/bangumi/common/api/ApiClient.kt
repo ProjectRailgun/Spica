@@ -24,40 +24,40 @@ import javax.net.ssl.SSLContext
  */
 
 object ApiClient {
-    private var instance: co.bangumi.common.api.ApiService? = null
+    private var instance: ApiService? = null
     private var retrofit: Retrofit? = null
     private var cookieJar: PersistentCookieJar? = null
 
     fun init(context: Context, server: String) {
-        co.bangumi.common.api.ApiClient.instance = co.bangumi.common.api.ApiClient.create(context, server)
+        instance = create(context, server)
     }
 
     fun deinit() {
-        co.bangumi.common.api.ApiClient.cookieJar?.clear()
-        co.bangumi.common.api.ApiClient.cookieJar = null
-        co.bangumi.common.api.ApiClient.retrofit = null
-        co.bangumi.common.api.ApiClient.instance = null
+        cookieJar?.clear()
+        cookieJar = null
+        retrofit = null
+        instance = null
     }
 
-    fun getInstance(): co.bangumi.common.api.ApiService {
-        if (co.bangumi.common.api.ApiClient.instance != null) {
-            return co.bangumi.common.api.ApiClient.instance as co.bangumi.common.api.ApiService
+    fun getInstance(): ApiService {
+        if (instance != null) {
+            return instance as ApiService
         }
 
         throw IllegalStateException("ApiClient Not being initialized")
     }
 
-    fun converterErrorBody(error: ResponseBody): co.bangumi.common.api.MessageResponse? {
-        if (co.bangumi.common.api.ApiClient.retrofit == null) {
+    fun converterErrorBody(error: ResponseBody): MessageResponse? {
+        if (retrofit == null) {
             throw IllegalStateException("ApiClient Not being initialized")
         }
 
-        val errorConverter: Converter<ResponseBody, co.bangumi.common.api.MessageResponse> = (co.bangumi.common.api.ApiClient.retrofit as Retrofit).responseBodyConverter(co.bangumi.common.api.MessageResponse::class.java, arrayOfNulls<Annotation>(0))
+        val errorConverter: Converter<ResponseBody, MessageResponse> = (retrofit as Retrofit).responseBodyConverter(MessageResponse::class.java, arrayOfNulls<Annotation>(0))
 
-        try {
-            return errorConverter.convert(error)
+        return try {
+            errorConverter.convert(error)
         } catch (e: Throwable) {
-            return null
+            null
         }
 
     }
@@ -68,7 +68,7 @@ object ApiClient {
             try {
                 val sc = SSLContext.getInstance("TLSv1.2")
                 sc.init(null, null, null)
-                this.sslSocketFactory(co.bangumi.common.api.Tls12SocketFactory(sc.socketFactory))
+                this.sslSocketFactory(Tls12SocketFactory(sc.socketFactory))
 
                 val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                         .tlsVersions(TlsVersion.TLS_1_2)
@@ -89,21 +89,21 @@ object ApiClient {
         return this
     }
 
-    private fun create(context: Context, server: String): co.bangumi.common.api.ApiService {
-        co.bangumi.common.api.ApiClient.cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
+    private fun create(context: Context, server: String): ApiService {
+        cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
 
         val okHttp = OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .retryOnConnectionFailure(true)
                 .dns(HttpsDns())
-                .cookieJar(co.bangumi.common.api.ApiClient.cookieJar)
+                .cookieJar(cookieJar)
                 .addInterceptor {
                     val request = it.request()
                     val response = it.proceed(request)
                     val body = response.body()
                     val bodyString = body?.string()
-                    if (BuildConfig.DEBUG) Log.i("TAG", response.toString() + " Body:" + bodyString)
+                    if (BuildConfig.DEBUG) Log.i("TAG", "$response Body:$bodyString")
                     response.newBuilder()
                             .headers(response.headers())
                             .body(ResponseBody.create(body?.contentType(), bodyString))
@@ -112,13 +112,13 @@ object ApiClient {
                 .enableTls12OnPreLollipop()
                 .build()
 
-        co.bangumi.common.api.ApiClient.retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
                 .client(okHttp)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(server)
                 .build()
 
-        return (co.bangumi.common.api.ApiClient.retrofit as Retrofit).create(co.bangumi.common.api.ApiService::class.java)
+        return (retrofit as Retrofit).create(ApiService::class.java)
     }
 }

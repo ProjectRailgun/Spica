@@ -33,13 +33,13 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             return Intent(context, AllBangumiActivity::class.java)
         }
 
-        private val TASK_ID_LOAD = 1
+        private const val TASK_ID_LOAD = 1
     }
 
     var loaded = false
     var pageNow = 1
 
-    private val spinner by lazy { findViewById(R.id.spinner) as AppCompatSpinner }
+    private val spinner by lazy { findViewById<AppCompatSpinner>(R.id.spinner) }
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
 
@@ -53,7 +53,7 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_bangumi)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setTitle(R.string.title_bangumi)
@@ -78,14 +78,14 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
 
         }
 
-        val recyclerView = findViewById(R.id.recycler_view) as RecyclerView
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val mLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = mLayoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(PaddingItemDecoration())
 
         val mScrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val visibleItemCount = mLayoutManager.childCount
                 val totalItemCount = mLayoutManager.itemCount
                 val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
@@ -116,29 +116,29 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     fun onLoadData(): Observable<List<Bangumi>> {
-        if (!loaded) {
+        return if (!loaded) {
             loaded = true
-            Log.i("AllBangumiActivity", "onLoadData:" + pageNow)
-            return co.bangumi.common.api.ApiClient.getInstance().getSearchBangumi(pageNow, 300, "air_date", "desc", null)
+            Log.i("AllBangumiActivity", "onLoadData:$pageNow")
+            co.bangumi.common.api.ApiClient.getInstance().getSearchBangumi(pageNow, 300, "air_date", "desc", null)
                     .withLifecycle()
-                    .onlyRunOneInstance(AllBangumiActivity.TASK_ID_LOAD, false)
+                    .onlyRunOneInstance(TASK_ID_LOAD, false)
                     .flatMap {
                         pageNow += 1
                         loaded = it.getData().isEmpty()
                         Observable.just(it.getData())
                     }
         } else {
-            return Observable.create<List<Bangumi>> { it.onComplete() }
+            Observable.create<List<Bangumi>> { it.onComplete() }
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -158,15 +158,15 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private class PaddingItemDecoration : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
-            val position = parent!!.getChildAdapterPosition(view)
-            val childCount = state!!.itemCount
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            val position = parent.getChildAdapterPosition(view)
+            val childCount = state.itemCount
             if (position == 0) {
-                outRect?.top =
-                        outRect?.top?.plus(view!!.resources.getDimensionPixelSize(R.dimen.spacing_list))
+                outRect.top =
+                        outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
             } else if (position + 1 == childCount) {
-                outRect?.bottom =
-                        outRect?.bottom?.plus(view!!.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
+                outRect.bottom =
+                        outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
             }
         }
     }
@@ -185,7 +185,7 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
             viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)

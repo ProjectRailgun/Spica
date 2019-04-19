@@ -34,20 +34,20 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.bringToFront()
         setSupportActionBar(toolbar)
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        (findViewById(R.id.fabSearch) as FloatingActionButton).setOnClickListener { search() }
+        (findViewById<FloatingActionButton>(R.id.fabSearch)).setOnClickListener { search() }
 
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
         val navHeaderT1 = navigationView.getHeaderView(0).findViewById(R.id.textView1) as TextView
         val navHeaderT2 = navigationView.getHeaderView(0).findViewById(R.id.textView2) as TextView
         navigationView.setNavigationItemSelectedListener(this)
@@ -86,7 +86,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         banner.setImageLoader(GlideImageLoader())
         .setImages(list.map { it.imageUrl })
         .setOnBannerListener{
-            val uri = Uri.parse(list.get(it).content)
+            val uri = Uri.parse(list[it].content)
             val intent = Intent(Intent.ACTION_VIEW, uri)
             startActivity(intent)
         }.start()
@@ -96,9 +96,9 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
         recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1)) {
-                    if (fabSearch.visibility == View.VISIBLE) fabSearch.visibility = View.GONE
+                    if (fabSearch.visibility == View.VISIBLE) fabSearch.hide()
                 } else{
-                    if (fabSearch.visibility == View.GONE) fabSearch.visibility = View.VISIBLE
+                    if (fabSearch.visibility == View.GONE) fabSearch.show()
                 }
             }
         })
@@ -109,7 +109,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     }
 
     override fun onBackPressed() {
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
@@ -123,9 +123,9 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -134,7 +134,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
             R.id.nav_favorite -> {
                 startActivity(MyCollectionActivity.intent(this))
             }
-            R.id.nav_bangmuni -> {
+            R.id.nav_bangumi -> {
                 startActivity(AllBangumiActivity.intent(this))
             }
 //            R.id.nav_setting -> {
@@ -145,7 +145,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
             }
         }
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
         return false
     }
@@ -169,7 +169,7 @@ class HomeActivity : co.bangumi.common.activity.BaseActivity(),
                 .error(R.drawable.banner_placeholder)
                 .thumbnail(0.1f)
                 .crossFade()
-                .into(imageView);
+                .into(imageView)
         }
     }
 

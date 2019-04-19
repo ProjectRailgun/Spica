@@ -46,14 +46,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val mNotificationManager: NotificationManager =
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-        val notificationBuilder: NotificationCompat.Builder;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        val notificationBuilder: NotificationCompat.Builder
+        notificationBuilder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val notificationChannel =
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+                    NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
             mNotificationManager.createNotificationChannel(notificationChannel)
-            notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            NotificationCompat.Builder(this, CHANNEL_ID)
         } else {
-            notificationBuilder = NotificationCompat.Builder(this)
+            NotificationCompat.Builder(this)
         }
         notificationBuilder.setContentText(remoteMessage.notification?.body)
             .setAutoCancel(true)

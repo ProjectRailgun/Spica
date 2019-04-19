@@ -7,7 +7,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 class PermissionUtil {
     companion object {
         fun checkOrRequestPermission(activity: BaseActivity, permission: String): Boolean {
-            var flag = false;
+            var flag = false
             val rxPermissions = RxPermissions(activity)
             rxPermissions
                 .request(permission)
@@ -18,7 +18,7 @@ class PermissionUtil {
                         activity.showToast(activity.getString(R.string.permission_denied))
                     }
                 }
-            return flag;
+            return flag
         }
     }
 }

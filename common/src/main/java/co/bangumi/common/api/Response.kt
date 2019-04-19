@@ -6,7 +6,7 @@ import java.util.*
  * Created by roya on 2017/5/23.
  */
 
-open class BaseResponse {}
+open class BaseResponse
 
 open class MessageResponse : BaseResponse() {
     private var msg: String? = null

@@ -9,11 +9,7 @@ import java.util.*
 
 class HttpsDns : Dns {
 
-    private val dnsService: HttpsDnsService
-
-    init {
-        dnsService = HttpsDnsService()
-    }
+    private val dnsService: HttpsDnsService = HttpsDnsService()
 
     @Throws(UnknownHostException::class)
     override fun lookup(hostname: String): List<InetAddress> {

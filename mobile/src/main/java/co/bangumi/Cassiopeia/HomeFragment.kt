@@ -80,9 +80,9 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                             .groupBy { it.position }
                         homeDataAdapter.list.add(HomeData(getString(R.string.recommended)))
                         homeDataAdapter.list.add(HomeData(HomeData.TYPE.LARGE, null, null,
-                            announceMap.get(Announce.Type.RECOMMENDATION.value)?.map { it.bangumi }))
+                            announceMap[Announce.Type.RECOMMENDATION.value]?.map { it.bangumi }))
 
-                        announceMap.get(Announce.Type.NOTICE.value)?.let {
+                        announceMap[Announce.Type.NOTICE.value]?.let {
                             (activity as HomeActivity).setBanner(it)
                         }
                     }
@@ -193,7 +193,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
                         viewHolder.recyclerView.adapter =
                                 HomeHorizontalAdapter(
-                                        list[position], { parent.startActivity(DetailActivity.intent(parent.context, it)) })
+                                        list[position]) { parent.startActivity(DetailActivity.intent(parent.context, it)) }
                     }
                     is HomeLargeHolder -> {
                         if (viewHolder.recyclerView.layoutManager == null) {
@@ -204,7 +204,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
                         viewHolder.recyclerView.adapter =
                                 HomeLargeAdapter(
-                                        list[position], { parent.startActivity(DetailActivity.intent(parent.context, it)) })
+                                        list[position]) { parent.startActivity(DetailActivity.intent(parent.context, it)) }
                     }
                     is WideCardHolder -> {
                         if (bangumi == null) {
@@ -215,7 +215,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                         viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
                         viewHolder.info.text =
                                 viewHolder.info.resources.getString(R.string.update_info)
-                                ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
 
                         if (bangumi.favorite_status > 0) {
                             val array =
@@ -280,14 +280,14 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                         )
                     )
                     HomeData.TYPE.ALL_BANGUMI.value -> AllBangumiHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_tail,
                             p0,
                             false
                         )
                     )
                     HomeData.TYPE.MY_COLLECTION.value -> MyCollectionHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_tail,
                             p0,
                             false
