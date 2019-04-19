@@ -53,5 +53,7 @@
     <string name="finished">完结</string>
     <string name="on_air">连载中</string>
     <string name="bangumi_type_raw">"  无字幕  "</string>
+    <string name="searching">Searching...</string>
+    <string name="loading">Loading...</string>
 
 </resources>

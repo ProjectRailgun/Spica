@@ -21,9 +21,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import co.bangumi.common.BuildConfig
+import co.bangumi.common.DisplayUtil
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import io.reactivex.Observable
+import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 
 @SuppressLint("Registered")
@@ -48,6 +51,9 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     private val filterRAW: (Bangumi) -> Boolean = { it.type == co.bangumi.common.api.ApiService.BANGUMI_TYPE_RAW }
 
     private var filterNow = filterAll
+    private var isAll = true
+
+    private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.loading)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,13 +96,13 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
                 val totalItemCount = mLayoutManager.itemCount
                 val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    loadData()
+                    if (!isAll) {
+                        loadData()
+                    }
                 }
             }
         }
         recyclerView.addOnScrollListener(mScrollListener)
-
-        loadData()
     }
 
     fun reloadData() {
@@ -108,17 +114,24 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     fun loadData() {
-        onLoadData()
-                .withLifecycle()
-                .subscribe(Consumer {
-                    addToList(it)
-                }, toastErrors())
+        onLoadData()?.let {
+            it.withLifecycle()
+                    .subscribe(Consumer {
+                        if (it.isEmpty()) {
+                            isAll = true
+                        } else {
+                            addToList(it)
+                            isAll = false
+                        }
+                    }, toastErrors(), Action { loadingHud.dismiss() })
+        }
     }
 
-    fun onLoadData(): Observable<List<Bangumi>> {
+    fun onLoadData(): Observable<List<Bangumi>>? {
         return if (!loaded) {
+            loadingHud.show()
             loaded = true
-            Log.i("AllBangumiActivity", "onLoadData:$pageNow")
+            if (BuildConfig.DEBUG) Log.i("AllBangumiActivity", "onLoadData:$pageNow")
             co.bangumi.common.api.ApiClient.getInstance().getSearchBangumi(pageNow, 300, "air_date", "desc", null)
                     .withLifecycle()
                     .onlyRunOneInstance(TASK_ID_LOAD, false)
@@ -127,9 +140,7 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
                         loaded = it.getData().isEmpty()
                         Observable.just(it.getData())
                     }
-        } else {
-            Observable.create<List<Bangumi>> { it.onComplete() }
-        }
+        } else null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

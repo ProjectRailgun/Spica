@@ -17,14 +17,18 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import co.bangumi.common.DisplayUtil
 import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
+import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 
 
 class SearchActivity : co.bangumi.common.activity.BaseActivity() {
+
+    private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.searching)) }
 
     companion object {
         fun intent(context: Context): Intent {
@@ -58,12 +62,13 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private fun search(s: String) {
+        loadingHud.show()
         ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s)
                 .withLifecycle()
                 .onlyRunOneInstance(TASK_ID_LOAD, true)
                 .subscribe(Consumer {
                     display(it.getData())
-                }, toastErrors())
+                }, toastErrors(), Action { loadingHud.dismiss() })
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, s)
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)

@@ -16,15 +16,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import co.bangumi.common.DisplayUtil
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import io.reactivex.Observable
+import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 
 class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
 
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
+
+    private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.loading)) }
 
     companion object {
         fun intent(context: Context): Intent {
@@ -58,8 +62,6 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
             }
         }
         recyclerView.addOnScrollListener(mScrollListener)
-
-//        loadData()
     }
 
     override fun onResume() {
@@ -71,17 +73,19 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     fun loadData() {
-        onLoadData()
-                .withLifecycle()
-                .subscribe(Consumer {
-                    addToList(it)
-                }, toastErrors())
+        onLoadData()?.let {
+            it.withLifecycle()
+                    .subscribe(Consumer {
+                        addToList(it)
+                    }, toastErrors(), Action { loadingHud.dismiss() })
+        }
     }
 
     var loaded = false
 
-    fun onLoadData(): Observable<List<Bangumi>> {
+    fun onLoadData(): Observable<List<Bangumi>>? {
         return if (!loaded) {
+            loadingHud.show()
             loaded = true
             co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(3)
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(1))
@@ -89,9 +93,7 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(4))
                     .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(5))
                     .flatMap { Observable.just(it.getData()) }
-        } else {
-            Observable.create<List<Bangumi>> { it.onComplete() }
-        }
+        } else null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

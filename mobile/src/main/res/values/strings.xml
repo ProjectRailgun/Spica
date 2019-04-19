@@ -70,4 +70,6 @@
 
     <string name="connecting">Connecting…</string>
     <string name="network_error">Network Error</string>
+    <string name="loading">Loading...</string>
+    <string name="searching">Searching...</string>
 </resources>
