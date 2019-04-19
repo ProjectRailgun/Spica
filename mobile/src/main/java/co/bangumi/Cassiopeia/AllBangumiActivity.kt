@@ -201,8 +201,10 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
 
             if (bangumi.type == Bangumi.Type.RAW.value) {
                 viewHolder.typeRaw.visibility = View.VISIBLE
+                viewHolder.typeSub.visibility = View.GONE
             } else{
                 viewHolder.typeSub.visibility = View.VISIBLE
+                viewHolder.typeRaw.visibility = View.GONE
             }
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")
