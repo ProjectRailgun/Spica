@@ -17,9 +17,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelection
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import co.bangumi.common.R
-import co.bangumi.common.StringUtil
-import co.bangumi.common.view.CheckableImageButton
 import kotlin.properties.Delegates
 
 
@@ -29,8 +26,8 @@ import kotlin.properties.Delegates
 
 class CygnusExoPlayer : FrameLayout {
 
-    val contentFrame by lazy { findViewById(co.bangumi.common.R.id.arfl) as co.bangumi.common.player.AspectRatioFrameLayout }
-    val surfaceView by lazy { findViewById(co.bangumi.common.R.id.surface_view) as SurfaceView }
+    val contentFrame: AspectRatioFrameLayout by lazy { findViewById<AspectRatioFrameLayout>(co.bangumi.common.R.id.arfl) }
+    val surfaceView: SurfaceView by lazy { findViewById<SurfaceView>(co.bangumi.common.R.id.surface_view) }
 
     val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
     val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
@@ -48,9 +45,9 @@ class CygnusExoPlayer : FrameLayout {
         mControllerCallback?.onControllerVisibilityChange(new)
     })
 
-    constructor(context: Context) : this(context, null) {}
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {}
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         LayoutInflater.from(context).inflate(co.bangumi.common.R.layout.megumin_exo_player_view, this)
@@ -72,7 +69,7 @@ class CygnusExoPlayer : FrameLayout {
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-    fun setResizeMode(@co.bangumi.common.player.AspectRatioFrameLayout.ResizeMode resizeMode: Int) {
+    fun setResizeMode(@AspectRatioFrameLayout.ResizeMode resizeMode: Int) {
         contentFrame.setResizeMode(resizeMode)
     }
 
@@ -120,7 +117,7 @@ class CygnusExoPlayer : FrameLayout {
 
 
         views.screen?.setOnCheckedChangeListener { _, isChecked ->
-            setResizeMode(if (isChecked) co.bangumi.common.player.AspectRatioFrameLayout.RESIZE_MODE_ZOOM else co.bangumi.common.player.AspectRatioFrameLayout.RESIZE_MODE_FIT)
+            setResizeMode(if (isChecked) AspectRatioFrameLayout.RESIZE_MODE_ZOOM else AspectRatioFrameLayout.RESIZE_MODE_FIT)
         }
 
 
@@ -162,12 +159,10 @@ class CygnusExoPlayer : FrameLayout {
 
     fun seekOffsetTo(offset: Int) {
         val currentPosition = player.currentPosition
-        if ((offset + currentPosition) > player.duration) {
-            seekTo(player.duration)
-        } else if ((offset + currentPosition) <= 0) {
-            seekTo(1)
-        } else {
-            seekTo(offset + currentPosition)
+        when {
+            (offset + currentPosition) > player.duration -> seekTo(player.duration)
+            (offset + currentPosition) <= 0 -> seekTo(1)
+            else -> seekTo(offset + currentPosition)
         }
     }
 

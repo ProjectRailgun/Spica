@@ -16,17 +16,17 @@ class BannerBehavior(context: Context, attrs: AttributeSet) :
     CoordinatorLayout.Behavior<View>(context, attrs) {
 
     override fun layoutDependsOn(
-        parent: CoordinatorLayout?,
-        child: View?,
-        dependency: View?
+        parent: CoordinatorLayout,
+        child: View,
+        dependency: View
     ): Boolean {
-        return   dependency is FrameLayout;
+        return   dependency is FrameLayout
     }
 
     override fun onDependentViewChanged(
-        parent: CoordinatorLayout?,
+        parent: CoordinatorLayout,
         child: View,
-        dependency: View?
+        dependency: View
     ): Boolean {
         if (dependency != null && dependency is FrameLayout) {
             val swipeRefreshLayout = dependency.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
@@ -67,17 +67,17 @@ class BannerBehavior(context: Context, attrs: AttributeSet) :
     }
 
     private fun isBottom(view: RecyclerView): Boolean {
-        val layoutManager = view.getLayoutManager() as LinearLayoutManager;
+        val layoutManager = view.layoutManager as LinearLayoutManager
         //屏幕中最后一个可见子项的position
-        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
         //当前屏幕所看到的子项个数
-        val visibleItemCount = layoutManager.getChildCount();
+        val visibleItemCount = layoutManager.childCount
         //当前RecyclerView的所有子项个数
-        val totalItemCount = layoutManager.getItemCount();
+        val totalItemCount = layoutManager.itemCount
         //RecyclerView的滑动状态
-        val state = view.getScrollState()
+        val state = view.scrollState
         val lastView = view.getChildAt(visibleItemCount - 1)
-        return  lastView is TextView && lastView.text.equals(view.context.getString(R.string.more))
+        return  lastView is TextView && lastView.text == view.context.getString(R.string.more)
     }
 
     private fun hide(view: View) {

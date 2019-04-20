@@ -22,7 +22,11 @@
             android:id="@+id/fixedAspectRatioFrameLayout"
             android:layout_width="94dp"
             android:layout_height="wrap_content"
-            app:aspectRatio="0.715">
+            android:layout_marginEnd="12dp"
+            app:aspectRatio="0.715"
+            app:layout_constraintEnd_toStartOf="@+id/recommended"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -40,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="87dp"
             android:ellipsize="none"
             android:fadingEdgeLength="40dp"
             android:requiresFadingEdge="horizontal"
@@ -47,6 +52,7 @@
             android:text="@string/recommended"
             android:textColor="@color/colorAccent"
             android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/fixedAspectRatioFrameLayout"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,9 +62,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxLines="2"
-            android:ellipsize="end"
             android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/fixedAspectRatioFrameLayout"
@@ -82,8 +88,8 @@
             android:id="@+id/eps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="none"
             android:fadingEdgeLength="40dp"
             android:requiresFadingEdge="horizontal"

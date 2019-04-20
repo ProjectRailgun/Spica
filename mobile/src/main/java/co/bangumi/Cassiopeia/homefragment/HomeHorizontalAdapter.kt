@@ -36,7 +36,7 @@ open class HomeHorizontalAdapter(private var datas: HomeData,
         val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
         Glide.with(holder.image.context)
-            .load(bangumi.image)
+            .load(bangumi.coverImage.url)
             .thumbnail(0.1f)
             .placeholder(BitmapDrawable(holder.image.resources, bitmap))
             .crossFade()

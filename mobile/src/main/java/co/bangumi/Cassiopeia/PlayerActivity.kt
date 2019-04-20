@@ -12,7 +12,9 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.Toast
 import co.bangumi.common.player.CygnusExoPlayer
 import co.bangumi.common.view.FastForwardBar
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -22,9 +24,9 @@ import com.google.android.exoplayer2.util.Util
 
 
 class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
-    val playerController by lazy { (findViewById(R.id.play_controller) as FrameLayout) }
-    val playerView by lazy { findViewById(R.id.player_content) as CygnusExoPlayer }
-    val root by lazy { (findViewById(R.id.root) as CoordinatorLayout) }
+    val playerController: FrameLayout by lazy { (findViewById<FrameLayout>(R.id.play_controller)) }
+    val playerView: CygnusExoPlayer by lazy { findViewById<CygnusExoPlayer>(R.id.player_content) }
+    val root: CoordinatorLayout by lazy { (findViewById<CoordinatorLayout>(R.id.root)) }
 
     val mHidePart2Runnable = Runnable {
         playerView.systemUiVisibility =
@@ -53,13 +55,13 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
             return intent
         }
 
-        private val INTENT_KEY_URL = "INTENT_KEY_URL"
-        private val UI_ANIMATION_DELAY = 100
+        private const val INTENT_KEY_URL = "INTENT_KEY_URL"
+        private const val UI_ANIMATION_DELAY = 100
 
-        val RESULT_KEY_ID = "PlayerActivity:RESULT_KEY_ID"
-        val RESULT_KEY_ID_2 = "PlayerActivity:RESULT_KEY_ID_2"
-        val RESULT_KEY_POSITION = "PlayerActivity:RESULT_KEY_POSITION"
-        val RESULT_KEY_DURATION = "PlayerActivity:RESULT_KEY_DURATION"
+        const val RESULT_KEY_ID = "PlayerActivity:RESULT_KEY_ID"
+        const val RESULT_KEY_ID_2 = "PlayerActivity:RESULT_KEY_ID_2"
+        const val RESULT_KEY_POSITION = "PlayerActivity:RESULT_KEY_POSITION"
+        const val RESULT_KEY_DURATION = "PlayerActivity:RESULT_KEY_DURATION"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,30 +78,30 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         if (TextUtils.isEmpty(url)) throw IllegalArgumentException("Required url")
 //        val fixedUrl = Uri.encode(co.bangumi.common.api.ApiHelper.fixHttpUrl(url), "@#&=*+-_.,:!?()/~'%")
         val fixedUrl = Uri.encode(url, "@#&=*+-_.,:!?()/~'%")
-        Log.i(this.localClassName, "playing:" + fixedUrl)
+        if (BuildConfig.DEBUG) Log.i(this.localClassName, "playing:$fixedUrl")
 
         checkMultiWindowMode()
-        (findViewById(R.id.play_close) as ImageButton).setOnClickListener { finish() }
-        (findViewById(R.id.fast_forward_bar) as FastForwardBar).callback =
+        (findViewById<ImageButton>(R.id.play_close)).setOnClickListener { finish() }
+        (findViewById<FastForwardBar>(R.id.fast_forward_bar)).callback =
                 object : FastForwardBar.FastForwardEventCallback {
-            override fun onFastForward(range: Int) {
-                playerView.seekOffsetTo(range * 1000)
-            }
+                    override fun onFastForward(range: Int) {
+                        playerView.seekOffsetTo(range * 1000)
+                    }
 
-            override fun onClick(view: View) {
-                playerView.performClick()
-            }
+                    override fun onClick(view: View) {
+                        playerView.performClick()
+                    }
 
-        }
+                }
 
         playerView.setControllerView(
                 CygnusExoPlayer.ControllerViews(
                         playerController,
-                    findViewById(R.id.play_button) as co.bangumi.common.view.CheckableImageButton,
-                    findViewById(R.id.play_screen) as co.bangumi.common.view.CheckableImageButton?,
-                    findViewById(R.id.play_progress) as SeekBar,
-                    findViewById(R.id.play_position) as TextView,
-                    findViewById(R.id.play_duration) as TextView
+                        findViewById(R.id.play_button),
+                        findViewById(R.id.play_screen),
+                        findViewById(R.id.play_progress),
+                        findViewById(R.id.play_position),
+                        findViewById(R.id.play_duration)
                 )
         )
 
@@ -115,8 +117,8 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
 
 
         val dataSourceFactory = DefaultDataSourceFactory(
-            this,
-            Util.getUserAgent(this, co.bangumi.Cassiopeia.BuildConfig.APPLICATION_ID)
+                this,
+                Util.getUserAgent(this, BuildConfig.APPLICATION_ID)
         )
         val extractorsFactory = DefaultExtractorsFactory()
         val videoSource = ExtractorMediaSource(Uri.parse(fixedUrl), dataSourceFactory, extractorsFactory, null, null)
@@ -242,14 +244,14 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         }
 
         if (controllerVisibility == View.INVISIBLE
-                && (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)){
+                && (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)) {
             playerView.showController()
         }
 
         return super.onKeyUp(keyCode, event)
     }
 
-    val mToast by lazy { Toast.makeText(this, "", Toast.LENGTH_SHORT) }
+    val mToast: Toast by lazy { Toast.makeText(this, "", Toast.LENGTH_SHORT) }
 
     private fun onKeyboardSeekUpdate(times: Int, isFinish: Boolean = false) {
         val isForward = keyPressingCode == KeyEvent.KEYCODE_DPAD_RIGHT

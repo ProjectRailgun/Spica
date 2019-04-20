@@ -1,23 +1,11 @@
 package co.bangumi.common.api
 
-import co.bangumi.common.model.Announce
-import co.bangumi.common.model.Bangumi
-import co.bangumi.common.model.DnsResponse
-import co.bangumi.common.model.UserInfo
+import co.bangumi.common.model.*
 import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.http.*
 
-/**
- * Created by roya on 2017/5/22.
- */
-
 interface ApiService {
-
-    companion object {
-        val BANGUMI_TYPE_CN = 1001
-        val BANGUMI_TYPE_RAW = 1002
-    }
 
     /**
      * DOH
@@ -33,13 +21,13 @@ interface ApiService {
      */
 
     @POST("api/user/login")
-    fun login(@Body body: co.bangumi.common.api.LoginRequest): Observable<co.bangumi.common.api.MessageResponse>
+    fun login(@Body body: LoginRequest): Observable<MessageResponse>
 
     @POST("api/user/logout")
-    fun logout(): Observable<co.bangumi.common.api.MessageResponse>
+    fun logout(): Observable<MessageResponse>
 
     @GET("/api/user/info")
-    fun getUserInfo(): Observable<co.bangumi.common.api.DataResponse<UserInfo>>
+    fun getUserInfo(): Observable<DataResponse<UserInfo>>
 
 
     /**
@@ -47,13 +35,17 @@ interface ApiService {
      */
 
     @GET("/api/home/my_bangumi")
-    fun getMyBangumi(@Query("status") status: Int = 3): Observable<co.bangumi.common.api.ListResponse<Bangumi>>
+    fun getMyBangumi(
+        @Query("page") page: Int?,
+        @Query("count") count: Int?,
+        @Query("status") status: Int?
+    ): Observable<ListResponse<Bangumi>>
 
     @GET("/api/home/announce")
-    fun getAnnounceBangumi(): Observable<co.bangumi.common.api.ListResponse<Announce>>
+    fun getAnnounceBangumi(): Observable<ListResponse<Announce>>
 
-    @GET("/api/home/on_air?type=1001")
-    fun getOnAir(): Observable<co.bangumi.common.api.ListResponse<Bangumi>>
+    @GET("/api/home/on_air")
+    fun getOnAir(@Query("type") type: Int?): Observable<ListResponse<Bangumi>>
 
     @GET("/api/home/bangumi")
     fun getSearchBangumi(
@@ -61,22 +53,23 @@ interface ApiService {
         @Query("count") count: Int?,
         @Query("sort_field") sortField: String?,
         @Query("sort_order") sortOrder: String?,
-        @Query("name") name: String?
-    ): Observable<co.bangumi.common.api.ListResponse<Bangumi>>
+        @Query("name") name: String?,
+        @Query("type") type: Int?
+    ): Observable<ListResponse<Bangumi>>
 
     @GET("/api/home/bangumi/{id}")
-    fun getBangumiDetail(@Path("id") id: String): Observable<co.bangumi.common.api.DataResponse<co.bangumi.common.model.BangumiDetail>>
+    fun getBangumiDetail(@Path("id") id: String): Observable<DataResponse<BangumiDetail>>
 
     @GET("/api/home/episode/{id}")
-    fun getEpisodeDetail(@Path("id") id: String): Observable<co.bangumi.common.model.EpisodeDetail>
+    fun getEpisodeDetail(@Path("id") id: String): Observable<EpisodeDetail>
 
     /**
      * Favorite and history
      */
 
     @POST("/api/watch/favorite/bangumi/{bangumi_id}")
-    fun uploadFavoriteStatus(@Path("bangumi_id") bangumiId: String, @Body body: co.bangumi.common.api.FavoriteChangeRequest): Observable<co.bangumi.common.api.MessageResponse>
+    fun uploadFavoriteStatus(@Path("bangumi_id") bangumiId: String, @Body body: FavoriteChangeRequest): Observable<MessageResponse>
 
     @POST("/api/watch/history/synchronize")
-    fun uploadWatchHistory(@Body body: co.bangumi.common.api.HistoryChangeRequest): Observable<co.bangumi.common.api.MessageResponse>
+    fun uploadWatchHistory(@Body body: HistoryChangeRequest): Observable<MessageResponse>
 }

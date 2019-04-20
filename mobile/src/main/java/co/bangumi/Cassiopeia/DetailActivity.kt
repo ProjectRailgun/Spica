@@ -23,6 +23,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import co.bangumi.common.DisplayUtil
 import co.bangumi.common.FileUtil
 import co.bangumi.common.PackageUtil
 import co.bangumi.common.StringUtil
@@ -31,14 +32,15 @@ import co.bangumi.common.cache.JsonUtil
 import co.bangumi.common.model.Bangumi
 import co.bangumi.common.model.EpisodeDetail
 import com.bumptech.glide.Glide
-import com.google.android.gms.analytics.HitBuilders
-import com.google.android.gms.analytics.Tracker
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.appindexing.FirebaseAppIndex
+import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.kaopiz.kprogresshud.KProgressHUD
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment
 import com.yalantis.contextmenu.lib.MenuObject
 import com.yalantis.contextmenu.lib.MenuParams
@@ -50,23 +52,26 @@ import kotlinx.android.synthetic.main.content_detail.*
 import java.io.File
 import java.util.*
 
-class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClickListener {
+class DetailActivity : co.bangumi.common.activity.BaseActivity(), OnMenuItemClickListener {
     // TODO 重构
-    val iv by lazy { findViewById(R.id.image) as ImageView? }
-    val subtitle by lazy { findViewById(R.id.subtitle) as TextView }
-    val info by lazy { findViewById(R.id.info) as TextView }
-    val summary by lazy { findViewById(R.id.summary) as TextView }
-    val summary2 by lazy { findViewById(R.id.summary2) as TextView }
-    val more by lazy { findViewById(R.id.button_more) as TextView }
-    val recyclerView by lazy { findViewById(R.id.recycler_view) as RecyclerView }
-    val summaryLayout by lazy { (findViewById(R.id.summary_layout) as LinearLayout) }
-    val btnBgmTv by lazy { (findViewById(R.id.button_bgm_tv) as Button) }
-    val imgShare by lazy { (findViewById(R.id.img_share) as ImageView) }
+    private val iv by lazy { findViewById<ImageView?>(R.id.image) }
+    private val subtitle by lazy { findViewById<TextView>(R.id.subtitle) }
+    private val info by lazy { findViewById<TextView>(R.id.info) }
+    private val typeSub by lazy { findViewById<TextView>(R.id.type_sub) }
+    private val typeRaw by lazy { findViewById<TextView>(R.id.type_raw) }
+    private val summary by lazy { findViewById<TextView>(R.id.summary) }
+    private val summary2 by lazy { findViewById<TextView>(R.id.summary2) }
+    private val more by lazy { findViewById<TextView>(R.id.button_more) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
+    private val summaryLayout by lazy { (findViewById<LinearLayout>(R.id.summary_layout)) }
+    private val btnBgmTv by lazy { (findViewById<Button>(R.id.button_bgm_tv)) }
+    private val imgShare by lazy { (findViewById<ImageView>(R.id.img_share)) }
 
-    val episodeAdapter by lazy { EpisodeAdapter() }
+    private val episodeAdapter by lazy { EpisodeAdapter() }
 
-    private lateinit var cassiopeiaApplication: CassiopeiaApplication
-    private lateinit var mTracker: Tracker
+    private val loadingHud: KProgressHUD by lazy { DisplayUtil.createCancellableHud(this, getString(R.string.loading)) }
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
+
     private lateinit var mMenuDialogFragment: ContextMenuDialogFragment
     private lateinit var bgm: Bangumi
     private lateinit var fragmentManager: FragmentManager
@@ -79,14 +84,14 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
             return intent
         }
 
-        private val INTENT_KEY_BANGMUMI = "INTENT_KEY_BANGMUMI"
-        private val REQUEST_CODE = 0x81
+        private const val INTENT_KEY_BANGMUMI = "INTENT_KEY_BANGMUMI"
+        private const val REQUEST_CODE = 0x81
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = ""
@@ -106,38 +111,30 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
         val name = StringUtil.getName(bgm)
         title = name
 
-        // TODO compare Firebase Analytics and Google Analytics
-        cassiopeiaApplication = application as CassiopeiaApplication
-        mTracker = cassiopeiaApplication.defaultTracker
+        val index = Indexables.digitalDocumentBuilder()
+            .setName(name)
+            .setText(bgm.summary)
+            .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
+            .setImage(bgm.image)
+            .build()
+        FirebaseAppIndex.getInstance().update(index)
 
-//        val index = Indexables.digitalDocumentBuilder()
-//            .setName(name)
-//            .setText(bgm.summary)
-//            .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
-//            .setImage(bgm.image)
-//            .build()
-//        FirebaseAppIndex.getInstance().update(index)
-//
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
         FirebaseAnalytics.getInstance(this).logEvent("view_detail", bundle)
-
-        mTracker.send(HitBuilders.EventBuilder()
-            .setAction("View Detail")
-            .setLabel(bgm.name_cn)
-            .build())
     }
 
     private fun initMenuFragment() {
         val menuParams = MenuParams()
         menuParams.actionBarSize = resources.getDimension(R.dimen.context_menu_height).toInt()
         val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
+        collectionStatusArray[0] = getString(R.string.delete_collection)
         val contextMenuList = ArrayList<MenuObject>()
-        collectionStatusArray.forEachIndexed { index,value ->
+        collectionStatusArray.forEachIndexed { index, value ->
             val menuObject = MenuObject(value)
-            menuObject.resource = when(index) {
-                0 -> R.drawable.ic_watchlist
+            menuObject.resource = when (index) {
+                0 -> R.drawable.ic_delete
                 1 -> R.drawable.ic_wish
                 2 -> R.drawable.ic_watched
                 3 -> R.drawable.ic_watching
@@ -154,37 +151,38 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
     }
 
     override fun onMenuItemClick(v: View?, position: Int) {
-        if (collectionStatusText.text == resources.getStringArray(R.array.array_favorite).get(position)) return
+        if (collectionStatusText.text == resources.getStringArray(R.array.array_favorite)[position]) return
 
-        collectionStatusText.text = resources.getStringArray(R.array.array_favorite).get(position)
+        collectionStatusText.text = resources.getStringArray(R.array.array_favorite)[position]
         ApiClient.getInstance().uploadFavoriteStatus(bgm.id, FavoriteChangeRequest(position))
-                .withLifecycle()
-                .subscribe({
-                    bgm.favorite_status = position
-                }, {
-                    toastErrors()
-                    collectionStatusText.text = resources.getStringArray(R.array.array_favorite).get(bgm.favorite_status)
-                })
+            .withLifecycle()
+            .onlyRunOneInstance(TASK_ID_LOAD, false)
+            .subscribe({
+                bgm.favorite_status = position
+            }, {
+                toastErrors()
+                collectionStatusText.text = resources.getStringArray(R.array.array_favorite)[bgm.favorite_status]
+            })
     }
 
     private fun loadData(bgmId: String) {
         ApiClient.getInstance().getBangumiDetail(bgmId)
-                .withLifecycle()
-                .subscribe({
-                    setData(it.getData())
-                }, {
-                    toastErrors().accept(it)
-                    finish()
-                })
+            .withLifecycle()
+            .subscribe({
+                setData(it.getData())
+            }, {
+                toastErrors().accept(it)
+                finish()
+            })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -192,63 +190,54 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
         assert(!TextUtils.isEmpty(episode.id))
 
         ApiClient.getInstance().getEpisodeDetail(episode.id)
-                .withLifecycle()
-                .subscribe({
-                    val url = it.video_files[0].url
-                    val path = this.getExternalFilesDir(
-                        Environment.DIRECTORY_DOWNLOADS
-                                + '/' + StringUtil.getName(it.bangumi))
-                    val file = File(path, url.substring(url.lastIndexOf('/')))
-                    val builder =  HitBuilders.EventBuilder()
-                        .setAction("Play Video")
-                        .setLabel("${it.bangumi.name_cn} - ${it.episode_no}")
-                    if (FileUtil.isFileExist(file)) {
-                        startActivityForResult(
-                            PlayerActivity.intent(
-                                this,
-                                file.path,
-                                episode.id,
-                                episode.bangumi_id
-                            ),
-                            DetailActivity.REQUEST_CODE
-                        )
-                        mTracker.send(builder
-                            .setCategory("local")
-                            .build())
-                        return@subscribe
-                    }
-                        startActivityForResult(
-                            PlayerActivity.intent(
-                                this,
-                                url,
-                                episode.id,
-                                episode.bangumi_id
-                            ),
-                            DetailActivity.REQUEST_CODE
-                        )
-                    mTracker.send(builder
-                        .setCategory("online")
-                        .build())
-                }, {
-                    toastErrors()
-                })
+            .withLifecycle()
+            .subscribe({
+                val url = it.video_files[0].url
+                val path = this.getExternalFilesDir(
+                    Environment.DIRECTORY_DOWNLOADS
+                        + '/' + StringUtil.getName(it.bangumi))
+                val file = File(path, url.substring(url.lastIndexOf('/')))
+                if (FileUtil.isFileExist(file)) {
+                    startActivityForResult(
+                        PlayerActivity.intent(
+                            this,
+                            file.path,
+                            episode.id,
+                            episode.bangumi_id
+                        ),
+                        REQUEST_CODE
+                    )
+                    return@subscribe
+                }
+                startActivityForResult(
+                    PlayerActivity.intent(
+                        this,
+                        url,
+                        episode.id,
+                        episode.bangumi_id
+                    ),
+                    REQUEST_CODE
+                )
+            }, {
+                toastErrors()
+            })
     }
 
     private fun markWatched(episodeDetail: EpisodeDetail) {
         ApiClient.getInstance().uploadWatchHistory(
-                HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(episodeDetail.bangumi_id,
-                        episodeDetail.id,
-                        System.currentTimeMillis(),
-                        0,
-                        1f,
-                        true))))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        Consumer {
-                            loadData(episodeDetail.bangumi_id)
-                        },
-                        ignoreErrors())
+            HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(episodeDetail.bangumi_id,
+                episodeDetail.id,
+                System.currentTimeMillis(),
+                0,
+                1f,
+                true))))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                Consumer {
+                    loadData(episodeDetail.bangumi_id)
+                },
+                ignoreErrors())
     }
 
     private fun openWith(file: File) {
@@ -289,7 +278,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
         val videoUrl = episodeDetail.video_files[0].url
         val path = this.getExternalFilesDir(
             Environment.DIRECTORY_DOWNLOADS
-                    + '/' + StringUtil.getName(episodeDetail.bangumi))
+                + '/' + StringUtil.getName(episodeDetail.bangumi))
         val file = File(path, videoUrl.substring(videoUrl.lastIndexOf('/')))
 
         val episodeName = StringUtil.getName(episodeDetail)
@@ -317,11 +306,6 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                 episodeDetail.episode_no.toString()
             )
             FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
-
-            mTracker.send(HitBuilders.EventBuilder()
-                .setAction("Download Video")
-                .setLabel("${episodeDetail.bangumi.name_cn} - ${episodeDetail.episode_no}")
-                .build())
         }
 
         if (FileUtil.isFileExist(file)) {
@@ -342,27 +326,27 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == DetailActivity.REQUEST_CODE
-                && resultCode == Activity.RESULT_OK
-                && data != null) {
+        if (requestCode == REQUEST_CODE
+            && resultCode == Activity.RESULT_OK
+            && data != null) {
             val id = data.getStringExtra(PlayerActivity.RESULT_KEY_ID)
             val bgmId = data.getStringExtra(PlayerActivity.RESULT_KEY_ID_2)
             val duration = data.getLongExtra(PlayerActivity.RESULT_KEY_DURATION, 0)
             val position = data.getLongExtra(PlayerActivity.RESULT_KEY_POSITION, 0)
             ApiClient.getInstance().uploadWatchHistory(
-                    HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(bgmId,
-                            id,
-                            System.currentTimeMillis(),
-                            position / 100,
-                            position.toFloat() / duration,
-                            duration == position))))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            Consumer {
-                                loadData(bgmId)
-                            },
-                            ignoreErrors())
+                HistoryChangeRequest(Collections.singletonList(HistoryChangeItem(bgmId,
+                    id,
+                    System.currentTimeMillis(),
+                    position / 100,
+                    position.toFloat() / duration,
+                    duration == position))))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Consumer {
+                        loadData(bgmId)
+                    },
+                    ignoreErrors())
         }
     }
 
@@ -373,16 +357,24 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
             val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
             bitmap.eraseColor(Color.parseColor(detail.coverColor))
             Glide.with(this)
-                .load(detail.image)
+                .load(detail.cover)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()
                 .into(iv)
         }
 
-        subtitle.text = co.bangumi.common.StringUtil.subTitle(detail)
+        subtitle.text = StringUtil.subTitle(detail)
         info.text = resources.getString(R.string.update_info)
-                ?.format(detail.eps, co.bangumi.common.StringUtil.dayOfWeek(detail.air_weekday), detail.air_date)
+            .format(detail.eps, StringUtil.dayOfWeek(detail.air_weekday), detail.air_date)
+
+        if (detail.type == Bangumi.Type.RAW.value) {
+            typeRaw.visibility = View.VISIBLE
+            typeSub.visibility = View.GONE
+        } else {
+            typeSub.visibility = View.VISIBLE
+            typeRaw.visibility = View.GONE
+        }
 
         btnBgmTv.visibility = if (detail.bgm_id > 0) View.VISIBLE else View.GONE
 
@@ -405,6 +397,7 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                 startActivity(Intent.createChooser(textIntent, StringUtil.getName(detail)))
                 return@setOnClickListener
             }
+            loadingHud.show()
             FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse(Constant.DETAIL_URL_PREFIX + detail.id))
                 .setDomainUriPrefix(Constant.DYNAMIC_LINK_PREFIX)
@@ -421,7 +414,8 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                         .build()
                 )
                 .buildShortDynamicLink(ShortDynamicLink.Suffix.SHORT)
-                .addOnCompleteListener(this) {
+                .addOnCompleteListener {
+                    loadingHud.dismiss()
                     if (it.isSuccessful) {
                         val shortLink = it.result!!.shortLink
                         val textIntent = Intent(Intent.ACTION_SEND)
@@ -478,29 +472,34 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
                 mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG)
             }
         }
-        val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
-        collectionStatusText.text = collectionStatusArray.get(detail.favorite_status)
+        if (detail.favorite_status == 0) {
+            collectionStatusText.text = getString(R.string.collect)
+        } else {
+            val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
+            collectionStatusText.text = collectionStatusArray[detail.favorite_status]
+        }
 
         if (detail is co.bangumi.common.model.BangumiDetail && detail.episodes != null && detail.episodes.isNotEmpty()) {
             episodeAdapter.setEpisodes(detail.episodes)
             detail.episodes
-                    .map { it?.watch_progress?.last_watch_time }
-                    .withIndex()
-                    .filter { it.value != null }
-                    .sortedBy { it.value }
-                    .lastOrNull()
-                    ?.let {
-                        recyclerView.post {
-                            recyclerView.smoothScrollToPosition(it.index)
-                        }
+                .asSequence()
+                .map { it?.watch_progress?.last_watch_time }
+                .withIndex()
+                .filter { it.value != null }
+                .sortedBy { it.value }
+                .lastOrNull()
+                ?.let {
+                    recyclerView.post {
+                        recyclerView.smoothScrollToPosition(it.index)
                     }
+                }
         }
 
     }
 
     inner class EpisodeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-        private var episodes: List<co.bangumi.common.model.Episode> = java.util.ArrayList()
+        private var episodes: List<co.bangumi.common.model.Episode> = ArrayList()
 
         fun setEpisodes(ep: List<co.bangumi.common.model.Episode>) {
             episodes = ep
@@ -528,15 +527,15 @@ class DetailActivity: co.bangumi.common.activity.BaseActivity(), OnMenuItemClick
 
                 holder.tv.text = "${d.episode_no}. $name"
                 if (d.watch_progress?.percentage != null
-                        && d.watch_progress?.percentage!! < 0.15f) {
+                    && d.watch_progress?.percentage!! < 0.15f) {
                     d.watch_progress?.percentage = 0.15f
                 }
                 holder.progress.setProgress(d.watch_progress?.percentage ?: 0f)
 
                 val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-                bitmap.eraseColor(Color.parseColor(if(d.thumbnailColor != null) d.thumbnailColor else "#00000000"))
+                bitmap.eraseColor(Color.parseColor(if (d.thumbnailColor != null) d.thumbnailColor else "#00000000"))
                 Glide.with(this@DetailActivity)
-                    .load(co.bangumi.common.api.ApiHelper.fixHttpUrl(d.thumbnail))
+                    .load(ApiHelper.fixHttpUrl(d.thumbnail))
                     .thumbnail(0.1f)
                     .placeholder(BitmapDrawable(resources, bitmap))
                     .crossFade()

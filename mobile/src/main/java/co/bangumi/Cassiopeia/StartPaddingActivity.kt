@@ -16,7 +16,7 @@ class StartPaddingActivity : co.bangumi.common.activity.BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val isConfigured = CygnusPreferences.configured()
-        val intent = intent;
+        val intent = intent
         if (isConfigured && intent.action == Intent.ACTION_VIEW) {
             var url = intent.dataString
             FirebaseDynamicLinks.getInstance()

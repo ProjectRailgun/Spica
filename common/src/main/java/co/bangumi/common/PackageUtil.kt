@@ -6,7 +6,7 @@ import android.content.Context
 class PackageUtil {
     companion object {
         fun getVersionCode(context: Context): Int {
-            return context.getPackageManager()
+            return context.packageManager
                 .getPackageInfo(context.packageName, 0).versionCode
         }
 

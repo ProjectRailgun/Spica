@@ -5,12 +5,12 @@ package co.bangumi.common.api
  */
 data class LoginRequest(val name: String, val password: String, val remmember: Boolean)
 
-val FavoriteStatus_DEF = 0
-val FavoriteStatus_WISH = 1
-val FavoriteStatus_WATCHED = 2
-val FavoriteStatus_WATCHING = 3
-val FavoriteStatus_PAUSE = 4
-val FavoriteStatus_ABANDONED = 5
+const val FavoriteStatus_DEF = 0
+const val FavoriteStatus_WISH = 1
+const val FavoriteStatus_WATCHED = 2
+const val FavoriteStatus_WATCHING = 3
+const val FavoriteStatus_PAUSE = 4
+const val FavoriteStatus_ABANDONED = 5
 
 data class FavoriteChangeRequest(val status: Int)
 

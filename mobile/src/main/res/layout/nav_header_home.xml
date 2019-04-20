@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="bottom"
     android:orientation="vertical"
     android:background="@mipmap/nav_bg"
@@ -27,14 +28,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:text="ShadowySpirits" />
+        tools:text="ShadowySpirits" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:text="shadowyspirits@outlook.com"/>
+        tools:text="shadowyspirits@outlook.com"/>
 </LinearLayout>
 
 

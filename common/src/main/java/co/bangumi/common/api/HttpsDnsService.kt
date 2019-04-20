@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class HttpsDnsService {
 
-    private var apiClient: ApiService;
+    private var apiClient: ApiService
 
     init {
         val client = OkHttpClient.Builder()
@@ -24,7 +24,7 @@ class HttpsDnsService {
                     val response = it.proceed(request)
                     val body = response.body()
                     val bodyString = body?.string()
-                    if (BuildConfig.DEBUG) Log.i("TAG", response.toString() + " Body:" + bodyString)
+                    if (BuildConfig.DEBUG) Log.i("TAG", "$response Body:$bodyString")
                     response.newBuilder()
                             .headers(response.headers())
                             .body(ResponseBody.create(body?.contentType(), bodyString))

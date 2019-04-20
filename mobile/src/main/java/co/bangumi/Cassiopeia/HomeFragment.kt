@@ -59,8 +59,8 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         swipeRefresh.isRefreshing = true
         Observable.zip(
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getAnnounceBangumi()),
-                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi()),
-                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getOnAir()),
+                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(1, -1, Bangumi.Status.WATCHING.value)),
+                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getOnAir(Bangumi.Type.ALL.value)),
             Function3 { t1: ListResponse<Announce>, t2: ListResponse<Bangumi>, t3: ListResponse<Bangumi> ->
                     arrayOf(t1.getData(), t2.getData(), t3.getData())
             })
@@ -80,9 +80,9 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                             .groupBy { it.position }
                         homeDataAdapter.list.add(HomeData(getString(R.string.recommended)))
                         homeDataAdapter.list.add(HomeData(HomeData.TYPE.LARGE, null, null,
-                            announceMap.get(Announce.Type.RECOMMENDATION.value)?.map { it.bangumi }))
+                            announceMap[Announce.Type.RECOMMENDATION.value]?.map { it.bangumi }))
 
-                        announceMap.get(Announce.Type.NOTICE.value)?.let {
+                        announceMap[Announce.Type.NOTICE.value]?.let {
                             (activity as HomeActivity).setBanner(it)
                         }
                     }
@@ -141,12 +141,14 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         }
 
         private class WideCardHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val image = view.findViewById(R.id.imageView) as ImageView
-            val title = view.findViewById(R.id.title) as TextView
-            val subtitle = view.findViewById(R.id.subtitle) as TextView
-            val info = view.findViewById(R.id.info) as TextView
-            val state = view.findViewById(R.id.state) as TextView
-            val info2 = view.findViewById(R.id.info2) as TextView
+            val image: ImageView = view.findViewById(R.id.imageView)
+            val title: TextView = view.findViewById(R.id.title)
+            val subtitle: TextView = view.findViewById(R.id.subtitle)
+            val info: TextView = view.findViewById(R.id.info)
+            val state: TextView = view.findViewById(R.id.state)
+            val info2: TextView = view.findViewById(R.id.info2)
+            val typeSub: TextView = view.findViewById(R.id.type_sub)
+            val typeRaw: TextView = view.findViewById(R.id.type_raw)
         }
 
         private class TitleHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -193,7 +195,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
                         viewHolder.recyclerView.adapter =
                                 HomeHorizontalAdapter(
-                                        list[position], { parent.startActivity(DetailActivity.intent(parent.context, it)) })
+                                        list[position]) { parent.startActivity(DetailActivity.intent(parent.context, it)) }
                     }
                     is HomeLargeHolder -> {
                         if (viewHolder.recyclerView.layoutManager == null) {
@@ -204,7 +206,7 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
                         viewHolder.recyclerView.adapter =
                                 HomeLargeAdapter(
-                                        list[position], { parent.startActivity(DetailActivity.intent(parent.context, it)) })
+                                        list[position]) { parent.startActivity(DetailActivity.intent(parent.context, it)) }
                     }
                     is WideCardHolder -> {
                         if (bangumi == null) {
@@ -215,7 +217,8 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                         viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
                         viewHolder.info.text =
                                 viewHolder.info.resources.getString(R.string.update_info)
-                                ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                                        if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
                         if (bangumi.favorite_status > 0) {
                             val array =
@@ -227,13 +230,21 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                             viewHolder.state.text = ""
                         }
 
+                        if (bangumi.type == Bangumi.Type.RAW.value) {
+                            viewHolder.typeRaw.visibility = View.VISIBLE
+                            viewHolder.typeSub.visibility = View.INVISIBLE
+                        } else{
+                            viewHolder.typeSub.visibility = View.VISIBLE
+                            viewHolder.typeRaw.visibility = View.INVISIBLE
+                        }
+
                         viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
                         val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
                         bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
 
                         Glide.with(parent)
-                            .load(bangumi.image)
+                            .load(bangumi.cover)
                             .thumbnail(0.1f)
                             .placeholder(BitmapDrawable(parent.resources, bitmap))
                             .crossFade()
@@ -280,14 +291,14 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
                         )
                     )
                     HomeData.TYPE.ALL_BANGUMI.value -> AllBangumiHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_tail,
                             p0,
                             false
                         )
                     )
                     HomeData.TYPE.MY_COLLECTION.value -> MyCollectionHolder(
-                        LayoutInflater.from(p0!!.context).inflate(
+                        LayoutInflater.from(p0.context).inflate(
                             R.layout.include_home_tail,
                             p0,
                             false

@@ -1,1 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="co.bangumi.common" />
+<manifest package="co.bangumi.common" />

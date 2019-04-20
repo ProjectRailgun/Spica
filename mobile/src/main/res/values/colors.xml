@@ -2,7 +2,9 @@
 <resources>
     <color name="meguminRed">#d43b3e</color>
     <color name="meguminRedDark">#a92f31</color>
+    <color name="dangerRed">#db2828</color>
     <color name="aquaBlue">#5e9fdf</color>
+    <color name="primaryBlue">#1c84c6</color>
 
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#181818</color>
@@ -17,7 +19,7 @@
     <color name="textColorPrimary">#ffffff</color>
     <color name="textColorTitle2">#e0ffffff</color>
     <color name="textColorSecondary">#bff0f0f0</color>
-    <color name="textColorLowLight">#80909090</color>
+    <color name="textColorLowLight">#80C8C8C8</color>
 
     <color name="backgroundPrimary">#303030</color>
     <color name="backgroundSecondary">#141414</color>

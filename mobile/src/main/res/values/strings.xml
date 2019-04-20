@@ -19,7 +19,7 @@
     <string name="empty">No content</string>
 
     <string-array name="array_favorite">
-        <item>Watchlist</item>
+        <item>ALL</item>
         <item>Wish to watch</item>
         <item>Watched</item>
         <item>Watching</item>
@@ -29,7 +29,7 @@
 
     <string-array name="array_bangumi_type">
         <item>All</item>
-        <item>CN</item>
+        <item>SUB</item>
         <item>RAW</item>
     </string-array>
 
@@ -60,9 +60,18 @@
     <string name="delete_success">Delete Success</string>
     <string name="delete_failed">Delete Failed</string>
 
+    <string name="bangumi_type_cn">"  SUB  "</string>
+    <string name="bangumi_type_raw">"  RAW  "</string>
+    <string name="on_air">onAir</string>
+    <string name="finished">Finished</string>
+
     <string name="toast_forward" translatable="false">+%ds</string>
     <string name="toast_backward" translatable="false">-%ds</string>
 
     <string name="connecting">Connecting…</string>
     <string name="network_error">Network Error</string>
+    <string name="loading">Loading…</string>
+    <string name="searching">Searching…</string>
+    <string name="collect">Collect</string>
+    <string name="delete_collection">Delete Collection</string>
 </resources>

@@ -14,7 +14,7 @@ import retrofit2.HttpException
 
 class FirstConfigActivity : co.bangumi.common.activity.BaseActivity() {
 
-    private val spinner by lazy { findViewById(R.id.spinner) as AppCompatSpinner }
+    private val spinner by lazy { findViewById<AppCompatSpinner>(R.id.spinner) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +30,13 @@ class FirstConfigActivity : co.bangumi.common.activity.BaseActivity() {
         textServer.setText(CygnusPreferences.getServer(), TextView.BufferType.EDITABLE)
         **/
 
-        val textUser = findViewById(R.id.user) as EditText
-        val textPw = findViewById(R.id.pw) as EditText
+        val textUser = findViewById<EditText>(R.id.user)
+        val textPw = findViewById<EditText>(R.id.pw)
 
 
         val toast = Toast.makeText(this, getString(R.string.connecting), Toast.LENGTH_LONG)
 
-        (findViewById(R.id.floatingActionButton) as FloatingActionButton).setOnClickListener {
+        (findViewById<FloatingActionButton>(R.id.floatingActionButton)).setOnClickListener {
             /**
             val host = StringBuilder()
             val domain = textServer.text.toString()

@@ -44,13 +44,13 @@
             android:singleLine="true"
             android:textColor="@color/textColorLowLight"
             android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/type_sub"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="12 eps  ·  Friday" />
 
         <TextView
             android:id="@+id/state"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
             android:layout_marginStart="8dp"
@@ -62,6 +62,42 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/info"
             tools:text="state" />
+
+        <TextView
+            android:id="@+id/type_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/radius_rectangle_blue"
+            android:ellipsize="end"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:visibility="invisible"
+            app:layout_constraintBaseline_toBaselineOf="@id/state"
+            app:layout_constraintEnd_toStartOf="@id/info"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/imageView"
+            android:text="@string/bangumi_type_cn" />
+
+        <TextView
+            android:id="@+id/type_raw"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/radius_rectangle_red"
+            android:visibility="gone"
+            android:ellipsize="end"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12sp"
+            android:gravity="center"
+            app:layout_constraintBaseline_toBaselineOf="@id/state"
+            app:layout_constraintEnd_toStartOf="@id/info"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/imageView"
+            android:text="@string/bangumi_type_raw" />
 
         <TextView
             android:id="@+id/title"
@@ -78,7 +114,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/info"
-            tools:text="bkbuhnnlnl" />
+            tools:text="testtest" />
 
         <TextView
             android:id="@+id/subtitle"

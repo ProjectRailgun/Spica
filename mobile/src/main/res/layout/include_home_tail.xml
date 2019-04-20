@@ -13,6 +13,6 @@
     android:paddingRight="14dp"
     android:text="@string/all_bangumi"
     android:textColor="@color/colorAccent"
-    android:textSize="18dp">
+    android:textSize="18sp">
 
 </TextView>

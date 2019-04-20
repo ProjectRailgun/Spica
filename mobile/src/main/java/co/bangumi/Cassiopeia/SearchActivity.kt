@@ -17,34 +17,35 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import co.bangumi.common.DisplayUtil
 import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
-import com.google.android.gms.analytics.HitBuilders
 import com.google.firebase.analytics.FirebaseAnalytics
-import io.reactivex.functions.Consumer
+import java.util.*
 
 
 class SearchActivity : co.bangumi.common.activity.BaseActivity() {
 
+    private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.searching)) }
+
     companion object {
         fun intent(context: Context): Intent {
-            val intent = Intent(context, SearchActivity::class.java)
-            return intent
+            return Intent(context, SearchActivity::class.java)
         }
-
-        public val TASK_ID_LOAD = 0x01
     }
 
-    private val recyclerView by lazy { findViewById(R.id.recycler_view) as RecyclerView }
-    private val edit by lazy { findViewById(R.id.edit) as EditText }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
+    private val edit by lazy { findViewById<EditText>(R.id.edit) }
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
+
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        (findViewById(R.id.back) as AppCompatImageButton).setOnClickListener { super.onBackPressed() }
+        (findViewById<AppCompatImageButton>(R.id.back)).setOnClickListener { super.onBackPressed() }
 
         val mLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = mLayoutManager
@@ -60,21 +61,19 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private fun search(s: String) {
-        ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s)
-                .withLifecycle()
-                .onlyRunOneInstance(SearchActivity.TASK_ID_LOAD, true)
-                .subscribe(Consumer {
-                    display(it.getData())
-                }, toastErrors())
+        loadingHud.show()
+        ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s, Bangumi.Type.ALL.value)
+            .withLifecycle()
+            .onlyRunOneInstance(TASK_ID_LOAD, true)
+            .subscribe({
+                display(it.getData())
+            }, {
+                loadingHud.dismiss()
+                toastErrors(it)
+            }, { loadingHud.dismiss() })
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, s)
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
-
-        (application as CassiopeiaApplication).defaultTracker.send(
-            HitBuilders.EventBuilder()
-                .setAction("Search")
-                .setLabel(s)
-                .build())
     }
 
     private fun display(data: List<Bangumi>) {
@@ -95,12 +94,14 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private class WideCardHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val image = view.findViewById(R.id.imageView) as ImageView
-        val title = view.findViewById(R.id.title) as TextView
-        val subtitle = view.findViewById(R.id.subtitle) as TextView
-        val info = view.findViewById(R.id.info) as TextView
-        val state = view.findViewById(R.id.state) as TextView
-        val info2 = view.findViewById(R.id.info2) as TextView
+        val image: ImageView = view.findViewById(R.id.imageView)
+        val title: TextView = view.findViewById(R.id.title)
+        val subtitle: TextView = view.findViewById(R.id.subtitle)
+        val info: TextView = view.findViewById(R.id.info)
+        val state: TextView = view.findViewById(R.id.state)
+        val info2: TextView = view.findViewById(R.id.info2)
+        val typeSub: TextView = view.findViewById(R.id.type_sub)
+        val typeRaw: TextView = view.findViewById(R.id.type_raw)
     }
 
     private inner class HomeAdapter : RecyclerView.Adapter<WideCardHolder>() {
@@ -117,7 +118,8 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = bangumi.name_cn
             viewHolder.subtitle.text = bangumi.name
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                    if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)
@@ -128,13 +130,21 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
                 viewHolder.state.text = ""
             }
 
+            if (bangumi.type == Bangumi.Type.RAW.value) {
+                viewHolder.typeRaw.visibility = View.VISIBLE
+                viewHolder.typeSub.visibility = View.GONE
+            } else {
+                viewHolder.typeSub.visibility = View.VISIBLE
+                viewHolder.typeRaw.visibility = View.GONE
+            }
+
             viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
             val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
             bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
 
             Glide.with(this@SearchActivity)
-                .load(bangumi.image)
+                .load(bangumi.cover)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()

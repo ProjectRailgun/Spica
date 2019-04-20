@@ -3,6 +3,7 @@ package co.bangumi.common.activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import co.bangumi.common.BuildConfig
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
 import io.reactivex.Observable
@@ -22,7 +23,7 @@ import java.util.*
 open class BaseActivity : co.bangumi.common.activity.RxLifecycleActivity() {
 
     private val rxPermissions: RxPermissions by lazy { RxPermissions(this) }
-    private val runningMap by lazy { IdentityHashMap<Int, Disposable>() }
+    private val runningMap by lazy { IdentityHashMap<String, Disposable>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,16 +34,16 @@ open class BaseActivity : co.bangumi.common.activity.RxLifecycleActivity() {
     }
 
     protected fun <T> Observable<T>.withLifecycle(
-            subscribeOn: Scheduler = Schedulers.io(),
-            observeOn: Scheduler = AndroidSchedulers.mainThread(),
-            untilEvent: ActivityEvent = ActivityEvent.DESTROY): Observable<T> {
+        subscribeOn: Scheduler = Schedulers.io(),
+        observeOn: Scheduler = AndroidSchedulers.mainThread(),
+        untilEvent: ActivityEvent = ActivityEvent.DESTROY): Observable<T> {
         return this
-                .subscribeOn(subscribeOn)
-                .observeOn(observeOn)
-                .compose(bindUntilEvent(untilEvent))
+            .subscribeOn(subscribeOn)
+            .observeOn(observeOn)
+            .compose(bindUntilEvent(untilEvent))
     }
 
-    protected fun <T> Observable<T>.onlyRunOneInstance(taskId: Int, displace: Boolean = true): Observable<T> {
+    protected fun <T> Observable<T>.onlyRunOneInstance(taskId: String, displace: Boolean = true): Observable<T> {
         if (runningMap.containsKey(taskId)) {
             if (!displace) {
                 return Observable.create<T> { wrapper -> wrapper.onComplete() }
@@ -64,20 +65,20 @@ open class BaseActivity : co.bangumi.common.activity.RxLifecycleActivity() {
             })
 
             if (!obs.isDisposed) {
-                runningMap.put(taskId, obs)
+                runningMap[taskId] = obs
             }
         }
     }
 
     protected fun ignoreErrors(): Consumer<in Throwable> {
         return Consumer {
-            Log.w("toastErrors", it)
+            if (BuildConfig.DEBUG) Log.w("toastErrors", it)
         }
     }
 
     protected fun toastErrors(): Consumer<in Throwable> {
         return Consumer {
-            Log.w("toastErrors", it)
+            if (BuildConfig.DEBUG) Log.w("toastErrors", it)
             var errorMessage = getString(co.bangumi.common.R.string.unknown_error)
 
             if (it is HttpException) {
@@ -95,10 +96,28 @@ open class BaseActivity : co.bangumi.common.activity.RxLifecycleActivity() {
         }
     }
 
+    protected fun toastErrors(e: Throwable) {
+        if (BuildConfig.DEBUG) Log.w("toastErrors", e)
+        var errorMessage = getString(co.bangumi.common.R.string.unknown_error)
+
+        if (e is HttpException) {
+            val body = e.response().errorBody()
+            val message = body?.let { it1 ->
+                co.bangumi.common.api.ApiClient.converterErrorBody(it1)
+            }
+
+            if (message?.message() != null) {
+                errorMessage = message.message()
+            }
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+    }
+
     protected fun requestPermissions(vararg permissions: String): Observable<Boolean> {
         return rxPermissions
-                .request(*permissions)
-                .withLifecycle(subscribeOn = AndroidSchedulers.mainThread(),
-                        untilEvent = ActivityEvent.PAUSE)
+            .request(*permissions)
+            .withLifecycle(subscribeOn = AndroidSchedulers.mainThread(),
+                untilEvent = ActivityEvent.PAUSE)
     }
 }

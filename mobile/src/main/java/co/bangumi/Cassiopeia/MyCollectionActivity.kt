@@ -7,29 +7,45 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.support.v7.widget.AppCompatSpinner
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import co.bangumi.common.BuildConfig
+import co.bangumi.common.DisplayUtil
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import io.reactivex.Observable
-import io.reactivex.functions.Consumer
+import java.util.*
 
 class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
 
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
 
+    private val spinner by lazy { findViewById<AppCompatSpinner>(R.id.spinner) }
+
+    private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.loading)) }
+
+    private var pageNow = 1
+    private var loaded = false
+    private var type: Int = Bangumi.Type.ALL.value
+    private var isAll = true
+
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
+
     companion object {
         fun intent(context: Context): Intent {
-            val i = Intent(context, MyCollectionActivity::class.java)
-            return i
+            return Intent(context, MyCollectionActivity::class.java)
         }
     }
 
@@ -37,30 +53,52 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setTitle(R.string.title_favorite)
 
-        val recyclerView = findViewById(R.id.recycler_view) as RecyclerView
+        val sp = ArrayAdapter.createFromResource(this,
+            R.array.array_favorite, R.layout.spinner_item
+        )
+        sp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = sp
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                type = when (position) {
+                    1 -> Bangumi.Status.WISH.value
+                    2 -> Bangumi.Status.WATCHED.value
+                    3 -> Bangumi.Status.WATCHING.value
+                    4 -> Bangumi.Status.PAUSE.value
+                    5 -> Bangumi.Status.ABANDONED.value
+                    else -> Bangumi.Status.ALL.value
+                }
+                reloadData()
+            }
+        }
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val mLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = mLayoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(PaddingItemDecoration())
 
         val mScrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val visibleItemCount = mLayoutManager.childCount
                 val totalItemCount = mLayoutManager.itemCount
                 val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    loadData()
+                    if (!isAll) {
+                        loadData()
+                    }
                 }
             }
         }
         recyclerView.addOnScrollListener(mScrollListener)
-
-//        loadData()
     }
 
     override fun onResume() {
@@ -71,37 +109,49 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
         loadData()
     }
 
-    fun loadData() {
-        onLoadData()
-                .withLifecycle()
-                .subscribe(Consumer {
-                    addToList(it)
-                }, toastErrors())
+    fun reloadData() {
+        loaded = false
+        pageNow = 1
+        bangumiList.clear()
+        adapter.notifyDataSetChanged()
+        loadData()
     }
 
-    var loaded = false
-
-    fun onLoadData(): Observable<List<Bangumi>> {
-        if (!loaded) {
-            loaded = true
-            return co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(3)
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(1))
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(2))
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(4))
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(5))
-                    .flatMap { Observable.just(it.getData()) }
-        } else {
-            return Observable.create<List<Bangumi>> { it.onComplete() }
+    fun loadData() {
+        onLoadData()?.let {
+            it.withLifecycle()
+                .subscribe({ addToList(it) }, {
+                    loadingHud.dismiss()
+                    toastErrors(it)
+                }, { loadingHud.dismiss() })
         }
     }
 
+
+    fun onLoadData(): Observable<List<Bangumi>>? {
+        return if (!loaded) {
+            loadingHud.show()
+            loaded = true
+            if (BuildConfig.DEBUG) Log.i("MyCollectionActivity", "onLoadData:$pageNow")
+            co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(pageNow, 15, type)
+                .withLifecycle()
+                .onlyRunOneInstance(TASK_ID_LOAD, false)
+                .flatMap {
+                    pageNow += 1
+                    loaded = it.getData().isEmpty()
+                    isAll = it.count == bangumiList.size + it.getData().size
+                    Observable.just(it.getData())
+                }
+        } else null
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -111,24 +161,26 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private class WideCardHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val image = view.findViewById(R.id.imageView) as ImageView
-        val title = view.findViewById(R.id.title) as TextView
-        val subtitle = view.findViewById(R.id.subtitle) as TextView
-        val info = view.findViewById(R.id.info) as TextView
-        val state = view.findViewById(R.id.state) as TextView
-        val info2 = view.findViewById(R.id.info2) as TextView
+        val image: ImageView = view.findViewById(R.id.imageView)
+        val title: TextView = view.findViewById(R.id.title)
+        val subtitle: TextView = view.findViewById(R.id.subtitle)
+        val info: TextView = view.findViewById(R.id.info)
+        val state: TextView = view.findViewById(R.id.state)
+        val info2: TextView = view.findViewById(R.id.info2)
+        val typeSub: TextView = view.findViewById(R.id.type_sub)
+        val typeRaw: TextView = view.findViewById(R.id.type_raw)
     }
 
     private class PaddingItemDecoration : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
-            val position = parent!!.getChildAdapterPosition(view)
-            val childCount = state!!.itemCount
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            val position = parent.getChildAdapterPosition(view)
+            val childCount = state.itemCount
             if (position == 0) {
-                outRect?.top =
-                        outRect?.top?.plus(view!!.resources.getDimensionPixelSize(R.dimen.spacing_list))
+                outRect.top =
+                    outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
             } else if (position + 1 == childCount) {
-                outRect?.bottom =
-                        outRect?.bottom?.plus(view!!.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
+                outRect.bottom =
+                    outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
             }
         }
     }
@@ -147,7 +199,8 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
             viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    ?.format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) }, bangumi.air_date)
+                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                    if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)
@@ -158,12 +211,20 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
                 viewHolder.state.text = ""
             }
 
+            if (bangumi.type == Bangumi.Type.RAW.value) {
+                viewHolder.typeRaw.visibility = View.VISIBLE
+                viewHolder.typeSub.visibility = View.INVISIBLE
+            } else {
+                viewHolder.typeSub.visibility = View.VISIBLE
+                viewHolder.typeRaw.visibility = View.INVISIBLE
+            }
+
             viewHolder.info2.text = bangumi.summary.replace("\n", "")
 
             val bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888)
             bitmap.eraseColor(Color.parseColor(bangumi.coverColor))
             Glide.with(this@MyCollectionActivity)
-                .load(bangumi.image)
+                .load(bangumi.coverImage.url)
                 .thumbnail(0.1f)
                 .placeholder(BitmapDrawable(resources, bitmap))
                 .crossFade()

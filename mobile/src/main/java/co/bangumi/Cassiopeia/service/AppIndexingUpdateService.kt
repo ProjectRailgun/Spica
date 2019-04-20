@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
 import co.bangumi.Cassiopeia.Constant
+import co.bangumi.common.BuildConfig
 import co.bangumi.common.StringUtil
 import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
@@ -16,7 +17,7 @@ class AppIndexingUpdateService : JobIntentService() {
     companion object {
 
         fun enqueueWork(context: Context) {
-            JobIntentService.enqueueWork(
+            enqueueWork(
                 context,
                 AppIndexingUpdateService::class.java,
                 Constant.UPDATE_INDEX_ALL_BANGUMI,
@@ -26,23 +27,23 @@ class AppIndexingUpdateService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        Log.d("IndexingUpdateService", "onHandleWorkStart")
-        var allBangumi: List<Bangumi> = ArrayList();
+        if (BuildConfig.DEBUG) Log.d("IndexingUpdateService", "onHandleWorkStart")
+        var allBangumi: List<Bangumi> = ArrayList()
 
         ApiClient.getInstance()
-            .getSearchBangumi(1, 300, "air_date", "desc", null)
+            .getSearchBangumi(1, 300, "air_date", "desc", null, Bangumi.Type.ALL.value)
             .subscribe {
                 allBangumi = it.getData()
             }
 
-        if (allBangumi.isEmpty()) return;
-        val firebaseAppIndex: FirebaseAppIndex = FirebaseAppIndex.getInstance();
+        if (allBangumi.isEmpty()) return
+        val firebaseAppIndex: FirebaseAppIndex = FirebaseAppIndex.getInstance()
         for (bangumi in allBangumi) {
             val index = Indexables.digitalDocumentBuilder()
                 .setName(StringUtil.getName(bangumi))
                 .setText(bangumi.summary)
                 .setUrl(Constant.DETAIL_URL_PREFIX + bangumi.id)
-                .setImage(bangumi.image)
+                .setImage(bangumi.cover)
                 .build()
 
             firebaseAppIndex.update(index)

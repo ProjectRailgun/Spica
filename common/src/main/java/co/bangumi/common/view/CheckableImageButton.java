@@ -19,7 +19,7 @@ public class CheckableImageButton extends AppCompatImageButton implements Checka
     private OnCheckedChangeListener mOnCheckedChangeListener;
 
     public CheckableImageButton(Context context) {
-        this(context, (AttributeSet) null);
+        this(context, null);
     }
 
     public CheckableImageButton(Context context, AttributeSet attrs) {
