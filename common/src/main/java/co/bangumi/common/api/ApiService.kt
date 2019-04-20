@@ -5,16 +5,7 @@ import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.http.*
 
-/**
- * Created by roya on 2017/5/22.
- */
-
 interface ApiService {
-
-    companion object {
-        const val BANGUMI_TYPE_CN = 1001
-        const val BANGUMI_TYPE_RAW = 1002
-    }
 
     /**
      * DOH
@@ -44,13 +35,17 @@ interface ApiService {
      */
 
     @GET("/api/home/my_bangumi")
-    fun getMyBangumi(@Query("status") status: Int = 3): Observable<ListResponse<Bangumi>>
+    fun getMyBangumi(
+        @Query("page") page: Int?,
+        @Query("count") count: Int?,
+        @Query("status") status: Int?
+    ): Observable<ListResponse<Bangumi>>
 
     @GET("/api/home/announce")
     fun getAnnounceBangumi(): Observable<ListResponse<Announce>>
 
-    @GET("/api/home/on_air?type=1001")
-    fun getOnAir(): Observable<ListResponse<Bangumi>>
+    @GET("/api/home/on_air")
+    fun getOnAir(@Query("type") type: Int?): Observable<ListResponse<Bangumi>>
 
     @GET("/api/home/bangumi")
     fun getSearchBangumi(
@@ -58,7 +53,8 @@ interface ApiService {
         @Query("count") count: Int?,
         @Query("sort_field") sortField: String?,
         @Query("sort_order") sortOrder: String?,
-        @Query("name") name: String?
+        @Query("name") name: String?,
+        @Query("type") type: Int?
     ): Observable<ListResponse<Bangumi>>
 
     @GET("/api/home/bangumi/{id}")

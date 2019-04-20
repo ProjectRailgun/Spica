@@ -26,8 +26,7 @@ import co.bangumi.common.DisplayUtil
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import io.reactivex.Observable
-import io.reactivex.functions.Action
-import io.reactivex.functions.Consumer
+import java.util.*
 
 @SuppressLint("Registered")
 class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
@@ -35,23 +34,18 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
         fun intent(context: Context): Intent {
             return Intent(context, AllBangumiActivity::class.java)
         }
-
-        private const val TASK_ID_LOAD = 1
     }
 
-    var loaded = false
-    var pageNow = 1
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
+
+    private var loaded = false
+    private var pageNow = 1
+    private var type: Int = Bangumi.Type.ALL.value
+    private var isAll = true
 
     private val spinner by lazy { findViewById<AppCompatSpinner>(R.id.spinner) }
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
-
-    private val filterAll: (Bangumi) -> Boolean = { true }
-    private val filterCN: (Bangumi) -> Boolean = { it.type == co.bangumi.common.api.ApiService.BANGUMI_TYPE_CN }
-    private val filterRAW: (Bangumi) -> Boolean = { it.type == co.bangumi.common.api.ApiService.BANGUMI_TYPE_RAW }
-
-    private var filterNow = filterAll
-    private var isAll = true
 
     private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.loading)) }
 
@@ -74,14 +68,13 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                filterNow = when (position) {
-                    1 -> filterCN
-                    2 -> filterRAW
-                    else -> filterAll
+                type = when (position) {
+                    1 -> Bangumi.Type.SUB.value
+                    2 -> Bangumi.Type.RAW.value
+                    else -> Bangumi.Type.ALL.value
                 }
                 reloadData()
             }
-
         }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
@@ -116,14 +109,10 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     fun loadData() {
         onLoadData()?.let {
             it.withLifecycle()
-                    .subscribe(Consumer {
-                        isAll = if (it.isEmpty()) {
-                            true
-                        } else {
-                            addToList(it)
-                            false
-                        }
-                    }, toastErrors(), Action { loadingHud.dismiss() })
+                .subscribe({ addToList(it) }, {
+                    loadingHud.dismiss()
+                    toastErrors(it)
+                }, { loadingHud.dismiss() })
         }
     }
 
@@ -132,14 +121,15 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             loadingHud.show()
             loaded = true
             if (BuildConfig.DEBUG) Log.i("AllBangumiActivity", "onLoadData:$pageNow")
-            co.bangumi.common.api.ApiClient.getInstance().getSearchBangumi(pageNow, 300, "air_date", "desc", null)
-                    .withLifecycle()
-                    .onlyRunOneInstance(TASK_ID_LOAD, false)
-                    .flatMap {
-                        pageNow += 1
-                        loaded = it.getData().isEmpty()
-                        Observable.just(it.getData())
-                    }
+            co.bangumi.common.api.ApiClient.getInstance().getSearchBangumi(pageNow, 15, "air_date", "desc", null, type)
+                .withLifecycle()
+                .onlyRunOneInstance(TASK_ID_LOAD, false)
+                .flatMap {
+                    pageNow += 1
+                    loaded = it.getData().isEmpty()
+                    isAll = it.count == bangumiList.size + it.getData().size
+                    Observable.just(it.getData())
+                }
         } else null
     }
 
@@ -154,8 +144,7 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
     }
 
     private fun addToList(list: List<Bangumi>) {
-        val fl = list.filter(filterNow)
-        bangumiList.addAll(fl)
+        bangumiList.addAll(list)
         adapter.notifyDataSetChanged()
     }
 
@@ -176,10 +165,10 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             val childCount = state.itemCount
             if (position == 0) {
                 outRect.top =
-                        outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
+                    outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
             } else if (position + 1 == childCount) {
                 outRect.bottom =
-                        outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
+                    outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
             }
         }
     }
@@ -198,8 +187,8 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
             viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
-                            if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
+                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                    if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)
@@ -212,10 +201,10 @@ class AllBangumiActivity : co.bangumi.common.activity.BaseActivity() {
 
             if (bangumi.type == Bangumi.Type.RAW.value) {
                 viewHolder.typeRaw.visibility = View.VISIBLE
-                viewHolder.typeSub.visibility = View.GONE
-            } else{
+                viewHolder.typeSub.visibility = View.INVISIBLE
+            } else {
                 viewHolder.typeSub.visibility = View.VISIBLE
-                viewHolder.typeRaw.visibility = View.GONE
+                viewHolder.typeRaw.visibility = View.INVISIBLE
             }
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")

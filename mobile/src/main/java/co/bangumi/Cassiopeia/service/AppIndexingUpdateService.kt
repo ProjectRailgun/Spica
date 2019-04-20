@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
 import co.bangumi.Cassiopeia.Constant
+import co.bangumi.common.BuildConfig
 import co.bangumi.common.StringUtil
 import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
@@ -26,11 +27,11 @@ class AppIndexingUpdateService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        Log.d("IndexingUpdateService", "onHandleWorkStart")
+        if (BuildConfig.DEBUG) Log.d("IndexingUpdateService", "onHandleWorkStart")
         var allBangumi: List<Bangumi> = ArrayList()
 
         ApiClient.getInstance()
-            .getSearchBangumi(1, 300, "air_date", "desc", null)
+            .getSearchBangumi(1, 300, "air_date", "desc", null, Bangumi.Type.ALL.value)
             .subscribe {
                 allBangumi = it.getData()
             }

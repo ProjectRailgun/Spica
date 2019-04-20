@@ -22,8 +22,7 @@ import co.bangumi.common.api.ApiClient
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
-import io.reactivex.functions.Action
-import io.reactivex.functions.Consumer
+import java.util.*
 
 
 class SearchActivity : co.bangumi.common.activity.BaseActivity() {
@@ -34,14 +33,14 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
         fun intent(context: Context): Intent {
             return Intent(context, SearchActivity::class.java)
         }
-
-        public const val TASK_ID_LOAD = 0x01
     }
 
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val edit by lazy { findViewById<EditText>(R.id.edit) }
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
+
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +62,15 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
 
     private fun search(s: String) {
         loadingHud.show()
-        ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s)
-                .withLifecycle()
-                .onlyRunOneInstance(TASK_ID_LOAD, true)
-                .subscribe(Consumer {
-                    display(it.getData())
-                }, toastErrors(), Action { loadingHud.dismiss() })
+        ApiClient.getInstance().getSearchBangumi(1, 300, "air_date", "desc", s, Bangumi.Type.ALL.value)
+            .withLifecycle()
+            .onlyRunOneInstance(TASK_ID_LOAD, true)
+            .subscribe({
+                display(it.getData())
+            }, {
+                loadingHud.dismiss()
+                toastErrors(it)
+            }, { loadingHud.dismiss() })
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, s)
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
@@ -116,8 +118,8 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = bangumi.name_cn
             viewHolder.subtitle.text = bangumi.name
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
-                            if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
+                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                    if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)
@@ -131,7 +133,7 @@ class SearchActivity : co.bangumi.common.activity.BaseActivity() {
             if (bangumi.type == Bangumi.Type.RAW.value) {
                 viewHolder.typeRaw.visibility = View.VISIBLE
                 viewHolder.typeSub.visibility = View.GONE
-            } else{
+            } else {
                 viewHolder.typeSub.visibility = View.VISIBLE
                 viewHolder.typeRaw.visibility = View.GONE
             }

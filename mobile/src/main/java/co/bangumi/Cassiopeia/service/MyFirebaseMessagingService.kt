@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import co.bangumi.Cassiopeia.HomeActivity
 import co.bangumi.Cassiopeia.R
+import co.bangumi.common.BuildConfig
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -19,11 +20,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     val CHANNEL_NAME = "other"
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "FCMService Create")
+        if (BuildConfig.DEBUG) Log.d(TAG, "FCMService Create")
     }
 
     override fun onNewToken(s: String?) {
-        Log.d("FCM_TOKEN", s)
+        if (BuildConfig.DEBUG) Log.d("FCM_TOKEN", s)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {

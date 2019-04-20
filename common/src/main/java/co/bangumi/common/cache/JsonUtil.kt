@@ -1,6 +1,7 @@
 package co.bangumi.common.cache
 
 import android.util.Log
+import co.bangumi.common.BuildConfig
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
@@ -17,7 +18,7 @@ object JsonUtil {
         try {
             return gson.fromJson(src, classOfT)
         } catch (e: JsonParseException) {
-            Log.w("JsonUtil", "JsonParseException", e)
+            if (BuildConfig.DEBUG) Log.w("JsonUtil", "JsonParseException", e)
         }
 
         return null

@@ -2,10 +2,6 @@ package co.bangumi.common.api
 
 import java.util.*
 
-/**
- * Created by roya on 2017/5/23.
- */
-
 open class BaseResponse
 
 open class MessageResponse : BaseResponse() {
@@ -36,7 +32,10 @@ class DataResponse<T> : MessageResponse() {
 }
 
 class ListResponse<T> : BaseResponse() {
-    private var data: List<T>? = null
+    private val data: List<T>? = null
+    val status: Int? = null
+    val total: Int? = null
+    val count: Int? = null
 
     fun getData(): List<T> {
         if (data != null) {

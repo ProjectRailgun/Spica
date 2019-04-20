@@ -78,7 +78,7 @@ class PlayerActivity : co.bangumi.common.activity.BaseActivity() {
         if (TextUtils.isEmpty(url)) throw IllegalArgumentException("Required url")
 //        val fixedUrl = Uri.encode(co.bangumi.common.api.ApiHelper.fixHttpUrl(url), "@#&=*+-_.,:!?()/~'%")
         val fixedUrl = Uri.encode(url, "@#&=*+-_.,:!?()/~'%")
-        Log.i(this.localClassName, "playing:$fixedUrl")
+        if (BuildConfig.DEBUG) Log.i(this.localClassName, "playing:$fixedUrl")
 
         checkMultiWindowMode()
         (findViewById<ImageButton>(R.id.play_close)).setOnClickListener { finish() }

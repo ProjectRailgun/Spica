@@ -44,7 +44,7 @@
             android:singleLine="true"
             android:textColor="@color/textColorLowLight"
             android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/type_sub"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="12 eps  ·  Friday" />
 
@@ -74,11 +74,11 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="12sp"
             android:gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBaseline_toBaselineOf="@+id/state"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="invisible"
+            app:layout_constraintBaseline_toBaselineOf="@id/state"
+            app:layout_constraintEnd_toStartOf="@id/info"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/state"
+            app:layout_constraintStart_toEndOf="@id/imageView"
             android:text="@string/bangumi_type_cn" />
 
         <TextView
@@ -93,10 +93,10 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="12sp"
             android:gravity="center"
-            app:layout_constraintBaseline_toBaselineOf="@+id/state"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/state"
+            app:layout_constraintEnd_toStartOf="@id/info"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/state"
+            app:layout_constraintStart_toEndOf="@id/imageView"
             android:text="@string/bangumi_type_raw" />
 
         <TextView

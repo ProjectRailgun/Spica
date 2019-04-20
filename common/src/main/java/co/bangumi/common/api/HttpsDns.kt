@@ -1,5 +1,7 @@
 package co.bangumi.common.api
 
+import android.util.Log
+import co.bangumi.common.BuildConfig
 import okhttp3.Dns
 import java.io.IOException
 import java.net.InetAddress
@@ -13,8 +15,9 @@ class HttpsDns : Dns {
 
     @Throws(UnknownHostException::class)
     override fun lookup(hostname: String): List<InetAddress> {
-        if (hostname.contains("1slb.net"))
+        if (hostname.contains("1slb.net")) {
             return Dns.SYSTEM.lookup(hostname)
+        }
 
         try {
             val ips = dnsService.lookup(hostname)
@@ -28,7 +31,7 @@ class HttpsDns : Dns {
             }
             return result
         } catch (e: IOException) {
-            e.printStackTrace()
+            if (BuildConfig.DEBUG) Log.e("DOH", e.message)
         }
 
         return Dns.SYSTEM.lookup(hostname)

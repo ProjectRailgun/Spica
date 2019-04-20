@@ -70,6 +70,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity(), OnMenuItemClic
     private val episodeAdapter by lazy { EpisodeAdapter() }
 
     private val loadingHud: KProgressHUD by lazy { DisplayUtil.createCancellableHud(this, getString(R.string.loading)) }
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
 
     private lateinit var mMenuDialogFragment: ContextMenuDialogFragment
     private lateinit var bgm: Bangumi
@@ -128,11 +129,12 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity(), OnMenuItemClic
         val menuParams = MenuParams()
         menuParams.actionBarSize = resources.getDimension(R.dimen.context_menu_height).toInt()
         val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
+        collectionStatusArray[0] = getString(R.string.delete_collection)
         val contextMenuList = ArrayList<MenuObject>()
         collectionStatusArray.forEachIndexed { index, value ->
             val menuObject = MenuObject(value)
             menuObject.resource = when (index) {
-                0 -> R.drawable.ic_watchlist
+                0 -> R.drawable.ic_delete
                 1 -> R.drawable.ic_wish
                 2 -> R.drawable.ic_watched
                 3 -> R.drawable.ic_watching
@@ -154,6 +156,7 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity(), OnMenuItemClic
         collectionStatusText.text = resources.getStringArray(R.array.array_favorite)[position]
         ApiClient.getInstance().uploadFavoriteStatus(bgm.id, FavoriteChangeRequest(position))
             .withLifecycle()
+            .onlyRunOneInstance(TASK_ID_LOAD, false)
             .subscribe({
                 bgm.favorite_status = position
             }, {
@@ -367,8 +370,10 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity(), OnMenuItemClic
 
         if (detail.type == Bangumi.Type.RAW.value) {
             typeRaw.visibility = View.VISIBLE
+            typeSub.visibility = View.GONE
         } else {
             typeSub.visibility = View.VISIBLE
+            typeRaw.visibility = View.GONE
         }
 
         btnBgmTv.visibility = if (detail.bgm_id > 0) View.VISIBLE else View.GONE
@@ -467,8 +472,12 @@ class DetailActivity : co.bangumi.common.activity.BaseActivity(), OnMenuItemClic
                 mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG)
             }
         }
-        val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
-        collectionStatusText.text = collectionStatusArray[detail.favorite_status]
+        if (detail.favorite_status == 0) {
+            collectionStatusText.text = getString(R.string.collect)
+        } else {
+            val collectionStatusArray = resources.getStringArray(R.array.array_favorite)
+            collectionStatusText.text = collectionStatusArray[detail.favorite_status]
+        }
 
         if (detail is co.bangumi.common.model.BangumiDetail && detail.episodes != null && detail.episodes.isNotEmpty()) {
             episodeAdapter.setEpisodes(detail.episodes)

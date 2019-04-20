@@ -16,11 +16,11 @@
     <string name="more">もっと</string>
 
     <string-array name="array_favorite">
-        <item>お気に入り登録</item>
-        <item>鑑賞準備</item>
-        <item>鑑賞完了</item>
-        <item>鑑賞中</item>
-        <item>放置</item>
+        <item>全部</item>
+        <item>観たい</item>
+        <item>見ました</item>
+        <item>視聴中</item>
+        <item>一時保留</item>
         <item>放棄</item>
     </string-array>
 
@@ -53,7 +53,9 @@
     <string name="finished">完結</string>
     <string name="bangumi_type_raw">"  字幕無し  "</string>
     <string name="bangumi_type_cn">"  中国語字幕  "</string>
-    <string name="searching">Searching...</string>
-    <string name="loading">Loading...</string>
+    <string name="searching">Searching…</string>
+    <string name="loading">Loading…</string>
+    <string name="collect">受け取り</string>
+    <string name="delete_collection">削除する</string>
 
 </resources>

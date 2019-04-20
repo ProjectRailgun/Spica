@@ -7,28 +7,41 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.support.v7.widget.AppCompatSpinner
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import co.bangumi.common.BuildConfig
 import co.bangumi.common.DisplayUtil
 import co.bangumi.common.model.Bangumi
 import com.bumptech.glide.Glide
 import io.reactivex.Observable
-import io.reactivex.functions.Action
-import io.reactivex.functions.Consumer
+import java.util.*
 
 class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
 
     private val bangumiList = arrayListOf<Bangumi>()
     private val adapter = HomeAdapter()
 
+    private val spinner by lazy { findViewById<AppCompatSpinner>(R.id.spinner) }
+
     private val loadingHud by lazy { DisplayUtil.createHud(this, resources.getString(R.string.loading)) }
+
+    private var pageNow = 1
+    private var loaded = false
+    private var type: Int = Bangumi.Type.ALL.value
+    private var isAll = true
+
+    private val TASK_ID_LOAD by lazy { UUID.randomUUID().toString() }
 
     companion object {
         fun intent(context: Context): Intent {
@@ -45,6 +58,28 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setTitle(R.string.title_favorite)
 
+        val sp = ArrayAdapter.createFromResource(this,
+            R.array.array_favorite, R.layout.spinner_item
+        )
+        sp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = sp
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                type = when (position) {
+                    1 -> Bangumi.Status.WISH.value
+                    2 -> Bangumi.Status.WATCHED.value
+                    3 -> Bangumi.Status.WATCHING.value
+                    4 -> Bangumi.Status.PAUSE.value
+                    5 -> Bangumi.Status.ABANDONED.value
+                    else -> Bangumi.Status.ALL.value
+                }
+                reloadData()
+            }
+        }
+
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val mLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = mLayoutManager
@@ -57,7 +92,9 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
                 val totalItemCount = mLayoutManager.itemCount
                 val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    loadData()
+                    if (!isAll) {
+                        loadData()
+                    }
                 }
             }
         }
@@ -72,27 +109,39 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
         loadData()
     }
 
+    fun reloadData() {
+        loaded = false
+        pageNow = 1
+        bangumiList.clear()
+        adapter.notifyDataSetChanged()
+        loadData()
+    }
+
     fun loadData() {
         onLoadData()?.let {
             it.withLifecycle()
-                    .subscribe(Consumer {
-                        addToList(it)
-                    }, toastErrors(), Action { loadingHud.dismiss() })
+                .subscribe({ addToList(it) }, {
+                    loadingHud.dismiss()
+                    toastErrors(it)
+                }, { loadingHud.dismiss() })
         }
     }
 
-    var loaded = false
 
     fun onLoadData(): Observable<List<Bangumi>>? {
         return if (!loaded) {
             loadingHud.show()
             loaded = true
-            co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(3)
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(1))
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(2))
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(4))
-                    .concatWith(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(5))
-                    .flatMap { Observable.just(it.getData()) }
+            if (BuildConfig.DEBUG) Log.i("MyCollectionActivity", "onLoadData:$pageNow")
+            co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(pageNow, 15, type)
+                .withLifecycle()
+                .onlyRunOneInstance(TASK_ID_LOAD, false)
+                .flatMap {
+                    pageNow += 1
+                    loaded = it.getData().isEmpty()
+                    isAll = it.count == bangumiList.size + it.getData().size
+                    Observable.just(it.getData())
+                }
         } else null
     }
 
@@ -128,10 +177,10 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
             val childCount = state.itemCount
             if (position == 0) {
                 outRect.top =
-                        outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
+                    outRect.top.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list))
             } else if (position + 1 == childCount) {
                 outRect.bottom =
-                        outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
+                    outRect.bottom.plus(view.resources.getDimensionPixelSize(R.dimen.spacing_list_bottom))
             }
         }
     }
@@ -150,8 +199,8 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
             viewHolder.title.text = co.bangumi.common.StringUtil.getName(bangumi)
             viewHolder.subtitle.text = co.bangumi.common.StringUtil.subTitle(bangumi)
             viewHolder.info.text = viewHolder.info.resources.getString(R.string.update_info)
-                    .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
-                            if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
+                .format(bangumi.eps, bangumi.air_weekday.let { co.bangumi.common.StringUtil.dayOfWeek(it) },
+                    if (bangumi.isOnAir()) viewHolder.info.resources.getString(R.string.on_air) else viewHolder.info.resources.getString(R.string.finished))
 
             if (bangumi.favorite_status > 0) {
                 val array = resources.getStringArray(R.array.array_favorite)
@@ -164,10 +213,10 @@ class MyCollectionActivity : co.bangumi.common.activity.BaseActivity() {
 
             if (bangumi.type == Bangumi.Type.RAW.value) {
                 viewHolder.typeRaw.visibility = View.VISIBLE
-                viewHolder.typeSub.visibility = View.GONE
-            } else{
+                viewHolder.typeSub.visibility = View.INVISIBLE
+            } else {
                 viewHolder.typeSub.visibility = View.VISIBLE
-                viewHolder.typeRaw.visibility = View.GONE
+                viewHolder.typeRaw.visibility = View.INVISIBLE
             }
 
             viewHolder.info2.text = bangumi.summary.replace("\n", "")

@@ -59,8 +59,8 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
         swipeRefresh.isRefreshing = true
         Observable.zip(
                 withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getAnnounceBangumi()),
-                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi()),
-                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getOnAir()),
+                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getMyBangumi(1, -1, Bangumi.Status.WATCHING.value)),
+                withLifecycle(co.bangumi.common.api.ApiClient.getInstance().getOnAir(Bangumi.Type.ALL.value)),
             Function3 { t1: ListResponse<Announce>, t2: ListResponse<Bangumi>, t3: ListResponse<Bangumi> ->
                     arrayOf(t1.getData(), t2.getData(), t3.getData())
             })
@@ -232,10 +232,10 @@ class HomeFragment : co.bangumi.common.activity.BaseFragment() {
 
                         if (bangumi.type == Bangumi.Type.RAW.value) {
                             viewHolder.typeRaw.visibility = View.VISIBLE
-                            viewHolder.typeSub.visibility = View.GONE
+                            viewHolder.typeSub.visibility = View.INVISIBLE
                         } else{
                             viewHolder.typeSub.visibility = View.VISIBLE
-                            viewHolder.typeRaw.visibility = View.GONE
+                            viewHolder.typeRaw.visibility = View.INVISIBLE
                         }
 
                         viewHolder.info2.text = bangumi.summary.replace("\n", "")

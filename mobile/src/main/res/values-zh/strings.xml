@@ -16,7 +16,7 @@
     <string name="more">更多</string>
 
     <string-array name="array_favorite">
-        <item>添加收藏</item>
+        <item>全部</item>
         <item>想看</item>
         <item>看过</item>
         <item>在看</item>
@@ -53,7 +53,9 @@
     <string name="finished">完结</string>
     <string name="on_air">连载中</string>
     <string name="bangumi_type_raw">"  无字幕  "</string>
-    <string name="searching">Searching...</string>
-    <string name="loading">Loading...</string>
+    <string name="searching">Searching…</string>
+    <string name="loading">Loading…</string>
+    <string name="collect">收藏</string>
+    <string name="delete_collection">删除收藏</string>
 
 </resources>

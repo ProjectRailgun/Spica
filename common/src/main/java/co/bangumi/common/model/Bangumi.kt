@@ -4,10 +4,6 @@ import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Created by roya on 2017/5/24.
- */
-
 open class Bangumi(val id: String,
                    val name: String,
                    val name_cn: String,
@@ -26,16 +22,16 @@ open class Bangumi(val id: String,
                    var favorite_status: Int,
                    val unwatched_count: Int,
                    val update_time: Long,
-                   val bgm_id: Long): BaseEntity() {
-    enum class Status(val value: Int) { WISH(1), WATCHED(2), WATCHING(3), PAUSE(4), ABANDONED(5)}
-    enum class Type(val value: Int) { SUB(1001), RAW(1002)}
+                   val bgm_id: Long) : BaseEntity() {
+    enum class Status(val value: Int) { ALL(-1), WISH(1), WATCHED(2), WATCHING(3), PAUSE(4), ABANDONED(5) }
+    enum class Type(val value: Int) { ALL(-1), SUB(1001), RAW(1002) }
 
     data class CoverImage(
-            val value: Int,
-            val dominant_color: String,
-            val height: Int,
-            val width: Int,
-            val url: String
+        val value: Int,
+        val dominant_color: String,
+        val height: Int,
+        val width: Int,
+        val url: String
 
     )
 

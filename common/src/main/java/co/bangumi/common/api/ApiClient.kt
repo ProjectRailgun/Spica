@@ -81,7 +81,7 @@ object ApiClient {
 
                 this.connectionSpecs(specs)
             } catch (exc: Exception) {
-                Log.e("OkHttpTLSCompat", "Error while setting TLS 1.2", exc)
+                if (BuildConfig.DEBUG) Log.e("OkHttpTLSCompat", "Error while setting TLS 1.2", exc)
             }
 
         }
