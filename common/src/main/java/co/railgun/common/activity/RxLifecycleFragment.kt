@@ -1,11 +1,11 @@
 package co.railgun.common.activity
 
-
+import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.CheckResult
 import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
-import android.view.View
 import com.trello.rxlifecycle2.LifecycleProvider
 import com.trello.rxlifecycle2.LifecycleTransformer
 import com.trello.rxlifecycle2.RxLifecycle
@@ -14,27 +14,23 @@ import com.trello.rxlifecycle2.android.RxLifecycleAndroid
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 
+abstract class RxLifecycleFragment : Fragment(), LifecycleProvider<FragmentEvent> {
 
-open class RxLifecycleFragment : Fragment(), LifecycleProvider<FragmentEvent> {
     private val lifecycleSubject = BehaviorSubject.create<FragmentEvent>()
 
     @CheckResult
-    override fun lifecycle(): Observable<FragmentEvent> {
-        return lifecycleSubject.hide()
-    }
+    override fun lifecycle(): Observable<FragmentEvent> = lifecycleSubject.hide()
 
     @CheckResult
-    override fun <T> bindUntilEvent(event: FragmentEvent): LifecycleTransformer<T> {
-        return RxLifecycle.bindUntilEvent<T, FragmentEvent>(lifecycleSubject, event)
-    }
+    override fun <T> bindUntilEvent(event: FragmentEvent): LifecycleTransformer<T> =
+        RxLifecycle.bindUntilEvent(lifecycleSubject, event)
 
     @CheckResult
-    override fun <T> bindToLifecycle(): LifecycleTransformer<T> {
-        return RxLifecycleAndroid.bindFragment<T>(lifecycleSubject)
-    }
+    override fun <T> bindToLifecycle(): LifecycleTransformer<T> =
+        RxLifecycleAndroid.bindFragment(lifecycleSubject)
 
-    override fun onAttach(activity: android.app.Activity?) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         lifecycleSubject.onNext(FragmentEvent.ATTACH)
     }
 
@@ -47,6 +43,7 @@ open class RxLifecycleFragment : Fragment(), LifecycleProvider<FragmentEvent> {
         super.onViewCreated(view, savedInstanceState)
         lifecycleSubject.onNext(FragmentEvent.CREATE_VIEW)
     }
+
     override fun onStart() {
         super.onStart()
         lifecycleSubject.onNext(FragmentEvent.START)
@@ -81,5 +78,4 @@ open class RxLifecycleFragment : Fragment(), LifecycleProvider<FragmentEvent> {
         lifecycleSubject.onNext(FragmentEvent.DETACH)
         super.onDetach()
     }
-
 }
