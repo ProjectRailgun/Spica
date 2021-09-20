@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("com.google.firebase.crashlytics")
-    id("com.google.firebase.firebase-perf")
     id("com.google.gms.google-services")
     kotlin("android")
 }
@@ -57,7 +56,6 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-dynamic-links")
     implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.firebase:firebase-perf")
 
     implementation("com.youth.banner:banner:1.4.10")
     implementation("com.github.Yalantis:Context-Menu.Android:1.0.8")
