@@ -53,6 +53,5 @@ dependencies {
     api("com.google.firebase:firebase-appindexing:20.0.0")
 
     api("com.google.android.exoplayer:exoplayer-core:2.10.8")
-    implementation("com.github.tbruyelle:rxpermissions:0.10.2")
     api("com.kaopiz:kprogresshud:1.2.0")
 }
