@@ -161,7 +161,7 @@ class HomeActivity : BaseThemeActivity(),
     }
 
     private fun logout() {
-        co.railgun.common.SpicaApplication.logout(this)
+        SpicaApplication.logout(this)
         finishAffinity()
     }
 
