@@ -1,0 +1,2 @@
+-keep class co.railgun.common.activity.BaseActivity
+-keep class co.railgun.common.activity.RxLifecycleActivity

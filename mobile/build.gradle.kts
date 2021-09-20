@@ -1,38 +1,36 @@
+import me.omico.age.dsl.withBuildType
+
 plugins {
     id("com.android.application")
-    id("com.google.firebase.crashlytics")
-    id("com.google.gms.google-services")
     kotlin("android")
 }
 
-android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+withBuildType("release") {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+}
 
+android {
     defaultConfig {
         applicationId = "co.railgun.spica"
-        minSdk = 26
-        targetSdk = 30
         versionCode = 7
         versionName = "0.9.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
     buildTypes {
         release {
-//            signingConfig signingConfigs.release
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            // TODO Disable before refactoring the entire project.
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "consumer-rules.pro",
+            )
+            signingConfig = signingConfigs.findByName("release")
         }
         debug {
             applicationIdSuffix = ".debug"
         }
     }
-
     buildFeatures {
         viewBinding = true
     }
