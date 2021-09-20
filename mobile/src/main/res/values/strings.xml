@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">番組Collection</string>
+    <string name="app_name">Bangumi R.I.P.</string>
     <string name="space" translatable="false"> </string>
     <string name="title_activity_home" translatable="false">HomeActivity</string>
 
-    <string name="first_config_description">Start by logging in with your 番組Collection account.</string>
+    <string name="first_config_description">Start by logging in with your Bangumi R.I.P. account.</string>
     <string name="first_config_username">Username</string>
     <string name="first_config_password">Password</string>
 
@@ -29,7 +29,7 @@
 
     <string-array name="array_bangumi_type">
         <item>All</item>
-        <item>SUB</item>
+        <item>Chinese</item>
         <item>RAW</item>
     </string-array>
 
@@ -41,37 +41,38 @@
     <string name="title_activity_player" translatable="false">PlayerActivity</string>
     <string name="title_activity_settings" translatable="false">Settings</string>
 
-    <string name="update_info">%d eps  ·  %s  ·  %s</string>
-    <string name="unwatched">%d new</string>
-    <string name="eps_all">%d eps</string>
+    <string name="update_info">%d Eps  ·  %s  ·  %s</string>
+    <string name="unwatched">%d New</string>
+    <string name="eps_all">%d Eps</string>
     <string name="more">More</string>
     <string name="less">Less</string>
-    <string name="others">others</string>
+    <string name="others">Settings</string>
+    <string name="switch_theme">Switch theme</string>
     <string name="logout">Logout</string>
     <string name="recommended">Recommended</string>
     <string name="releasing">Releasing</string>
-    <string name="my_collection">My Collection</string>
+    <string name="my_collection">My collection</string>
     <string name="all_bangumi">All Bangumi</string>
     <string name="mark_as_watched">Mark as watched</string>
     <string name="mark_all_before_as_watched">Mark all before as watched</string>
     <string name="open_with_external_player">Open with external player</string>
     <string name="download">Download</string>
     <string name="delete">Delete</string>
-    <string name="delete_success">Delete Success</string>
-    <string name="delete_failed">Delete Failed</string>
+    <string name="delete_success">Delete success</string>
+    <string name="delete_failed">Delete failed</string>
 
-    <string name="bangumi_type_cn">"  SUB  "</string>
+    <string name="bangumi_type_cn">"  Chinese  "</string>
     <string name="bangumi_type_raw">"  RAW  "</string>
-    <string name="on_air">onAir</string>
+    <string name="on_air">On air</string>
     <string name="finished">Finished</string>
 
     <string name="toast_forward" translatable="false">+%ds</string>
     <string name="toast_backward" translatable="false">-%ds</string>
 
     <string name="connecting">Connecting…</string>
-    <string name="network_error">Network Error</string>
+    <string name="network_error">Network error</string>
     <string name="loading">Loading…</string>
     <string name="searching">Searching…</string>
-    <string name="collect">Collect</string>
-    <string name="delete_collection">Delete Collection</string>
+    <string name="collect">Add to collection</string>
+    <string name="delete_collection">Remove collection</string>
 </resources>

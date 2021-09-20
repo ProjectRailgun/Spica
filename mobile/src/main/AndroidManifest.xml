@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="co.bangumi.Cassiopeia"
+    package="co.railgun.spica"
     tools:ignore="ImpliedTouchscreenHardware">
 
     <uses-feature
@@ -13,15 +13,16 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".CassiopeiaApplication"
+        android:name="co.railgun.spica.SpicaApplication"
         android:allowBackup="true"
         android:banner="@mipmap/launcher_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".StartPaddingActivity"
-            android:theme="@style/PaddingViewTheme">
+            android:name="co.railgun.spica.StartPaddingActivity"
+            android:theme="@style/PaddingViewTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +36,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="bangumi.co"
+                    android:host="bgm.rip"
                     android:scheme="https" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
@@ -45,46 +46,46 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="cygnus.page.link"
+                    android:host="co.railgun.spica.page.link"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name="co.railgun.spica.DetailActivity"
+            android:theme="@style/AppTheme.NoStateBar" />
         <activity
-            android:name=".HomeActivity"
+            android:name="co.railgun.spica.HomeActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoStateBar" />
         <activity
-            android:name=".FirstConfigActivity"
+            android:name="co.railgun.spica.FirstConfigActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".PlayerActivity"
+            android:name="co.railgun.spica.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_player"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".MyCollectionActivity" />
-        <activity android:name=".AllBangumiActivity" />
+        <activity android:name="co.railgun.spica.MyCollectionActivity" />
+        <activity android:name="co.railgun.spica.AllBangumiActivity" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->
         <!-- android:label="@string/title_activity_settings" -->
         <!-- android:theme="@style/AppThemeActionBar" /> -->
-        <activity android:name=".SearchActivity" />
+        <activity android:name="co.railgun.spica.SearchActivity" />
 
-        <service android:name=".service.MyFirebaseMessagingService">
+        <service android:name="co.railgun.spica.service.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".service.AppIndexingUpdateService"
+            android:name="co.railgun.spica.service.AppIndexingUpdateService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
-            android:name=".service.AppIndexingUpdateReceiver"
+            android:name="co.railgun.spica.service.AppIndexingUpdateReceiver"
             android:exported="true"
             android:permission="com.google.android.gms.permission.APPINDEXING">
             <intent-filter>
@@ -93,8 +94,8 @@
         </receiver>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="co.bangumi.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="co.railgun.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -17,6 +17,9 @@
     <item android:title="@string/others">
         <menu>
             <item
+                android:id="@+id/nav_setting"
+                android:title="@string/switch_theme" />
+            <item
                 android:id="@+id/nav_logout"
                 android:title="@string/logout" />
         </menu>

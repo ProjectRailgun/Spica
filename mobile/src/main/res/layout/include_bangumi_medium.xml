@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="94dp"
@@ -9,7 +9,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/contentBackground"
+    app:cardBackgroundColor="?attr/contentBackground"
     app:cardCornerRadius="1dp"
     app:cardElevation="3dp">
 
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <co.bangumi.common.view.FixedAspectRatioFrameLayout
+        <co.railgun.common.view.FixedAspectRatioFrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:aspectRatio="0.715">
@@ -31,7 +31,7 @@
                 android:scaleType="centerCrop" />
 
 
-        </co.bangumi.common.view.FixedAspectRatioFrameLayout>
+        </co.railgun.common.view.FixedAspectRatioFrameLayout>
 
         <TextView
             android:id="@+id/title"
@@ -44,7 +44,7 @@
             android:fadingEdgeLength="40dp"
             android:requiresFadingEdge="horizontal"
             android:singleLine="true"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="?attr/textColorPrimary"
             tools:text="title" />
 
         <TextView
@@ -55,9 +55,9 @@
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:maxLines="1"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="?attr/textColorSecondary"
             android:textSize="13sp"
             tools:text="new" />
 
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

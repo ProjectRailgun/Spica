@@ -1,6 +1,6 @@
 # 番組Collection
 
-[![Get On Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/store/apps/details?id=co.bangumi.Cassiopeia)
+[![Get On Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/store/apps/details?id=spica)
 
 An android client for [番組Collection](https://bangumi.co). Written in Kotlin.
 

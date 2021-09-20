@@ -1,4 +1,4 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:keepScreenOn="true"
-    tools:context="co.bangumi.Cassiopeia.PlayerActivity">
+    tools:context="co.railgun.spica.PlayerActivity">
 
-    <co.bangumi.common.player.CygnusExoPlayer
+    <co.railgun.common.player.SpicaExoPlayer
         android:id="@+id/player_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <co.bangumi.common.view.FastForwardBar
+    <co.railgun.common.view.FastForwardBar
         android:id="@+id/fast_forward_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -42,7 +42,7 @@
             android:src="@drawable/ic_arrow_back_black_24dp"
             android:tint="@android:color/white" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -74,7 +74,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <co.bangumi.common.view.SeekBar
+            <co.railgun.common.view.SeekBar
                 android:id="@+id/play_progress"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/play_position"
                 tools:layout_editor_absoluteX="0dp" />
 
-            <co.bangumi.common.view.CheckableImageButton
+            <co.railgun.common.view.CheckableImageButton
                 android:id="@+id/play_button"
                 android:layout_width="48dp"
                 android:layout_height="36dp"
@@ -101,7 +101,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/play_progress" />
 
-            <co.bangumi.common.view.CheckableImageButton
+            <co.railgun.common.view.CheckableImageButton
                 android:id="@+id/play_screen"
                 android:layout_width="48dp"
                 android:layout_height="36dp"
@@ -115,7 +115,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/play_progress" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
