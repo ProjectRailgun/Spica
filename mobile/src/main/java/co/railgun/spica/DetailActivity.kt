@@ -36,11 +36,14 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.ktx.Firebase
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment
 import com.yalantis.contextmenu.lib.MenuObject
@@ -132,11 +135,10 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
             .setImage(bgm.image)
             .build()
         FirebaseAppIndex.getInstance(applicationContext).update(index)
-
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
-        FirebaseAnalytics.getInstance(this).logEvent("view_detail", bundle)
+        Firebase.analytics.logEvent("view_detail") {
+            param(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
+            param(FirebaseAnalytics.Param.ITEM_NAME, name)
+        }
     }
 
     private fun initMenuFragment() {
@@ -315,14 +317,14 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
             downloadBgm(episodeDetail)
             dialog.dismiss()
 
-            val bundle = Bundle()
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodeDetail.id)
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, StringUtil.getName(episodeDetail.bangumi))
-            bundle.putString(
-                FirebaseAnalytics.Param.ITEM_LOCATION_ID,
-                episodeDetail.episode_no.toString()
-            )
-            FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
+            Firebase.analytics.logEvent("download_start") {
+                param(FirebaseAnalytics.Param.ITEM_ID, episodeDetail.id)
+                param(FirebaseAnalytics.Param.ITEM_NAME, StringUtil.getName(episodeDetail.bangumi))
+                param(
+                    FirebaseAnalytics.Param.ITEM_LOCATION_ID,
+                    episodeDetail.episode_no.toString()
+                )
+            }
         }
 
         if (FileUtil.isFileExist(file)) {
@@ -564,14 +566,14 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
                 holder.tv.alpha = if (d.status != 0) 1f else 0.2f
                 holder.view.setOnClickListener {
                     if (d.status != 0) playVideo(d)
-                    val bundle = Bundle()
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, d.id)
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
-                    bundle.putString(
-                        FirebaseAnalytics.Param.ITEM_LOCATION_ID,
-                        d.episode_no.toString()
-                    )
-                    FirebaseAnalytics.getInstance(parent).logEvent("view_vod", bundle)
+                    Firebase.analytics.logEvent("view_vod") {
+                        param(FirebaseAnalytics.Param.ITEM_ID, d.id)
+                        param(FirebaseAnalytics.Param.ITEM_NAME, name)
+                        param(
+                            FirebaseAnalytics.Param.ITEM_LOCATION_ID,
+                            d.episode_no.toString()
+                        )
+                    }
                 }
 
                 holder.view.setOnLongClickListener {

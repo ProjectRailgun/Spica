@@ -19,7 +19,6 @@ import co.railgun.spica.databinding.ActivityHomeBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.youth.banner.Banner
 import com.youth.banner.loader.ImageLoader
 import retrofit2.HttpException
@@ -32,8 +31,6 @@ class HomeActivity : BaseThemeActivity(),
     private val root by lazy { binding.root }
     private val banner by lazy { root.findViewById<Banner>(R.id.banner) }
     private val fabSearch by lazy { root.findViewById<FloatingActionButton>(R.id.fabSearch) }
-
-    private var mFirebaseAnalytics: FirebaseAnalytics? = null
 
     override fun themeWhite(): Int {
         return R.style.AppThemeWhite_NoStateBar
@@ -69,8 +66,6 @@ class HomeActivity : BaseThemeActivity(),
         val navHeaderT1 = navigationView.getHeaderView(0).findViewById(R.id.textView1) as TextView
         val navHeaderT2 = navigationView.getHeaderView(0).findViewById(R.id.textView2) as TextView
         navigationView.setNavigationItemSelectedListener(this)
-
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, HomeFragment())

@@ -51,7 +51,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.0")
 
     implementation(platform("com.google.firebase:firebase-bom:28.4.1"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-dynamic-links")
     implementation("com.google.firebase:firebase-messaging")
