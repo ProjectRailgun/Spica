@@ -12,17 +12,15 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import androidx.fragment.app.FragmentManager
-import androidx.core.content.FileProvider
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.FileProvider
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.RecyclerView
 import co.railgun.common.DisplayUtil
 import co.railgun.common.FileUtil
 import co.railgun.common.PackageUtil
@@ -31,15 +29,21 @@ import co.railgun.common.api.*
 import co.railgun.common.cache.JsonUtil
 import co.railgun.common.model.Bangumi
 import co.railgun.common.model.EpisodeDetail
+import co.railgun.common.view.ScrollStartLayoutManager
+import co.railgun.spica.databinding.ActivityDetailBinding
 import com.bumptech.glide.Glide
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.ktx.Firebase
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment
 import com.yalantis.contextmenu.lib.MenuObject
@@ -48,12 +52,18 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.content_detail.*
 import java.io.File
 import java.util.*
 
 class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
+
     // TODO 重构
+    private lateinit var binding: ActivityDetailBinding
+
+    private val root by lazy { binding.root }
+    private val collectionStatus by lazy { root.findViewById<LinearLayout>(R.id.collectionStatus) }
+    private val collectionStatusText by lazy { root.findViewById<TextView>(R.id.collectionStatusText) }
+
     private val iv by lazy { findViewById<ImageView?>(R.id.image) }
     private val subtitle by lazy { findViewById<TextView>(R.id.subtitle) }
     private val info by lazy { findViewById<TextView>(R.id.info) }
@@ -98,20 +108,19 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = ""
 
-        recyclerView.layoutManager = co.railgun.common.view.ScrollStartLayoutManager(this, co.railgun.common.view.ScrollStartLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager = ScrollStartLayoutManager(this, ScrollStartLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = episodeAdapter
         fragmentManager = supportFragmentManager
 
         val json = intent.getStringExtra(INTENT_KEY_BANGMUMI)
         checkNotNull(json)
         bgm = JsonUtil.fromJson(json, Bangumi::class.java)!!
-        checkNotNull(bgm)
         initMenuFragment()
         setData(bgm)
         loadData(bgm.id)
@@ -125,12 +134,11 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
             .setUrl(Constant.DETAIL_URL_PREFIX + bgm.id)
             .setImage(bgm.image)
             .build()
-        FirebaseAppIndex.getInstance(getApplicationContext()).update(index)
-
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
-        FirebaseAnalytics.getInstance(this).logEvent("view_detail", bundle)
+        FirebaseAppIndex.getInstance(applicationContext).update(index)
+        Firebase.analytics.logEvent("view_detail") {
+            param(FirebaseAnalytics.Param.ITEM_ID, bgm.id)
+            param(FirebaseAnalytics.Param.ITEM_NAME, name)
+        }
     }
 
     private fun initMenuFragment() {
@@ -309,14 +317,14 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
             downloadBgm(episodeDetail)
             dialog.dismiss()
 
-            val bundle = Bundle()
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodeDetail.id)
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, StringUtil.getName(episodeDetail.bangumi))
-            bundle.putString(
-                FirebaseAnalytics.Param.ITEM_LOCATION_ID,
-                episodeDetail.episode_no.toString()
-            )
-            FirebaseAnalytics.getInstance(parent).logEvent("download_start", bundle)
+            Firebase.analytics.logEvent("download_start") {
+                param(FirebaseAnalytics.Param.ITEM_ID, episodeDetail.id)
+                param(FirebaseAnalytics.Param.ITEM_NAME, StringUtil.getName(episodeDetail.bangumi))
+                param(
+                    FirebaseAnalytics.Param.ITEM_LOCATION_ID,
+                    episodeDetail.episode_no.toString()
+                )
+            }
         }
 
         if (FileUtil.isFileExist(file)) {
@@ -337,6 +345,7 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE
             && resultCode == Activity.RESULT_OK
             && data != null) {
@@ -557,14 +566,14 @@ class DetailActivity : BaseThemeActivity(), OnMenuItemClickListener {
                 holder.tv.alpha = if (d.status != 0) 1f else 0.2f
                 holder.view.setOnClickListener {
                     if (d.status != 0) playVideo(d)
-                    val bundle = Bundle()
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, d.id)
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name)
-                    bundle.putString(
-                        FirebaseAnalytics.Param.ITEM_LOCATION_ID,
-                        d.episode_no.toString()
-                    )
-                    FirebaseAnalytics.getInstance(parent).logEvent("view_vod", bundle)
+                    Firebase.analytics.logEvent("view_vod") {
+                        param(FirebaseAnalytics.Param.ITEM_ID, d.id)
+                        param(FirebaseAnalytics.Param.ITEM_NAME, name)
+                        param(
+                            FirebaseAnalytics.Param.ITEM_LOCATION_ID,
+                            d.episode_no.toString()
+                        )
+                    }
                 }
 
                 holder.view.setOnLongClickListener {

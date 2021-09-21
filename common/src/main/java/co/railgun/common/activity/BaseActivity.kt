@@ -1,10 +1,8 @@
 package co.railgun.common.activity
 
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import co.railgun.common.BuildConfig
-import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -15,55 +13,50 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import java.util.*
 
-
 /**
  * Created by roya on 2017/5/21.
  */
-
 open class BaseActivity : co.railgun.common.activity.RxLifecycleActivity() {
 
-    private val rxPermissions: RxPermissions by lazy { RxPermissions(this) }
     private val runningMap by lazy { IdentityHashMap<String, Disposable>() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    public fun showToast(s: String, t: Int = Toast.LENGTH_LONG) {
+    fun showToast(s: String, t: Int = Toast.LENGTH_LONG) {
         Toast.makeText(this, s, t).show()
     }
 
     protected fun <T> Observable<T>.withLifecycle(
         subscribeOn: Scheduler = Schedulers.io(),
         observeOn: Scheduler = AndroidSchedulers.mainThread(),
-        untilEvent: ActivityEvent = ActivityEvent.DESTROY): Observable<T> {
-        return this
-            .subscribeOn(subscribeOn)
-            .observeOn(observeOn)
-            .compose(bindUntilEvent(untilEvent))
-    }
+        untilEvent: ActivityEvent = ActivityEvent.DESTROY
+    ): Observable<T> = subscribeOn(subscribeOn)
+        .observeOn(observeOn)
+        .compose(bindUntilEvent(untilEvent))
 
-    protected fun <T> Observable<T>.onlyRunOneInstance(taskId: String, displace: Boolean = true): Observable<T> {
+    protected fun <T> Observable<T>.onlyRunOneInstance(
+        taskId: String,
+        displace: Boolean = true
+    ): Observable<T> {
         if (runningMap.containsKey(taskId)) {
             if (!displace) {
-                return Observable.create<T> { wrapper -> wrapper.onComplete() }
+                return Observable.create { wrapper -> wrapper.onComplete() }
             } else {
                 runningMap[taskId]?.dispose()
                 runningMap.remove(taskId)
             }
         }
 
-        return Observable.create<T> { wrapper ->
-            val obs = this.subscribe({
-                wrapper.onNext(it)
-            }, {
-                runningMap.remove(taskId)
-                wrapper.onError(it)
-            }, {
-                runningMap.remove(taskId)
-                wrapper.onComplete()
-            })
-
+        return Observable.create { wrapper ->
+            val obs = subscribe(
+                { wrapper.onNext(it!!) },
+                {
+                    runningMap.remove(taskId)
+                    wrapper.onError(it)
+                },
+                {
+                    runningMap.remove(taskId)
+                    wrapper.onComplete()
+                }
+            )
             if (!obs.isDisposed) {
                 runningMap[taskId] = obs
             }
@@ -112,12 +105,5 @@ open class BaseActivity : co.railgun.common.activity.RxLifecycleActivity() {
         }
 
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-    }
-
-    protected fun requestPermissions(vararg permissions: String): Observable<Boolean> {
-        return rxPermissions
-            .request(*permissions)
-            .withLifecycle(subscribeOn = AndroidSchedulers.mainThread(),
-                untilEvent = ActivityEvent.PAUSE)
     }
 }

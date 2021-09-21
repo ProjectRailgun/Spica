@@ -7,14 +7,8 @@ import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 
 class PreferencesUtil private constructor(context: Context) {
-    private val preferences: SharedPreferences
 
-    init {
-        preferences = context.getSharedPreferences(
-                TAG_KEY,
-                Context.MODE_PRIVATE
-        )
-    }
+    private val preferences: SharedPreferences = context.getSharedPreferences(TAG_KEY, Context.MODE_PRIVATE)
 
     fun putLong(k: String, v: Long) {
         preferences.edit().putLong(k, v).apply()
@@ -91,7 +85,7 @@ class PreferencesUtil private constructor(context: Context) {
     }
 
     companion object {
-        private const val TAG_KEY = co.railgun.common.BuildConfig.APPLICATION_ID
+        private const val TAG_KEY = co.railgun.common.BuildConfig.LIBRARY_PACKAGE_NAME
         private var mInstance: PreferencesUtil? = null
 
         fun init(context: Context) {

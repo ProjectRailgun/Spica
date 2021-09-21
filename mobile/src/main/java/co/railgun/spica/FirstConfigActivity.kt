@@ -2,13 +2,16 @@ package co.railgun.spica
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.appcompat.widget.AppCompatSpinner
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatSpinner
 import co.railgun.common.api.LoginRequest
 import co.railgun.common.cache.SpicaPreferences
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import retrofit2.HttpException
 
 
@@ -69,10 +72,9 @@ class FirstConfigActivity : co.railgun.common.activity.BaseActivity() {
                         SpicaPreferences.setServer(host.toString())
                         SpicaPreferences.setUsername(textUser.text.toString())
                         startActivity(Intent(this, HomeActivity::class.java))
-                        val bundle = Bundle()
-                        bundle.putString(FirebaseAnalytics.Param.METHOD, "origin")
-                        FirebaseAnalytics.getInstance(this)
-                            .logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                        Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN){
+                            param(FirebaseAnalytics.Param.METHOD, "origin")
+                        }
                         toast.cancel()
                         finish()
                     }, {

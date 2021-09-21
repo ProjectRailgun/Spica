@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="co.railgun.spica"
     tools:ignore="ImpliedTouchscreenHardware">
@@ -13,16 +14,16 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="co.railgun.spica.SpicaApplication"
+        android:name=".SpicaApplication"
         android:allowBackup="true"
         android:banner="@mipmap/launcher_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="co.railgun.spica.StartPaddingActivity"
-            android:theme="@style/PaddingViewTheme"
-            android:exported="true">
+            android:name=".StartPaddingActivity"
+            android:exported="true"
+            android:theme="@style/PaddingViewTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,41 +52,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="co.railgun.spica.DetailActivity"
+            android:name=".DetailActivity"
             android:theme="@style/AppTheme.NoStateBar" />
         <activity
-            android:name="co.railgun.spica.HomeActivity"
+            android:name=".HomeActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoStateBar" />
         <activity
-            android:name="co.railgun.spica.FirstConfigActivity"
+            android:name=".FirstConfigActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="co.railgun.spica.PlayerActivity"
+            android:name=".PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_player"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name="co.railgun.spica.MyCollectionActivity" />
-        <activity android:name="co.railgun.spica.AllBangumiActivity" />
+        <activity android:name=".MyCollectionActivity" />
+        <activity android:name=".AllBangumiActivity" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->
         <!-- android:label="@string/title_activity_settings" -->
         <!-- android:theme="@style/AppThemeActionBar" /> -->
-        <activity android:name="co.railgun.spica.SearchActivity" />
+        <activity android:name=".SearchActivity" />
 
-        <service android:name="co.railgun.spica.service.MyFirebaseMessagingService">
+        <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="co.railgun.spica.service.AppIndexingUpdateService"
+            android:name=".service.AppIndexingUpdateService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
-            android:name="co.railgun.spica.service.AppIndexingUpdateReceiver"
+            android:name=".service.AppIndexingUpdateReceiver"
             android:exported="true"
             android:permission="com.google.android.gms.permission.APPINDEXING">
             <intent-filter>
@@ -95,7 +96,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="co.railgun.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

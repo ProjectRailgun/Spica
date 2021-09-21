@@ -6,9 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import androidx.appcompat.widget.AppCompatImageButton
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +14,17 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import co.railgun.common.DisplayUtil
 import co.railgun.common.api.ApiClient
 import co.railgun.common.model.Bangumi
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 
@@ -72,9 +75,9 @@ class SearchActivity : BaseThemeActivity() {
                 loadingHud.dismiss()
                 toastErrors(it)
             }, { loadingHud.dismiss() })
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, s)
-        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
+        Firebase.analytics.logEvent(FirebaseAnalytics.Event.SEARCH) {
+            param(FirebaseAnalytics.Param.SEARCH_TERM, s)
+        }
     }
 
     private fun display(data: List<Bangumi>) {
