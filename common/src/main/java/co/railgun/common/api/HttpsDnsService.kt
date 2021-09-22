@@ -5,6 +5,7 @@ import co.railgun.common.BuildConfig
 import co.railgun.common.Constant
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,12 +19,12 @@ class HttpsDnsService {
                 .addInterceptor {
                     val request = it.request().newBuilder().addHeader("accept", "application/dns-json").build()
                     val response = it.proceed(request)
-                    val body = response.body()
+                    val body = response.body
                     val bodyString = body?.string()
                     if (BuildConfig.DEBUG) Log.i("TAG", "$response Body:$bodyString")
                     response.newBuilder()
-                            .headers(response.headers())
-                            .body(ResponseBody.create(body?.contentType(), bodyString))
+                            .headers(response.headers)
+                            .body(bodyString?.toResponseBody(body.contentType()))
                             .build()
                 }
                 .build()

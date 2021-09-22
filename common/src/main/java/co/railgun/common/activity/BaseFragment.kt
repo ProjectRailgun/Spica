@@ -46,7 +46,7 @@ open class BaseFragment : co.railgun.common.activity.RxLifecycleFragment() {
             var errorMessage = getString(co.railgun.common.R.string.unknown_error)
 
             if (it is HttpException) {
-                val body = it.response().errorBody()
+                val body = it.response()?.errorBody()
                 val message = body?.let { it1 ->
                     co.railgun.common.api.ApiClient.converterErrorBody(it1)
                 }
