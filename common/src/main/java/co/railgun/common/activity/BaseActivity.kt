@@ -75,7 +75,7 @@ open class BaseActivity : co.railgun.common.activity.RxLifecycleActivity() {
             var errorMessage = getString(co.railgun.common.R.string.unknown_error)
 
             if (it is HttpException) {
-                val body = it.response().errorBody()
+                val body = it.response()?.errorBody()
                 val message = body?.let { it1 ->
                     co.railgun.common.api.ApiClient.converterErrorBody(it1)
                 }
@@ -94,7 +94,7 @@ open class BaseActivity : co.railgun.common.activity.RxLifecycleActivity() {
         var errorMessage = getString(co.railgun.common.R.string.unknown_error)
 
         if (e is HttpException) {
-            val body = e.response().errorBody()
+            val body = e.response()?.errorBody()
             val message = body?.let { it1 ->
                 co.railgun.common.api.ApiClient.converterErrorBody(it1)
             }

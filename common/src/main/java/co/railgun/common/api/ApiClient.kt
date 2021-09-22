@@ -8,6 +8,7 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -45,7 +46,11 @@ object ApiClient {
             throw IllegalStateException("ApiClient Not being initialized")
         }
 
-        val errorConverter: Converter<ResponseBody, MessageResponse> = (retrofit as Retrofit).responseBodyConverter(MessageResponse::class.java, arrayOfNulls<Annotation>(0))
+        val errorConverter: Converter<ResponseBody, MessageResponse> =
+            (retrofit as Retrofit).responseBodyConverter(
+                MessageResponse::class.java,
+                arrayOfNulls<Annotation>(0)
+            )
 
         return try {
             errorConverter.convert(error)
@@ -59,27 +64,27 @@ object ApiClient {
         cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
 
         val okHttp = OkHttpClient.Builder()
-                .dns(HttpsDns())
-                .cookieJar(cookieJar)
-                .addInterceptor {
-                    val request = it.request()
-                    val response = it.proceed(request)
-                    val body = response.body()
-                    val bodyString = body?.string()
-                    if (BuildConfig.DEBUG) Log.i("TAG", "$response Body:$bodyString")
-                    response.newBuilder()
-                            .headers(response.headers())
-                            .body(ResponseBody.create(body?.contentType(), bodyString))
-                            .build()
-                }
-                .build()
+            .dns(HttpsDns())
+            .cookieJar(cookieJar!!)
+            .addInterceptor {
+                val request = it.request()
+                val response = it.proceed(request)
+                val body = response.body
+                val bodyString = body?.string()
+                if (BuildConfig.DEBUG) Log.i("TAG", "$response Body:$bodyString")
+                response.newBuilder()
+                    .headers(response.headers)
+                    .body(bodyString?.toResponseBody(body.contentType()))
+                    .build()
+            }
+            .build()
 
         retrofit = Retrofit.Builder()
-                .client(okHttp)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(server)
-                .build()
+            .client(okHttp)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(server)
+            .build()
 
         return (retrofit as Retrofit).create(ApiService::class.java)
     }
