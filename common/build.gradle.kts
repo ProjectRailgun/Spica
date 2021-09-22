@@ -41,4 +41,9 @@ dependencies {
 
     api("com.google.android.exoplayer:exoplayer-core:2.10.8")
     api("com.kaopiz:kprogresshud:1.2.0")
+
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    api("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+    api("me.omico.cloudflare.api:cloudflare-dns:1.0.0-SNAPSHOT")
 }

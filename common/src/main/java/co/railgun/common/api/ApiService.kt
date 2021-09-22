@@ -2,19 +2,9 @@ package co.railgun.common.api
 
 import co.railgun.common.model.*
 import io.reactivex.Observable
-import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
-
-    /**
-     * DOH
-     */
-    @GET("dns-query")
-    fun getIpByHost(
-            @Query("name") host: String,
-            @Query("type") type: String
-                    ): Call<DnsResponse>
 
     /**
      * Users
@@ -68,7 +58,10 @@ interface ApiService {
      */
 
     @POST("/api/watch/favorite/bangumi/{bangumi_id}")
-    fun uploadFavoriteStatus(@Path("bangumi_id") bangumiId: String, @Body body: FavoriteChangeRequest): Observable<MessageResponse>
+    fun uploadFavoriteStatus(
+        @Path("bangumi_id") bangumiId: String,
+        @Body body: FavoriteChangeRequest
+    ): Observable<MessageResponse>
 
     @POST("/api/watch/history/synchronize")
     fun uploadWatchHistory(@Body body: HistoryChangeRequest): Observable<MessageResponse>
