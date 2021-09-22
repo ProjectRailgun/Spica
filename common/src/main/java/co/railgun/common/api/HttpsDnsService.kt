@@ -3,7 +3,6 @@ package co.railgun.common.api
 import android.util.Log
 import co.railgun.common.BuildConfig
 import co.railgun.common.Constant
-import co.railgun.common.api.ApiClient.enableTls12OnPreLollipop
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
@@ -16,9 +15,6 @@ class HttpsDnsService {
 
     init {
         val client = OkHttpClient.Builder()
-                .followRedirects(true)
-                .followSslRedirects(true)
-                .retryOnConnectionFailure(true)
                 .addInterceptor {
                     val request = it.request().newBuilder().addHeader("accept", "application/dns-json").build()
                     val response = it.proceed(request)
@@ -30,7 +26,6 @@ class HttpsDnsService {
                             .body(ResponseBody.create(body?.contentType(), bodyString))
                             .build()
                 }
-                .enableTls12OnPreLollipop()
                 .build()
 
         apiClient = Retrofit.Builder()
