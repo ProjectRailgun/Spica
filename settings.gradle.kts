@@ -11,6 +11,7 @@ pluginManagement {
         id("com.android.library") version versions.androidGradlePlugin
         id("me.omico.age") version versions.agePlugin
         kotlin("android") version versions.kotlinPlugin
+        kotlin("plugin.serialization") version versions.kotlinPlugin
     }
     repositories {
         google()
@@ -33,3 +34,5 @@ dependencyResolutionManagement {
 
 include(":common")
 include(":mobile")
+
+include(":api")

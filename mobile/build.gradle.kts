@@ -56,4 +56,7 @@ dependencies {
 
     implementation("com.youth.banner:banner:1.4.10")
     implementation("com.github.Yalantis:Context-Menu.Android:1.0.8")
+
+    implementation(project(":api"))
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 }

@@ -46,4 +46,6 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     api("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     api("me.omico.cloudflare.api:cloudflare-dns:1.0.0-SNAPSHOT")
+
+    compileOnly(project(":api"))
 }
