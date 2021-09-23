@@ -15,7 +15,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 class StartPaddingActivity : BaseThemeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isConfigured = SpicaPreferences.configured()
+        val isConfigured = SpicaPreferences.isConfigured
         val intent = intent
         if (isConfigured && intent.action == Intent.ACTION_VIEW) {
             var url = intent.dataString

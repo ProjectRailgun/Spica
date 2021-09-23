@@ -1,11 +1,8 @@
 package co.railgun.common.api
 
-import android.content.Context
 import android.util.Log
+import co.railgun.api.bgmrip.internal.persistentCookieJar
 import co.railgun.common.BuildConfig
-import com.franmontiel.persistentcookiejar.PersistentCookieJar
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -18,36 +15,23 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by roya on 2017/5/22.
  */
 object ApiClient {
-    private var instance: ApiService? = null
-    private var retrofit: Retrofit? = null
-    private var cookieJar: PersistentCookieJar? = null
 
-    fun init(context: Context, server: String) {
-        instance = create(context, server)
-    }
+    private val _instance: ApiService by lazy { create() }
+    private lateinit var retrofit: Retrofit
 
     fun deinit() {
-        cookieJar?.clear()
-        cookieJar = null
-        retrofit = null
-        instance = null
+        persistentCookieJar.clear()
     }
 
-    fun getInstance(): ApiService {
-        if (instance != null) {
-            return instance as ApiService
-        }
-
-        throw IllegalStateException("ApiClient Not being initialized")
-    }
+    fun getInstance(): ApiService = _instance
 
     fun converterErrorBody(error: ResponseBody): MessageResponse? {
-        if (retrofit == null) {
+        if (!::retrofit.isInitialized) {
             throw IllegalStateException("ApiClient Not being initialized")
         }
 
         val errorConverter: Converter<ResponseBody, MessageResponse> =
-            (retrofit as Retrofit).responseBodyConverter(
+            retrofit.responseBodyConverter(
                 MessageResponse::class.java,
                 arrayOfNulls<Annotation>(0)
             )
@@ -60,12 +44,10 @@ object ApiClient {
 
     }
 
-    private fun create(context: Context, server: String): ApiService {
-        cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
-
+    private fun create(): ApiService {
         val okHttp = OkHttpClient.Builder()
             .dns(HttpsDns())
-            .cookieJar(cookieJar!!)
+            .cookieJar(persistentCookieJar)
             .addInterceptor {
                 val request = it.request()
                 val response = it.proceed(request)
@@ -83,9 +65,9 @@ object ApiClient {
             .client(okHttp)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(server)
+            .baseUrl("https://bgm.rip/")
             .build()
 
-        return (retrofit as Retrofit).create(ApiService::class.java)
+        return retrofit.create(ApiService::class.java)
     }
 }

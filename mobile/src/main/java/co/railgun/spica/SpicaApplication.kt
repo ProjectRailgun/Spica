@@ -3,9 +3,10 @@ package co.railgun.spica
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import co.railgun.api.bgmrip.BgmRipClient
+import co.railgun.api.bgmrip.function.initialize
 import co.railgun.common.api.ApiClient
 import co.railgun.common.cache.PreferencesUtil
-import co.railgun.common.cache.SpicaPreferences
 import com.google.firebase.appindexing.FirebaseAppIndex
 
 @Suppress("unused")
@@ -14,9 +15,7 @@ class SpicaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PreferencesUtil.init(this)
-        if (SpicaPreferences.configured()) {
-            ApiClient.init(this, SpicaPreferences.getServer())
-        }
+        BgmRipClient.initialize(this)
     }
 
     companion object {
@@ -25,9 +24,9 @@ class SpicaApplication : Application() {
             PreferencesUtil.getInstance().clear()
             ApiClient.deinit()
             FirebaseAppIndex.getInstance(context).removeAll()
-            val i = context.applicationContext.packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
-            i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            context.startActivity(i)
+            val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            context.startActivity(intent)
         }
     }
 }

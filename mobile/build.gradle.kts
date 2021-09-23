@@ -59,4 +59,6 @@ dependencies {
 
     implementation(project(":api"))
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
 }
