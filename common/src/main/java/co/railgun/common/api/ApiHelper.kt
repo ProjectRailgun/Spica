@@ -1,7 +1,5 @@
 package co.railgun.common.api
 
-import co.railgun.common.cache.SpicaPreferences
-
 /**
  * Created by roya on 2017/6/4.
  */
@@ -12,6 +10,6 @@ object ApiHelper {
             return url
         }
 
-        return SpicaPreferences.getServer() + if (url.startsWith("/")) url.substring(1) else url
+        return "https://bgm.rip/" + if (url.startsWith("/")) url.substring(1) else url
     }
 }
