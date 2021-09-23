@@ -25,12 +25,16 @@ import okhttp3.Cookie;
 /**
  * This class decorates a Cookie to re-implements equals() and hashcode() methods in order to identify
  * the cookie by the following attributes: name, domain, path, secure & hostOnly.<p>
- *
+ * <p>
  * This new behaviour will be useful in determining when an already existing cookie in session must be overwritten.
  */
 class IdentifiableCookie {
 
-    private Cookie cookie;
+    private final Cookie cookie;
+
+    IdentifiableCookie(Cookie cookie) {
+        this.cookie = cookie;
+    }
 
     static List<IdentifiableCookie> decorateAll(Collection<Cookie> cookies) {
         List<IdentifiableCookie> identifiableCookies = new ArrayList<>(cookies.size());
@@ -38,10 +42,6 @@ class IdentifiableCookie {
             identifiableCookies.add(new IdentifiableCookie(cookie));
         }
         return identifiableCookies;
-    }
-
-    IdentifiableCookie(Cookie cookie) {
-        this.cookie = cookie;
     }
 
     Cookie getCookie() {

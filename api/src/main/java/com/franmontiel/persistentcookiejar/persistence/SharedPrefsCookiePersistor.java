@@ -40,6 +40,10 @@ public class SharedPrefsCookiePersistor implements CookiePersistor {
         this.sharedPreferences = sharedPreferences;
     }
 
+    private static String createCookieKey(Cookie cookie) {
+        return (cookie.secure() ? "https" : "http") + "://" + cookie.domain() + cookie.path() + "|" + cookie.name();
+    }
+
     @Override
     public List<Cookie> loadAll() {
         List<Cookie> cookies = new ArrayList<>(sharedPreferences.getAll().size());
@@ -70,10 +74,6 @@ public class SharedPrefsCookiePersistor implements CookiePersistor {
             editor.remove(createCookieKey(cookie));
         }
         editor.commit();
-    }
-
-    private static String createCookieKey(Cookie cookie) {
-        return (cookie.secure() ? "https" : "http") + "://" + cookie.domain() + cookie.path() + "|" + cookie.name();
     }
 
     @Override
