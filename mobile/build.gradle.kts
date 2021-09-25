@@ -61,4 +61,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
+
+    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("com.google.protobuf:protobuf-kotlin:3.18.0")
+    implementation("me.omico.cryonics:cryonics:1.0.0-SNAPSHOT")
 }
