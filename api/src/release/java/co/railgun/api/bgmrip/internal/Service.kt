@@ -18,6 +18,6 @@ internal val service: BgmRipService by lazy {
 private val client by lazy {
     OkHttpClient.Builder()
         .dns(BgmRipDns)
-        .cookieJar(persistentCookieJar)
+        .cookieJar(cookieJar)
         .build()
 }

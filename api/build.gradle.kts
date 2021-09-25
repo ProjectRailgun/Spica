@@ -23,4 +23,8 @@ dependencies {
 
     compileOnly("com.squareup.retrofit2:converter-scalars:2.9.0")
     debugImplementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+
+    compileOnly("androidx.datastore:datastore:1.0.0")
+    compileOnly("com.google.protobuf:protobuf-kotlin:3.18.0")
+    compileOnly("me.omico.cryonics:cryonics:1.0.0-SNAPSHOT")
 }

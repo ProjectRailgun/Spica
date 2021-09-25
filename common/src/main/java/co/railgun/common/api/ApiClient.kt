@@ -1,7 +1,7 @@
 package co.railgun.common.api
 
 import android.util.Log
-import co.railgun.api.bgmrip.internal.persistentCookieJar
+import co.railgun.api.bgmrip.internal.cookieJar
 import co.railgun.common.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -18,10 +18,6 @@ object ApiClient {
 
     private val _instance: ApiService by lazy { create() }
     private lateinit var retrofit: Retrofit
-
-    fun deinit() {
-        persistentCookieJar.clear()
-    }
 
     fun getInstance(): ApiService = _instance
 
@@ -47,7 +43,7 @@ object ApiClient {
     private fun create(): ApiService {
         val okHttp = OkHttpClient.Builder()
             .dns(HttpsDns())
-            .cookieJar(persistentCookieJar)
+            .cookieJar(cookieJar)
             .addInterceptor {
                 val request = it.request()
                 val response = it.proceed(request)
