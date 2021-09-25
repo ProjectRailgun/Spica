@@ -53,36 +53,49 @@
         </activity>
         <activity
             android:name=".DetailActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.NoStateBar" />
         <activity
             android:name=".HomeActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoStateBar" />
         <activity
             android:name=".FirstConfigActivity"
+            android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="false"
             android:label="@string/title_activity_player"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".MyCollectionActivity" />
-        <activity android:name=".AllBangumiActivity" />
+        <activity
+            android:name=".MyCollectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AllBangumiActivity"
+            android:exported="false" />
         <!-- <activity -->
         <!-- android:name=".SettingsActivity" -->
         <!-- android:label="@string/title_activity_settings" -->
         <!-- android:theme="@style/AppThemeActionBar" /> -->
-        <activity android:name=".SearchActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
 
-        <service android:name=".service.MyFirebaseMessagingService">
+        <service
+            android:name=".service.MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
             android:name=".service.AppIndexingUpdateService"
+            android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
