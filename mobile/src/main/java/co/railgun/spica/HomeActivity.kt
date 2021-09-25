@@ -13,7 +13,12 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
+import co.railgun.api.bgmrip.BgmRipClient
+import co.railgun.api.bgmrip.function.user.info
 import co.railgun.common.model.Announce
 import co.railgun.spica.databinding.ActivityHomeBinding
 import com.bumptech.glide.Glide
@@ -21,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.youth.banner.Banner
 import com.youth.banner.loader.ImageLoader
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 
@@ -71,19 +77,19 @@ class HomeActivity : BaseThemeActivity(),
             .replace(R.id.fragment_container, HomeFragment())
             .commit()
 
-        co.railgun.common.api.ApiClient.getInstance().getUserInfo()
-            .withLifecycle()
-            .subscribe({
-                val userInfo = it.getData()
-                navHeaderT1.text = userInfo.name
-                navHeaderT2.text = userInfo.email
-            }, {
-                toastErrors().accept(it)
-
-                if (it is HttpException && it.code() == 401) {
-                    logout()
-                }
-            })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                runCatching { BgmRipClient.User.info() }
+                    .onFailure {
+                        toastErrors().accept(it)
+                        if (it is HttpException && it.code() == 401) logout()
+                    }
+                    .onSuccess {
+                        navHeaderT1.text = it.name
+                        navHeaderT2.text = it.email
+                    }
+            }
+        }
     }
 
     public fun setBanner(list: List<Announce>) {
