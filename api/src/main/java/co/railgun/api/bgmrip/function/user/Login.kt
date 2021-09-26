@@ -3,9 +3,9 @@
 package co.railgun.api.bgmrip.function.user
 
 import co.railgun.api.bgmrip.BgmRipClient
-import co.railgun.api.bgmrip.internal.service
-import co.railgun.api.bgmrip.model.LoginRequest
-import co.railgun.api.bgmrip.model.LoginResponse
+import co.railgun.api.bgmrip.internal.userService
+import co.railgun.api.bgmrip.model.user.LoginRequest
+import co.railgun.api.bgmrip.model.user.LoginResponse
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
@@ -19,7 +19,7 @@ fun BgmRipClient.User.login(
     remmember: Boolean = true,
 ): LoginResponse = runBlocking {
     val result = runCatching {
-        service.login(
+        userService.login(
             loginRequest = LoginRequest(
                 name = name,
                 password = password,

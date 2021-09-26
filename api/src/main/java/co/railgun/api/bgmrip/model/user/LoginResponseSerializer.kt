@@ -1,4 +1,4 @@
-package co.railgun.api.bgmrip.model
+package co.railgun.api.bgmrip.model.user
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
