@@ -32,8 +32,7 @@ class LoginResponseSerializer : KSerializer<LoginResponse> {
         val element = decoder.decodeJsonElement()
         require(element is JsonObject)
         return when {
-            "message" in element ->
-                LoginResponse.Failure(element["message"]!!.jsonPrimitive.content)
+            "message" in element -> LoginResponse.Failure(element["message"]!!.jsonPrimitive.content)
             else -> LoginResponse.Success
         }
     }
