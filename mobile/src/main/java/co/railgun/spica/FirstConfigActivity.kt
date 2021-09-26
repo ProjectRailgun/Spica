@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import co.railgun.api.bgmrip.BgmRipClient
 import co.railgun.api.bgmrip.function.user.login
-import co.railgun.api.bgmrip.model.LoginResponse
+import co.railgun.api.bgmrip.model.user.LoginResponse
 import co.railgun.common.activity.BaseActivity
 import co.railgun.common.cache.SpicaPreferences
 import co.railgun.spica.databinding.ActivityFirstConfigBinding
