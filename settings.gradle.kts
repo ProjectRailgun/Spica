@@ -34,10 +34,17 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("VERSION_CATALOGS")
 
+createVersionCatalog("androidx")
+createVersionCatalog("material")
+
 include(":common")
 include(":mobile")
 
 include(":api")
+
+include(":ui:common")
+include(":ui:main")
+include(":ui:theme")
 
 fun createVersionCatalog(name: String) =
     dependencyResolutionManagement.versionCatalogs.create(name) {
