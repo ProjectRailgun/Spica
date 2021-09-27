@@ -32,7 +32,14 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("VERSION_CATALOGS")
+
 include(":common")
 include(":mobile")
 
 include(":api")
+
+fun createVersionCatalog(name: String) =
+    dependencyResolutionManagement.versionCatalogs.create(name) {
+        from(files("gradle/common-version-catalogs/$name.versions.toml"))
+    }
