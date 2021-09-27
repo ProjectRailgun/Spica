@@ -44,6 +44,7 @@ include(":api")
 
 include(":ui:common")
 include(":ui:home")
+include(":ui:login")
 include(":ui:main")
 include(":ui:theme")
 
