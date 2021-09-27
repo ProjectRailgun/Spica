@@ -36,11 +36,15 @@ enableFeaturePreview("VERSION_CATALOGS")
 
 createVersionCatalog("androidx")
 createVersionCatalog("material")
+createVersionCatalog("retrofit2")
+createVersionCatalog("kotlinx")
 
 include(":common")
 include(":mobile")
 
 include(":api")
+
+include(":data:user")
 
 include(":ui:common")
 include(":ui:home")
