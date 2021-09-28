@@ -50,6 +50,7 @@ include(":ui:common")
 include(":ui:home")
 include(":ui:login")
 include(":ui:main")
+include(":ui:splash")
 include(":ui:theme")
 
 fun createVersionCatalog(name: String) =
