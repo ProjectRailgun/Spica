@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
 data class LoginRequest(
     @SerialName("name") val name: String,
     @SerialName("password") val password: String,
-    @SerialName("remmember") val remmember: Boolean,
+    @SerialName("remember") val remember: Boolean,
 ) : Request

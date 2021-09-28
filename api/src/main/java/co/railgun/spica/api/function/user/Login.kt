@@ -16,14 +16,14 @@ import retrofit2.HttpException
 fun SpicaClient.User.login(
     name: String,
     password: String,
-    remmember: Boolean = true,
+    remember: Boolean = true,
 ): LoginResponse = runBlocking {
     val result = runCatching {
         userService.login(
             loginRequest = LoginRequest(
                 name = name,
                 password = password,
-                remmember = remmember,
+                remember = remember,
             ),
         )
     }
