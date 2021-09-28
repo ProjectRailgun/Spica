@@ -4,11 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import co.railgun.spica.api.SpicaClient
-import co.railgun.spica.api.function.user.login
-import co.railgun.spica.api.model.user.LoginResponse
 import co.railgun.common.activity.BaseActivity
 import co.railgun.common.cache.SpicaPreferences
+import co.railgun.spica.api.SpicaClient
+import co.railgun.spica.api.function.user.login
+import co.railgun.spica.api.model.ActionResponse
 import co.railgun.spica.databinding.ActivityFirstConfigBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -40,7 +40,7 @@ class FirstConfigActivity : BaseActivity() {
                     password = binding.pw.text.toString()
                 )
             ) {
-                is LoginResponse.Success -> {
+                is ActionResponse.Ok -> {
                     SpicaPreferences.saveUsername(binding.user.text.toString())
                     startActivity(Intent(this@FirstConfigActivity, HomeActivity::class.java))
                     Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
@@ -49,7 +49,7 @@ class FirstConfigActivity : BaseActivity() {
                     toast.cancel()
                     finish()
                 }
-                is LoginResponse.Failure -> {
+                is ActionResponse.Message -> {
                     toast.setText(loginResponse.message)
                     toast.show()
                 }

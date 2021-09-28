@@ -1,4 +1,4 @@
-package co.railgun.spica.api.model.user
+package co.railgun.spica.api.model
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
@@ -16,27 +16,28 @@ import kotlinx.serialization.json.jsonPrimitive
     ExperimentalSerializationApi::class,
     InternalSerializationApi::class,
 )
-class LoginResponseSerializer : KSerializer<LoginResponse> {
+class ActionResponseSerializer : KSerializer<ActionResponse> {
 
-    private val successSerializer by lazy { LoginResponse.Success.serializer() }
-    private val failureSerializer by lazy { LoginResponse.Failure.serializer() }
+    private val okSerializer by lazy { ActionResponse.Ok.serializer() }
+    private val messageSerializer by lazy { ActionResponse.Message.serializer() }
 
     override val descriptor: SerialDescriptor =
-        buildSerialDescriptor("LoginResponse", PolymorphicKind.SEALED) {
-            element("Success", successSerializer.descriptor)
-            element("Failure", failureSerializer.descriptor)
+        buildSerialDescriptor("Response", PolymorphicKind.SEALED) {
+            element("Ok", okSerializer.descriptor)
+            element("Message", messageSerializer.descriptor)
         }
 
-    override fun deserialize(decoder: Decoder): LoginResponse {
+    override fun deserialize(decoder: Decoder): ActionResponse {
         require(decoder is JsonDecoder)
         val element = decoder.decodeJsonElement()
         require(element is JsonObject)
         return when {
-            "message" in element -> LoginResponse.Failure(element["message"]!!.jsonPrimitive.content)
-            else -> LoginResponse.Success
+            "msg" in element && element["msg"]?.jsonPrimitive?.content == "OK" -> ActionResponse.Ok
+            "message" in element -> ActionResponse.Message(element["message"]!!.jsonPrimitive.content)
+            else -> error("Unsupported.")
         }
     }
 
-    override fun serialize(encoder: Encoder, value: LoginResponse): Unit =
+    override fun serialize(encoder: Encoder, value: ActionResponse): Unit =
         throw UnsupportedOperationException()
 }
