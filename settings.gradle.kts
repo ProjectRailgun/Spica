@@ -34,6 +34,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("VERSION_CATALOGS")
 
+createVersionCatalog("accompanist")
 createVersionCatalog("androidx")
 createVersionCatalog("material")
 createVersionCatalog("retrofit2")

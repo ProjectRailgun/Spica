@@ -13,6 +13,10 @@ android {
 }
 
 dependencies {
+    implementation(accompanist.insets)
+    implementation(accompanist.insetsUi)
+    implementation(accompanist.swipeRefresh)
+    implementation(accompanist.systemUiController)
     implementation(androidx.activity.activityCompose)
     implementation(androidx.activity.activityKtx)
     implementation(androidx.annotation.annotation)
@@ -26,6 +30,9 @@ dependencies {
     implementation(androidx.navigation.runtimeKtx)
     implementation(material.material)
     implementation(project(":ui:common"))
+    implementation(project(":ui:home"))
+    implementation(project(":ui:login"))
+    implementation(project(":ui:splash"))
     implementation(project(":ui:theme"))
     debugImplementation(androidx.compose.uiTooling)
 }
