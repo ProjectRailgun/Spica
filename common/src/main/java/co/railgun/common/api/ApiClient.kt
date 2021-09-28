@@ -1,7 +1,7 @@
 package co.railgun.common.api
 
 import android.util.Log
-import co.railgun.api.bgmrip.internal.cookieJar
+import co.railgun.spica.api.internal.cookieJar
 import co.railgun.common.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody

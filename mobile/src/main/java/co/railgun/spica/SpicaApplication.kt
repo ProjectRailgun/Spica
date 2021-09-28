@@ -3,8 +3,8 @@ package co.railgun.spica
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import co.railgun.api.bgmrip.BgmRipClient
-import co.railgun.api.bgmrip.function.initialize
+import co.railgun.spica.api.SpicaClient
+import co.railgun.spica.api.function.initialize
 import co.railgun.common.cache.PreferencesUtil
 import com.google.firebase.appindexing.FirebaseAppIndex
 import me.omico.cryonics.cryonicsCookiesDataStore
@@ -15,7 +15,7 @@ class SpicaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PreferencesUtil.init(this)
-        BgmRipClient.initialize(this)
+        SpicaClient.initialize(this)
     }
 
     companion object {

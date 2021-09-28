@@ -17,8 +17,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
-import co.railgun.api.bgmrip.BgmRipClient
-import co.railgun.api.bgmrip.function.user.info
+import co.railgun.spica.api.SpicaClient
+import co.railgun.spica.api.function.user.info
 import co.railgun.common.model.Announce
 import co.railgun.spica.databinding.ActivityHomeBinding
 import com.bumptech.glide.Glide
@@ -79,7 +79,7 @@ class HomeActivity : BaseThemeActivity(),
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                runCatching { BgmRipClient.User.info() }
+                runCatching { SpicaClient.User.info() }
                     .onFailure {
                         toastErrors().accept(it)
                         if (it is HttpException && it.code() == 401) logout()
