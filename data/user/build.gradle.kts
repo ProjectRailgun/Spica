@@ -3,6 +3,12 @@ plugins {
     kotlin("android")
 }
 
+android {
+    buildFeatures {
+        buildConfig = false
+    }
+}
+
 dependencies {
     compileOnly(kotlinx.coroutines.core)
     compileOnly(retrofit2.retrofit)

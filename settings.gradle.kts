@@ -45,6 +45,7 @@ include(":mobile")
 
 include(":api")
 
+include(":data")
 include(":data:user")
 
 include(":ui:common")
