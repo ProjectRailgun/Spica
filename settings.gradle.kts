@@ -37,6 +37,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 createVersionCatalog("accompanist")
 createVersionCatalog("androidx")
 createVersionCatalog("material")
+createVersionCatalog("omico")
 createVersionCatalog("retrofit2")
 createVersionCatalog("kotlinx")
 
