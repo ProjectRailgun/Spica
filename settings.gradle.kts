@@ -43,8 +43,8 @@ createVersionCatalog("omico")
 createVersionCatalog("protobuf3")
 createVersionCatalog("retrofit2")
 
-include(":common")
-include(":mobile")
+//include(":common")
+//include(":mobile")
 
 include(":api")
 
