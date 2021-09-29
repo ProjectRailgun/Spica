@@ -46,6 +46,8 @@ createVersionCatalog("retrofit2")
 //include(":common")
 //include(":mobile")
 
+include(":app")
+
 include(":api")
 
 include(":data")
