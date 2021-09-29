@@ -48,6 +48,7 @@ include(":api")
 include(":data")
 include(":data:user")
 
+include(":ui")
 include(":ui:common")
 include(":ui:home")
 include(":ui:login")

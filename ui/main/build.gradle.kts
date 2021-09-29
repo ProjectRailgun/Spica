@@ -5,6 +5,7 @@ plugins {
 
 android {
     buildFeatures {
+        buildConfig = false
         compose = true
     }
     composeOptions {
@@ -13,26 +14,26 @@ android {
 }
 
 dependencies {
-    implementation(accompanist.insets)
-    implementation(accompanist.insetsUi)
-    implementation(accompanist.swipeRefresh)
-    implementation(accompanist.systemUiController)
-    implementation(androidx.activity.activityCompose)
-    implementation(androidx.activity.activityKtx)
-    implementation(androidx.annotation.annotation)
-    implementation(androidx.appcompat)
-    implementation(androidx.compose.foundation)
-    implementation(androidx.compose.material)
-    implementation(androidx.compose.runtime)
-    implementation(androidx.compose.ui)
-    implementation(androidx.compose.uiToolingPreview)
-    implementation(androidx.navigation.compose)
-    implementation(androidx.navigation.runtimeKtx)
-    implementation(material.material)
-    implementation(project(":ui:common"))
-    implementation(project(":ui:home"))
-    implementation(project(":ui:login"))
-    implementation(project(":ui:splash"))
-    implementation(project(":ui:theme"))
-    debugImplementation(androidx.compose.uiTooling)
+    compileOnly(accompanist.insets)
+    compileOnly(accompanist.insetsUi)
+    compileOnly(accompanist.swipeRefresh)
+    compileOnly(accompanist.systemUiController)
+    compileOnly(androidx.activity.activityCompose)
+    compileOnly(androidx.activity.activityKtx)
+    compileOnly(androidx.annotation.annotation)
+    compileOnly(androidx.appcompat)
+    compileOnly(androidx.compose.foundation)
+    compileOnly(androidx.compose.material)
+    compileOnly(androidx.compose.runtime)
+    compileOnly(androidx.compose.ui)
+    compileOnly(androidx.compose.uiToolingPreview)
+    compileOnly(androidx.navigation.compose)
+    compileOnly(androidx.navigation.runtimeKtx)
+    compileOnly(material.material)
+    compileOnly(project(":ui:common"))
+    compileOnly(project(":ui:home"))
+    compileOnly(project(":ui:login"))
+    compileOnly(project(":ui:splash"))
+    compileOnly(project(":ui:theme"))
+    debugCompileOnly(androidx.compose.uiTooling)
 }
