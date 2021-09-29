@@ -1,6 +1,6 @@
 package co.railgun.spica.api
 
-object SpicaClient {
+object SpicaApiClient {
     object Home
     object User
     object Watch {

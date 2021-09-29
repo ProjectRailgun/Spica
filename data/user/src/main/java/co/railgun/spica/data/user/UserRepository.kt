@@ -1,6 +1,6 @@
 package co.railgun.spica.data.user
 
-import co.railgun.spica.api.SpicaClient
+import co.railgun.spica.api.SpicaApiClient
 import co.railgun.spica.api.function.user.info
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ class UserRepository {
     val state: StateFlow<UserState> = _state.asStateFlow()
 
     suspend fun fetchUserInfo() {
-        runCatching { SpicaClient.User.info() }
+        runCatching { SpicaApiClient.User.info() }
             .onFailure { exception ->
                 _state.emit(
                     when {

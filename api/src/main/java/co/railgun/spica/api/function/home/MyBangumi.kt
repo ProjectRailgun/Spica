@@ -2,12 +2,12 @@
 
 package co.railgun.spica.api.function.home
 
-import co.railgun.spica.api.SpicaClient
+import co.railgun.spica.api.SpicaApiClient
 import co.railgun.spica.api.internal.homeService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-suspend fun SpicaClient.Home.myBangumi(
+suspend fun SpicaApiClient.Home.myBangumi(
     page: Int,
     count: Int,
     status: BangumiStatus,

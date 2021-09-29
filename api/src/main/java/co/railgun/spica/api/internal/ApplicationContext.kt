@@ -6,5 +6,5 @@ internal var currentApplicationContext: Context? = null
 
 internal val applicationContext: Context
     get() = requireNotNull(currentApplicationContext) {
-        "BgmRipClient hasn't been initialized."
+        "SpicaClient hasn't been initialized."
     }
