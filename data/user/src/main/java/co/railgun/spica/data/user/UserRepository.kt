@@ -2,10 +2,10 @@ package co.railgun.spica.data.user
 
 import co.railgun.spica.api.SpicaApiClient
 import co.railgun.spica.api.function.user.info
+import co.railgun.spica.api.model.DataResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import retrofit2.HttpException
 
 class UserRepository {
 
@@ -13,18 +13,12 @@ class UserRepository {
     val state: StateFlow<UserState> = _state.asStateFlow()
 
     suspend fun fetchUserInfo() {
-        runCatching { SpicaApiClient.User.info() }
-            .onFailure { exception ->
-                _state.emit(
-                    when {
-                        exception is HttpException && exception.code() == 401 -> UserState.Unauthorized
-                        else -> UserState.Error(exception)
-                    }
-                )
-            }
-            .onSuccess { userInfo ->
-                _state.emit(userInfo.toUserState())
-            }
+        val userState = when (val response = SpicaApiClient.User.info()) {
+            is DataResponse.Ok -> response.data.toUserState()
+            is DataResponse.Unauthorized -> UserState.Unauthorized
+            is DataResponse.Error -> UserState.Error(response.exception)
+        }
+        _state.emit(userState)
     }
 }
 

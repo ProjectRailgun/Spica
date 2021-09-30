@@ -6,11 +6,6 @@ import kotlinx.serialization.Serializable
 internal interface Response
 
 @Serializable
-data class DataResponse<T>(
-    @SerialName("data") val data: T,
-) : Response
-
-@Serializable
 data class ListDataResponse<T>(
     @SerialName("data") val data: List<T>,
     @SerialName("count") val count: Int = 0,
