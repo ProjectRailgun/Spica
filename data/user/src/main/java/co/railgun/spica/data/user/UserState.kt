@@ -17,4 +17,8 @@ sealed class UserState {
     data class Error(
         val exception: Throwable,
     ) : UserState()
+
+    data class LoginFailed(
+        val message: String,
+    ) : UserState()
 }
