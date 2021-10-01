@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="co.railgun.spica.ui.main" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="co.railgun.spica.ui.main">
+
+    <application>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Spica">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
