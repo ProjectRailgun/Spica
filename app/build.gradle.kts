@@ -40,14 +40,4 @@ android {
 dependencies {
     implementation(project(":data"))
     implementation(project(":ui"))
-    implementation(kotlinx.coroutines.core)
-    implementation(kotlinx.serialization.json)
-    implementation(okhttp4.okhttp)
-    implementation(omico.cloudflareApi.dns)
-    implementation(omico.cryonics.cryonics)
-    implementation(protobuf3.protobufKotlin)
-    implementation(retrofit2.converter.kotlinxSerialization)
-    implementation(retrofit2.converter.scalars)
-    implementation(retrofit2.retrofit)
-    debugImplementation(okhttp4.interceptor.logging)
 }

@@ -16,7 +16,6 @@ dependencies {
     api(androidx.datastore.datastore)
     api(kotlinx.coroutines.core)
     api(kotlinx.serialization.json)
-    api(okhttp4.interceptor.logging)
     api(okhttp4.okhttp)
     api(omico.cloudflareApi.dns)
     api(omico.cryonics.cryonics)
@@ -24,4 +23,5 @@ dependencies {
     api(retrofit2.converter.kotlinxSerialization)
     api(retrofit2.converter.scalars)
     api(retrofit2.retrofit)
+    debugApi(okhttp4.interceptor.logging)
 }
