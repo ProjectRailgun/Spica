@@ -19,6 +19,7 @@ dependencies {
     api(project(":ui:home"))
     api(project(":ui:login"))
     api(project(":ui:main"))
+    api(project(":ui:resources"))
     api(project(":ui:splash"))
     api(project(":ui:theme"))
 }

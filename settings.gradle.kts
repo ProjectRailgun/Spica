@@ -58,6 +58,7 @@ include(":ui:common")
 include(":ui:home")
 include(":ui:login")
 include(":ui:main")
+include(":ui:resources")
 include(":ui:splash")
 include(":ui:theme")
 

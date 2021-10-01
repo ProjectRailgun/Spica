@@ -16,4 +16,5 @@ dependencies {
     compileOnly(androidx.compose.runtime)
     compileOnly(androidx.navigation.compose)
     compileOnly(androidx.navigation.runtimeKtx)
+    api(project(":ui:resources"))
 }
