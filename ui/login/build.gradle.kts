@@ -14,7 +14,6 @@ android {
 }
 
 dependencies {
-    compileOnly(androidx.compose.runtime)
-    compileOnly(androidx.navigation.runtimeKtx)
     compileOnly(project(":ui:common"))
+    compileOnly(project(":ui:compose-preview"))
 }
