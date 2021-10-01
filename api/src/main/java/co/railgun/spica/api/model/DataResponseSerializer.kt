@@ -27,10 +27,11 @@ class DataResponseSerializer<T>(
     override fun deserialize(decoder: Decoder): DataResponse<T> {
         require(decoder is JsonDecoder)
         val element = decoder.decodeJsonElement()
+        val json = decoder.json
         require(element is JsonObject)
         return when {
-            "data" in element ->
-                DataResponse.Ok(decoder.json.decodeFromJsonElement(dataSerializer, element))
+            "data" in element.keys ->
+                DataResponse.Ok(json.decodeFromJsonElement(dataSerializer, element["data"]!!))
             else -> error("Unsupported.")
         }
     }
