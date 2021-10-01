@@ -9,6 +9,8 @@ object LoginScreen : AppScreen {
     override val route: String = "login"
 
     override val content: @Composable (NavBackStackEntry) -> Unit = {
-        LoginUI()
+        LoginUI(
+            navController = navController,
+        )
     }
 }
