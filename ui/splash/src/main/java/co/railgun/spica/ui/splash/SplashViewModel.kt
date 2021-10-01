@@ -24,7 +24,7 @@ class SplashViewModel : ViewModel() {
 
     private fun checkUserState() {
         viewModelScope.launch {
-            userRepository.fetchUserInfo()
+            userRepository.updateUserState()
         }
     }
 
