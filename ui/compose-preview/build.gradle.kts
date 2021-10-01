@@ -5,6 +5,7 @@ plugins {
 
 android {
     buildFeatures {
+        buildConfig = false
         compose = true
     }
     composeOptions {
@@ -13,9 +14,13 @@ android {
 }
 
 dependencies {
-    compileOnly(accompanist.insetsUi)
+    api(androidx.compose.uiToolingPreview)
+    compileOnly(accompanist.insets)
+    compileOnly(androidx.compose.foundation)
+    compileOnly(androidx.compose.material)
     compileOnly(androidx.compose.runtime)
     compileOnly(androidx.navigation.compose)
-    compileOnly(androidx.navigation.runtimeKtx)
-    api(project(":ui:resources"))
+    compileOnly(project(":ui:common"))
+    compileOnly(project(":ui:theme"))
+    debugApi(androidx.compose.uiTooling)
 }

@@ -55,6 +55,7 @@ include(":data:user")
 
 include(":ui")
 include(":ui:common")
+include(":ui:compose-preview")
 include(":ui:home")
 include(":ui:login")
 include(":ui:main")
