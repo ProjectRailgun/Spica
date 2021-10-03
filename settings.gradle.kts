@@ -4,7 +4,7 @@ pluginManagement {
     val versions = object {
         val agePlugin = "1.0.0-SNAPSHOT"
         val androidGradlePlugin = "7.1.0-alpha13"
-        val kotlinPlugin = "1.5.30"
+        val kotlinPlugin = "1.5.31"
     }
     plugins {
         id("com.android.application") version versions.androidGradlePlugin
