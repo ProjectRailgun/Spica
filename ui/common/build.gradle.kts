@@ -33,6 +33,8 @@ dependencies {
     api(androidx.lifecycle.runtimeKtx)
     api(androidx.navigation.compose)
     api(androidx.navigation.runtimeKtx)
+    api(coil.coil)
+    api(coil.coilCompose)
     api(material.material)
     api(project(":data"))
     api(project(":ui:resources"))

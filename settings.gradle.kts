@@ -36,6 +36,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 
 createVersionCatalog("accompanist")
 createVersionCatalog("androidx")
+createVersionCatalog("coil")
 createVersionCatalog("kotlinx")
 createVersionCatalog("material")
 createVersionCatalog("okhttp4")
