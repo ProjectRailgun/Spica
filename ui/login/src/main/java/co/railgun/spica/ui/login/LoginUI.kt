@@ -73,7 +73,10 @@ fun LoginUI(
         uiState = uiState,
         onSubmitAction = { action ->
             when (action) {
-                LoginAction.Logged -> navController.navigate(route = "home")
+                LoginAction.Logged -> {
+                    navController.popBackStack()
+                    navController.navigate(route = "home")
+                }
                 else -> viewModel.submitAction(action)
             }
         },
