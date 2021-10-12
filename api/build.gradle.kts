@@ -13,6 +13,7 @@ android {
 }
 
 dependencies {
+    api(kotlin("reflect"))
     api(androidx.datastore.datastore)
     api(kotlinx.coroutines.core)
     api(kotlinx.serialization.json)
