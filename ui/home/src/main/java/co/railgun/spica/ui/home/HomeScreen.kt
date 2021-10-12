@@ -2,7 +2,7 @@ package co.railgun.spica.ui.home
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
-import co.railgun.spica.ui.AppScreen
+import co.railgun.spica.ui.navigation.AppScreen
 
 object HomeScreen : AppScreen {
 

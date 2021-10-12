@@ -1,4 +1,4 @@
-package co.railgun.spica.ui.compose
+package co.railgun.spica.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

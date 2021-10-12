@@ -1,5 +1,5 @@
 package co.railgun.spica
 
-import android.app.Application
+import me.omico.xero.core.CoreApplication
 
-class SpicaApplication : Application()
+class SpicaApplication : CoreApplication()

@@ -1,4 +1,4 @@
-package co.railgun.spica.ui
+package co.railgun.spica.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument

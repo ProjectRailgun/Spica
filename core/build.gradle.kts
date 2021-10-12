@@ -6,10 +6,10 @@ plugins {
 android {
     buildFeatures {
         buildConfig = false
-        compose = true
     }
 }
 
 dependencies {
-    compileOnly(project(":ui:common"))
+    compileOnly(androidx.annotation.annotation)
+    compileOnly(androidx.core.coreKtx)
 }

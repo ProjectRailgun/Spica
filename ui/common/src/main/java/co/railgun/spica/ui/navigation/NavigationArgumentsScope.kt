@@ -1,4 +1,4 @@
-package co.railgun.spica.ui
+package co.railgun.spica.ui.navigation
 
 import android.os.Bundle
 import androidx.navigation.NavBackStackEntry

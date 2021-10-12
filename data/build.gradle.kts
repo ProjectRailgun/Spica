@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":api"))
     api(project(":data:user"))
+    implementation(project(":api"))
 }

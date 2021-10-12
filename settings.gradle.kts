@@ -47,22 +47,18 @@ createVersionCatalog("retrofit2")
 //include(":common")
 //include(":mobile")
 
-include(":app")
-
 include(":api")
-
+include(":app")
+include(":core")
 include(":data")
 include(":data:user")
-
 include(":ui")
 include(":ui:common")
-include(":ui:compose-preview")
+include(":ui:common:theme")
 include(":ui:home")
 include(":ui:login")
 include(":ui:main")
-include(":ui:resources")
 include(":ui:splash")
-include(":ui:theme")
 
 fun createVersionCatalog(name: String) =
     dependencyResolutionManagement.versionCatalogs.create(name) {

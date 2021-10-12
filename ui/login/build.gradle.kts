@@ -8,12 +8,8 @@ android {
         buildConfig = false
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = androidx.versions.compose.get()
-    }
 }
 
 dependencies {
     compileOnly(project(":ui:common"))
-    compileOnly(project(":ui:compose-preview"))
 }

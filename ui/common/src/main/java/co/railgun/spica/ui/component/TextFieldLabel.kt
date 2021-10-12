@@ -1,4 +1,4 @@
-package co.railgun.spica.ui.compose
+package co.railgun.spica.ui.component
 
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha

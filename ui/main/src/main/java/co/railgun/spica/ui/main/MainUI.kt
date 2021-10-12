@@ -8,10 +8,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import co.railgun.spica.ui.LocalNavController
 import co.railgun.spica.ui.home.HomeScreen
 import co.railgun.spica.ui.login.LoginScreen
-import co.railgun.spica.ui.screen
+import co.railgun.spica.ui.navigation.LocalNavController
+import co.railgun.spica.ui.navigation.screen
 import co.railgun.spica.ui.splash.SplashScreen
 import co.railgun.spica.ui.theme.SpicaTheme
 import com.google.accompanist.insets.ProvideWindowInsets

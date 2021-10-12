@@ -1,3 +1,3 @@
-package co.railgun.spica.ui
+package co.railgun.spica.ui.navigation
 
 interface AppScreen : Screen, AppNavigationArgumentsScope

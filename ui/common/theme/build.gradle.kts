@@ -8,9 +8,6 @@ android {
         buildConfig = false
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = androidx.versions.compose.get()
-    }
 }
 
 dependencies {

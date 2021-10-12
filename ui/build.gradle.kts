@@ -8,12 +8,12 @@ android {
         buildConfig = false
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = androidx.versions.compose.get()
-    }
 }
 
 dependencies {
     api(project(":ui:common"))
+    api(project(":ui:home"))
+    api(project(":ui:login"))
     api(project(":ui:main"))
+    api(project(":ui:splash"))
 }

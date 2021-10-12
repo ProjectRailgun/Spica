@@ -7,12 +7,12 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = androidx.versions.compose.get()
-    }
 }
 
 dependencies {
+    api(project(":core"))
+    api(project(":data"))
+    api(project(":ui:common:theme"))
     api(accompanist.insets)
     api(accompanist.insetsUi)
     api(accompanist.swipeRefresh)
@@ -35,8 +35,7 @@ dependencies {
     api(androidx.navigation.runtimeKtx)
     api(coil.coil)
     api(coil.coilCompose)
+    api(kotlinx.coroutines.core)
     api(material.material)
-    api(project(":data"))
-    api(project(":ui:resources"))
-    api(project(":ui:theme"))
+    debugApi(androidx.compose.uiTooling)
 }
