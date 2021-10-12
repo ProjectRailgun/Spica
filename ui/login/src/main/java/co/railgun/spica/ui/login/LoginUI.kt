@@ -42,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import co.railgun.spica.ui.ProvideSpicaPreviewContainer
 import co.railgun.spica.ui.component.AppBarAction
 import co.railgun.spica.ui.component.HeightSpacer
+import co.railgun.spica.ui.component.OnSubmitAction
 import co.railgun.spica.ui.component.PasswordTextField
 import co.railgun.spica.ui.component.SpicaTopAppBar
 import co.railgun.spica.ui.component.TextFieldState
@@ -83,13 +84,15 @@ fun LoginUI(
     )
 }
 
+private typealias OnSubmitLoginAction = OnSubmitAction<LoginAction>
+
 @Composable
 private fun LoginUI(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     uiState: LoginUIState,
-    onSubmitAction: (LoginAction) -> Unit,
+    onSubmitAction: OnSubmitLoginAction,
 ) {
     LaunchedEffect(uiState) {
         if (uiState.logged) onSubmitAction(LoginAction.Logged)
@@ -139,7 +142,7 @@ private fun LoginContent(
     passwordTextFieldState: TextFieldState = rememberTextFieldState(
         errorFor = { "Invalid password" },
     ),
-    onSubmitAction: (LoginAction) -> Unit,
+    onSubmitAction: OnSubmitLoginAction,
 ) {
     var username: String by remember { mutableStateOf("") }
     Column(
