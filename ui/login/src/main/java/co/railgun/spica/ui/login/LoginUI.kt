@@ -28,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
@@ -46,6 +48,7 @@ import co.railgun.spica.ui.component.OnSubmitAction
 import co.railgun.spica.ui.component.PasswordTextField
 import co.railgun.spica.ui.component.SpicaTopAppBar
 import co.railgun.spica.ui.component.TextFieldState
+import co.railgun.spica.ui.component.autofill
 import co.railgun.spica.ui.component.rememberTextFieldState
 import com.google.accompanist.insets.ui.Scaffold
 import kotlinx.coroutines.CoroutineScope
@@ -135,6 +138,7 @@ private fun LoginUI(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun LoginContent(
     modifier: Modifier = Modifier,
@@ -167,6 +171,10 @@ private fun LoginContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .focusRequester(focusRequester = focusRequest)
+                    .autofill(
+                        autofillTypes = listOf(AutofillType.Username),
+                        onFill = { username = it }
+                    )
             },
             label = { Text(text = "Username") },
             value = username,
@@ -183,8 +191,12 @@ private fun LoginContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .focusRequester(focusRequester = focusRequest)
+                    .autofill(
+                        autofillTypes = listOf(AutofillType.Password),
+                        onFill = { passwordTextFieldState.text = it }
+                    )
             },
-            label = "Enter password",
+            label = "Password",
             textFieldState = passwordTextFieldState,
             onImeAction = {
                 onSubmitAction(
