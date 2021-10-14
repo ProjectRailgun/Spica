@@ -20,6 +20,8 @@ import co.railgun.spica.ui.component.OnSubmitAction
 import co.railgun.spica.ui.component.SpicaTopAppBar
 import co.railgun.spica.ui.component.liftOnScroll
 import co.railgun.spica.ui.home.component.items
+import co.railgun.spica.ui.navigation.navigateToBangumiDetail
+import co.railgun.spica.ui.navigation.navigateToLogin
 import com.google.accompanist.insets.ui.Scaffold
 
 @Preview
@@ -41,14 +43,14 @@ fun HomeUI(
     val uiState: HomeUIState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState) {
         if (!uiState.unauthorized) return@LaunchedEffect
-        navController.popBackStack()
-        navController.navigate("login")
+        navController.navigateToLogin()
     }
     HomeUI(
         uiState = uiState,
         onSubmitAction = { action ->
             when (action) {
-                HomeAction.NavigateToBangumiDetail -> navController.navigate("bangumi_detail")
+                is HomeAction.NavigateToBangumiDetail ->
+                    navController.navigateToBangumiDetail()
                 else -> viewModel.submitAction(action)
             }
         },

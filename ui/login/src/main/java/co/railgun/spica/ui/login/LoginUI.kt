@@ -50,6 +50,7 @@ import co.railgun.spica.ui.component.SpicaTopAppBar
 import co.railgun.spica.ui.component.TextFieldState
 import co.railgun.spica.ui.component.autofill
 import co.railgun.spica.ui.component.rememberTextFieldState
+import co.railgun.spica.ui.navigation.navigateToHome
 import com.google.accompanist.insets.ui.Scaffold
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -77,10 +78,7 @@ fun LoginUI(
         uiState = uiState,
         onSubmitAction = { action ->
             when (action) {
-                LoginAction.Logged -> {
-                    navController.popBackStack()
-                    navController.navigate(route = "home")
-                }
+                LoginAction.Logged -> navController.navigateToHome()
                 else -> viewModel.submitAction(action)
             }
         },

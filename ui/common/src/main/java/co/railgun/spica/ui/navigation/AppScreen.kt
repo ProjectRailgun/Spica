@@ -1,3 +1,5 @@
 package co.railgun.spica.ui.navigation
 
-interface AppScreen : Screen, AppNavigationArgumentsScope
+abstract class AppScreen(
+    override val route: String,
+) : Screen, AppNavigationArgumentsScope
