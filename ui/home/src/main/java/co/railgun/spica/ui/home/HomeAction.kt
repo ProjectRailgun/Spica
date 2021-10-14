@@ -4,5 +4,7 @@ sealed class HomeAction {
 
     object Loading : HomeAction()
 
-    object NavigateToBangumiDetail : HomeAction()
+    data class NavigateToBangumiDetail(
+        val id: String,
+    ) : HomeAction()
 }

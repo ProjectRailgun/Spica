@@ -24,13 +24,13 @@ internal fun <T> LazyListScope.items(
 internal fun LazyListScope.items(
     title: String,
     items: List<Bangumi>,
-    onItemClick: () -> Unit,
+    onItemClick: Bangumi.() -> Unit,
 ) {
     item { Title(text = title) }
     items(items = items) { bangumi ->
         Bangumi(
             bangumi = bangumi,
-            onclick = onItemClick,
+            onclick = { bangumi.onItemClick() },
         )
     }
     item { HeightSpacer(height = 16.dp) }

@@ -5,9 +5,6 @@ import androidx.navigation.NavBackStackEntry
 
 interface NavigationArgumentsScope {
 
-    val String.routeArgument: String
-        get() = "{$this}"
-
     fun <T> String.resolveArgument(key: String, value: T): String =
         replace(key.routeArgument, value.toString())
 
@@ -23,3 +20,6 @@ interface NavigationArgumentsScope {
     private fun NavBackStackEntry.requireArguments(): Bundle =
         requireNotNull(arguments) { "Navigation arguments shouldn't be null here." }
 }
+
+val String.routeArgument: String
+    get() = "{$this}"

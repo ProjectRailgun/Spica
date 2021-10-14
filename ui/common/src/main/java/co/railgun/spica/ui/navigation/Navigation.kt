@@ -2,9 +2,8 @@ package co.railgun.spica.ui.navigation
 
 import androidx.navigation.NavController
 
-fun NavController.navigateToBangumiDetail() {
-    navigate(Route.bangumiDetail)
-}
+fun NavController.navigateToBangumiDetail(id: String) =
+    navigate(Route.bangumiDetail(id))
 
 fun NavController.navigateToHome(popBackStack: Boolean = true) {
     if (popBackStack) popBackStack()

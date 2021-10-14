@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import co.railgun.spica.data.bangumi.Bangumi
 import co.railgun.spica.ui.ProvideSpicaPreviewContainer
 import co.railgun.spica.ui.component.OnSubmitAction
 import co.railgun.spica.ui.component.SpicaTopAppBar
@@ -50,7 +51,7 @@ fun HomeUI(
         onSubmitAction = { action ->
             when (action) {
                 is HomeAction.NavigateToBangumiDetail ->
-                    navController.navigateToBangumiDetail()
+                    navController.navigateToBangumiDetail(action.id)
                 else -> viewModel.submitAction(action)
             }
         },
@@ -95,7 +96,7 @@ private fun HomeContent(
     val announcedBangumi by rememberUpdatedState(newValue = uiState.announcedBangumi)
     val myBangumi by rememberUpdatedState(newValue = uiState.myBangumi)
     val onAir by rememberUpdatedState(newValue = uiState.onAir)
-    val onItemClick = { onSubmitAction(HomeAction.NavigateToBangumiDetail) }
+    val onItemClick: Bangumi.() -> Unit = { onSubmitAction(HomeAction.NavigateToBangumiDetail(id)) }
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
