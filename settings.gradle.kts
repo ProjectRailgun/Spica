@@ -3,7 +3,7 @@ rootProject.name = "Spica"
 pluginManagement {
     val versions = object {
         val agePlugin = "1.0.0-SNAPSHOT"
-        val androidGradlePlugin = "7.1.0-alpha13"
+        val androidGradlePlugin = "7.2.0-alpha01"
         val kotlinPlugin = "1.5.31"
     }
     plugins {
