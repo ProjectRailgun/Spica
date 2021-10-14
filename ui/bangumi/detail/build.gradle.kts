@@ -11,9 +11,5 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":ui:bangumi:detail"))
     compileOnly(project(":ui:common"))
-    compileOnly(project(":ui:home"))
-    compileOnly(project(":ui:login"))
-    compileOnly(project(":ui:splash"))
 }

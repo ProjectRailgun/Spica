@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    api(project(":ui:bangumi:detail"))
     api(project(":ui:common"))
     api(project(":ui:home"))
     api(project(":ui:login"))

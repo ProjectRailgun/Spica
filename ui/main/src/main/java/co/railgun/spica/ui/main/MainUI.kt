@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import co.railgun.spica.ui.bangumi.detail.BangumiDetailScreen
 import co.railgun.spica.ui.home.HomeScreen
 import co.railgun.spica.ui.login.LoginScreen
 import co.railgun.spica.ui.navigation.LocalNavController
@@ -48,6 +49,7 @@ private fun MainNavHost(
                 navController = navController,
                 startDestination = SplashScreen.route,
             ) {
+                screen(BangumiDetailScreen)
                 screen(HomeScreen)
                 screen(LoginScreen)
                 screen(SplashScreen)
