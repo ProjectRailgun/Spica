@@ -9,6 +9,8 @@ object HomeScreen : AppScreen {
     override val route: String = "home"
 
     override val content: @Composable (NavBackStackEntry) -> Unit = {
-        HomeUI()
+        HomeUI(
+            navController = navController,
+        )
     }
 }
