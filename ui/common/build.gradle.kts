@@ -26,6 +26,7 @@ dependencies {
     api(androidx.compose.materialIconsCore)
     api(androidx.compose.materialIconsExtended)
     api(androidx.compose.runtime)
+    api(androidx.compose.runtimeSaveable)
     api(androidx.compose.ui)
     api(androidx.compose.uiToolingPreview)
     api(androidx.compose.uiUtil)
