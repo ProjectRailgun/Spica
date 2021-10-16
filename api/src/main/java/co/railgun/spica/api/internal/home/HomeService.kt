@@ -37,5 +37,5 @@ internal interface HomeService {
     @GET("/api/home/episode/{id}")
     suspend fun episodeDetail(
         @Path("id") id: String,
-    ): DataResponse<Episode>
+    ): Episode
 }

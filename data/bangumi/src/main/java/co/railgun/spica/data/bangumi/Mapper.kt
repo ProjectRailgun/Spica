@@ -25,6 +25,9 @@ fun ApiEpisode.toData(): Episode =
         subTitle = name,
         bangumiId = bangumiId,
         bgmEpsId = bgmEpsId,
+        thumbnailUrl = thumbnailImage?.url,
+        downloadStatus = status.toDownloadStatus(),
+        videoUrl = videoFiles.firstOrNull()?.url ?: "",
     )
 
 fun ApiAnnounce.toData(): Bangumi =
@@ -38,3 +41,6 @@ fun List<ApiEpisode>.toEpisodes(): List<Episode> =
 
 fun List<ApiAnnounce>.toAnnouncedBangumi(): List<Bangumi> =
     map(ApiAnnounce::toData)
+
+fun Int.toDownloadStatus(): Episode.DownloadStatus =
+    Episode.DownloadStatus.values().find { it.status == this } ?: error("Status code incorrect.")
