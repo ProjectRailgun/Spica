@@ -13,11 +13,11 @@ inline fun <reified VM : ViewModel> viewModel(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     },
     key: String? = null,
-    crossinline factoryCreator: () -> VM
+    crossinline factoryCreator: () -> VM,
 ): VM = viewModel(viewModelStoreOwner, key, viewModelFactory(factoryCreator))
 
 inline fun <T : ViewModel> viewModelFactory(
-    crossinline creator: () -> T
+    crossinline creator: () -> T,
 ) = object : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
