@@ -4,11 +4,15 @@ pluginManagement {
     val versions = object {
         val agePlugin = "1.0.0-SNAPSHOT"
         val androidGradlePlugin = "7.2.0-alpha01"
+        val gradleVersionsPlugin = "0.39.0"
         val kotlinPlugin = "1.5.31"
+        val spotlessPlugin = "5.17.0"
     }
     plugins {
         id("com.android.application") version versions.androidGradlePlugin
         id("com.android.library") version versions.androidGradlePlugin
+        id("com.diffplug.spotless") version versions.spotlessPlugin
+        id("com.github.ben-manes.versions") version versions.gradleVersionsPlugin
         id("me.omico.age") version versions.agePlugin
         kotlin("android") version versions.kotlinPlugin
         kotlin("plugin.serialization") version versions.kotlinPlugin
@@ -44,8 +48,8 @@ createVersionCatalog("omico")
 createVersionCatalog("protobuf3")
 createVersionCatalog("retrofit2")
 
-//include(":common")
-//include(":mobile")
+// include(":common")
+// include(":mobile")
 
 include(":api")
 include(":app")

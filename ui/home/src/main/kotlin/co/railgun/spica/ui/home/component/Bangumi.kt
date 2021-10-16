@@ -19,7 +19,6 @@ import co.railgun.spica.ui.component.HeightSpacer
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 
-
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun Bangumi(

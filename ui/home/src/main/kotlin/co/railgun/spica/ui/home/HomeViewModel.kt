@@ -67,7 +67,6 @@ class HomeViewModel : ViewModel() {
         initialValue = HomeUIState.Empty,
     )
 
-
     private fun initialize() {
         viewModelScope.launch {
             loading()
