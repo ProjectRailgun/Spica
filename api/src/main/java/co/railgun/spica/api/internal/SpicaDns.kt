@@ -1,12 +1,12 @@
 package co.railgun.spica.api.internal
 
 import android.util.Log
-import java.net.InetAddress
 import kotlinx.coroutines.runBlocking
 import me.omico.cloudflare.api.dns.CloudflareDnsClient
 import me.omico.cloudflare.api.dns.function.dnsQuery
 import me.omico.cryonics.BuildConfig
 import okhttp3.Dns
+import java.net.InetAddress
 
 object SpicaDns : Dns {
 
