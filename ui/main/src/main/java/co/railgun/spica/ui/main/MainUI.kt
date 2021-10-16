@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import co.railgun.spica.ui.bangumi.detail.BangumiDetailScreen
+import co.railgun.spica.ui.bangumi.player.BangumiPlayerScreen
 import co.railgun.spica.ui.home.HomeScreen
 import co.railgun.spica.ui.login.LoginScreen
 import co.railgun.spica.ui.navigation.LocalNavController
@@ -51,6 +52,7 @@ private fun MainNavHost(
                 startDestination = Route.splash,
             ) {
                 screen(BangumiDetailScreen)
+                screen(BangumiPlayerScreen)
                 screen(HomeScreen)
                 screen(LoginScreen)
                 screen(SplashScreen)

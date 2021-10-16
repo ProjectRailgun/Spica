@@ -16,14 +16,21 @@ interface AppNavigationArgumentsScope : NavigationArgumentsScope {
         @ReadOnlyComposable
         get() = LocalNavController.current
 
-    fun navArgumentId(): NamedNavArgument =
-        navArgument(ARG_ID) { type = NavType.StringType }
+    fun navArgumentBangumiId(): NamedNavArgument =
+        navArgument(ARG_BANGUMI_ID) { type = NavType.StringType }
 
-    val NavBackStackEntry.argumentId: String
-        get() = requireString(ARG_ID)
+    val NavBackStackEntry.bangumiId: String
+        get() = requireString(ARG_BANGUMI_ID)
+
+    fun navArgumentEpisodeId(): NamedNavArgument =
+        navArgument(ARG_EPISODE_ID) { type = NavType.StringType }
+
+    val NavBackStackEntry.episodeId: String
+        get() = requireString(ARG_EPISODE_ID)
 
     companion object : AppNavigationArgumentsScope {
-        const val ARG_ID = "id"
+        const val ARG_BANGUMI_ID = "bangumi_id"
+        const val ARG_EPISODE_ID = "episode_id"
     }
 }
 

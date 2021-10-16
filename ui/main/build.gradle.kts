@@ -12,6 +12,7 @@ android {
 
 dependencies {
     compileOnly(project(":ui:bangumi:detail"))
+    compileOnly(project(":ui:bangumi:player"))
     compileOnly(project(":ui:common"))
     compileOnly(project(":ui:home"))
     compileOnly(project(":ui:login"))

@@ -21,6 +21,7 @@ dependencies {
     api(androidx.activity.activityKtx)
     api(androidx.annotation.annotation)
     api(androidx.appcompat)
+    api(androidx.compose.animation)
     api(androidx.compose.foundation)
     api(androidx.compose.material)
     api(androidx.compose.materialIconsCore)
