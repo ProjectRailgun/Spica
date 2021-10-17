@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.omico.xero.core.util.d
 
 class BangumiPlayerViewModel(
     private val id: String,
@@ -59,7 +58,6 @@ class BangumiPlayerViewModel(
         episode,
         error,
         ->
-        episode.d
         BangumiPlayerUIState(
             loading = loading,
             videoUrl = episode.videoUrl,

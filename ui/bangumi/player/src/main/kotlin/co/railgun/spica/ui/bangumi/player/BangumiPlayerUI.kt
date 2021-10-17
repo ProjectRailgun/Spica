@@ -26,7 +26,6 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.omico.xero.core.lifecycle.viewModel
-import me.omico.xero.core.util.d
 
 @Preview
 @Composable
@@ -64,7 +63,6 @@ private fun BangumiPlayUI(
     uiState: BangumiPlayerUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
 ) {
-    exoPlayerState.isControllerVisible.d
     SideEffect {
         systemUiController.isSystemBarsVisible = exoPlayerState.isControllerVisible
     }
