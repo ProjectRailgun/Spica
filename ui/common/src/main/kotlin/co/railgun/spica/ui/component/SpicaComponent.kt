@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import co.railgun.spica.ui.R
 import co.railgun.spica.ui.theme.topAppBarBackground
 import com.google.accompanist.insets.LocalWindowInsets
@@ -59,7 +58,7 @@ fun SpicaTopAppBar(
 }
 
 @Composable
-fun AppBarAction(
+fun AppBarIcon(
     imageVector: ImageVector,
     onClick: () -> Unit,
 ) {
@@ -74,15 +73,22 @@ fun AppBarAction(
 }
 
 @Composable
-fun NavigateUpIcon(
-    navController: NavController,
+fun AppBarAction(
+    imageVector: ImageVector,
+    onClick: () -> Unit,
 ) {
-    IconButton(
-        onClick = { navController.navigateUp() },
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.ArrowBack,
-            contentDescription = null,
-        )
-    }
+    AppBarIcon(
+        imageVector = imageVector,
+        onClick = onClick,
+    )
+}
+
+@Composable
+fun NavigateUpIcon(
+    onClick: () -> Unit,
+) {
+    AppBarIcon(
+        imageVector = Icons.Rounded.ArrowBack,
+        onClick = onClick,
+    )
 }

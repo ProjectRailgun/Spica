@@ -1,3 +1,6 @@
 package co.railgun.spica.ui.bangumi.player
 
-sealed class BangumiPlayerAction
+sealed class BangumiPlayerAction {
+
+    object Back : BangumiPlayerAction()
+}

@@ -1,5 +1,6 @@
 package co.railgun.spica.ui.bangumi.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,10 +60,10 @@ fun BangumiDetailUI(
     val uiState: BangumiDetailUIState by viewModel.uiState.collectAsState()
     ProvideLazyListState {
         BangumiDetailUI(
-            navController = navController,
             uiState = uiState,
             onSubmitAction = { action ->
                 when (action) {
+                    is BangumiDetailAction.Back -> navController.navigateUp()
                     is BangumiDetailAction.NavigateToLogin -> navController.navigateToLogin()
                     is BangumiDetailAction.NavigateToBangumiPlayer ->
                         navController.navigateToBangumiPlayer(action.id)
@@ -77,12 +78,13 @@ private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiDetailActi
 
 @Composable
 private fun BangumiDetailUI(
-    navController: NavController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     uiState: BangumiDetailUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
 ) {
+    val onSubmitBackAction = { onSubmitAction(BangumiDetailAction.Back) }
+    BackHandler(onBack = onSubmitBackAction)
     LaunchedEffect(uiState) {
         if (uiState.error !is BangumiDetailUIState.Error.Message) return@LaunchedEffect
         coroutineScope.launch {
@@ -96,7 +98,7 @@ private fun BangumiDetailUI(
             SpicaTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 titleText = uiState.title,
-                navigationIcon = { NavigateUpIcon(navController = navController) },
+                navigationIcon = { NavigateUpIcon(onClick = onSubmitBackAction) },
                 elevation = LocalLazyListState.current.liftOnScroll(),
             )
         },

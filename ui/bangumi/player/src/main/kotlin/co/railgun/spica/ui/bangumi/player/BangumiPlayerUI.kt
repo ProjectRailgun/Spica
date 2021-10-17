@@ -1,5 +1,6 @@
 package co.railgun.spica.ui.bangumi.player
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -46,9 +47,13 @@ fun BangumiPlayUI(
 ) {
     val uiState: BangumiPlayerUIState by viewModel.uiState.collectAsState()
     BangumiPlayUI(
-        navController = navController,
         uiState = uiState,
-        onSubmitAction = viewModel::submitAction,
+        onSubmitAction = { action ->
+            when (action) {
+                BangumiPlayerAction.Back -> navController.navigateUp()
+                else -> viewModel.submitAction(action)
+            }
+        },
     )
 }
 
@@ -57,12 +62,13 @@ private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiPlayerActi
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BangumiPlayUI(
-    navController: NavController = rememberNavController(),
     systemUiController: SystemUiController = rememberSystemUiController(),
     exoPlayerState: ExoPlayerState = rememberExoPlayerState(),
     uiState: BangumiPlayerUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
 ) {
+    val onSubmitBackAction = { onSubmitAction(BangumiPlayerAction.Back) }
+    BackHandler(onBack = onSubmitBackAction)
     SideEffect {
         systemUiController.isSystemBarsVisible = exoPlayerState.isControllerVisible
     }
@@ -76,7 +82,7 @@ private fun BangumiPlayUI(
                     modifier = Modifier.fillMaxWidth(),
                     titleText = uiState.title,
                     backgroundColor = Color.Transparent,
-                    navigationIcon = { NavigateUpIcon(navController = navController) },
+                    navigationIcon = { NavigateUpIcon(onClick = onSubmitBackAction) },
                     elevation = 0.dp,
                 )
             }
