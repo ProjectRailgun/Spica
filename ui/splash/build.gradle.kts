@@ -12,6 +12,4 @@ android {
 
 dependencies {
     compileOnly(project(":ui:common"))
-    compileOnly(project(":ui:home"))
-    compileOnly(project(":ui:login"))
 }

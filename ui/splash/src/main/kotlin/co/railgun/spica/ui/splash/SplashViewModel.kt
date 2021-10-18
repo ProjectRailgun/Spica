@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.railgun.spica.data.user.UserState
 import co.railgun.spica.data.user.userRepository
-import co.railgun.spica.ui.home.HomeScreen
-import co.railgun.spica.ui.login.LoginScreen
+import co.railgun.spica.ui.navigation.Route
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,11 +31,11 @@ class SplashViewModel : ViewModel() {
         viewModelScope.launch {
             userRepository.state.collect { userState ->
                 if (userState is UserState.Initializing) return@collect
-                val screen = when (userState) {
-                    is UserState.Logged -> HomeScreen
-                    else -> LoginScreen
+                val route = when (userState) {
+                    is UserState.Logged -> Route.home
+                    else -> Route.login
                 }
-                _route.emit(screen.route)
+                _route.emit(route)
             }
         }
     }
