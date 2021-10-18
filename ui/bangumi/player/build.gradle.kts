@@ -12,7 +12,7 @@ android {
 
 dependencies {
     compileOnly(project(":ui:common"))
-    implementation("com.google.android.exoplayer:exoplayer-core:2.15.1")
-    implementation("com.google.android.exoplayer:exoplayer-dash:2.15.1")
-    implementation("com.google.android.exoplayer:exoplayer-ui:2.15.1")
+    implementation(exoplayer2.core)
+    implementation(exoplayer2.dash)
+    implementation(exoplayer2.ui)
 }

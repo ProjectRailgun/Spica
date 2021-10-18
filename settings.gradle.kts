@@ -3,7 +3,7 @@ rootProject.name = "Spica"
 pluginManagement {
     val versions = object {
         val agePlugin = "1.0.0-SNAPSHOT"
-        val androidGradlePlugin = "7.2.0-alpha01"
+        val androidGradlePlugin = "7.2.0-alpha02"
         val gradleVersionsPlugin = "0.39.0"
         val kotlinPlugin = "1.5.31"
         val spotlessPlugin = "5.17.0"
@@ -41,6 +41,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 createVersionCatalog("accompanist")
 createVersionCatalog("androidx")
 createVersionCatalog("coil")
+createVersionCatalog("exoplayer2")
 createVersionCatalog("kotlinx")
 createVersionCatalog("material")
 createVersionCatalog("okhttp4")
