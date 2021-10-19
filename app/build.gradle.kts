@@ -32,9 +32,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = androidx.versions.compose.get()
-    }
 }
 
 dependencies {
