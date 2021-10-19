@@ -4,9 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import co.railgun.spica.ui.bangumi.player.component.rememberExoPlayerState
 import co.railgun.spica.ui.component.NavigateUpIcon
 import co.railgun.spica.ui.component.OnSubmitAction
 import co.railgun.spica.ui.component.SpicaTopAppBar
+import co.railgun.spica.ui.theme.SpicaTheme
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -46,15 +49,17 @@ fun BangumiPlayUI(
     viewModel: BangumiPlayerViewModel = viewModel { BangumiPlayerViewModel(id = id) },
 ) {
     val uiState: BangumiPlayerUIState by viewModel.uiState.collectAsState()
-    BangumiPlayUI(
-        uiState = uiState,
-        onSubmitAction = { action ->
-            when (action) {
-                BangumiPlayerAction.Back -> navController.navigateUp()
-                else -> viewModel.submitAction(action)
-            }
-        },
-    )
+    SpicaTheme(isDarkTheme = true) {
+        BangumiPlayUI(
+            uiState = uiState,
+            onSubmitAction = { action ->
+                when (action) {
+                    BangumiPlayerAction.Back -> navController.navigateUp()
+                    else -> viewModel.submitAction(action)
+                }
+            },
+        )
+    }
 }
 
 private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiPlayerAction>
@@ -63,21 +68,30 @@ private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiPlayerActi
 @Composable
 private fun BangumiPlayUI(
     systemUiController: SystemUiController = rememberSystemUiController(),
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
     exoPlayerState: ExoPlayerState = rememberExoPlayerState(),
     uiState: BangumiPlayerUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
 ) {
     val onSubmitBackAction = { onSubmitAction(BangumiPlayerAction.Back) }
     BackHandler(onBack = onSubmitBackAction)
-    SideEffect {
-        systemUiController.isSystemBarsVisible = exoPlayerState.isControllerVisible
+    DisposableEffect(Unit) {
+        onDispose {
+            systemUiController.setSystemBarsColor(
+                color = Color.Transparent,
+                darkIcons = !isDarkTheme,
+                isNavigationBarContrastEnforced = false,
+            )
+        }
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AnimatedVisibility(
-                visible = exoPlayerState.isControllerVisible,
-            ) {
+            AnimatedVisibility(visible = exoPlayerState.isControllerVisible) {
+                SideEffect {
+                    systemUiController.setSystemBarsColor(color = Color.Transparent)
+                    systemUiController.isSystemBarsVisible = exoPlayerState.isControllerVisible
+                }
                 SpicaTopAppBar(
                     modifier = Modifier.fillMaxWidth(),
                     titleText = uiState.title,

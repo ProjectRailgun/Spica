@@ -6,7 +6,9 @@
     <application>
         <activity
             android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true"
+            android:launchMode="singleInstancePerTask"
             android:theme="@style/Theme.Spica">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

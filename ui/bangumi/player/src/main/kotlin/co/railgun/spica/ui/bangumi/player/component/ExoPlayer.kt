@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.view.View
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,7 +17,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 
@@ -28,37 +29,41 @@ fun ExoPlayer(
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val exoPlayer = remember(context, lifecycle, url) { context.createExoPlayer(url) }
+    val exoPlayer = remember { context.createExoPlayer(url) }
+    val playerView = remember { StyledPlayerView(context) }
+    @Suppress("unused") val playerViewLifecycleObserver = remember {
+        object : LifecycleObserver {
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_START)
+            fun onStart() {
+                state.restoreState(exoPlayer)
+                playerView.onResume()
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+            fun onStop() {
+                state.saveState(exoPlayer)
+                playerView.onPause()
+            }
+        }
+    }
+    DisposableEffect(lifecycle, playerViewLifecycleObserver) {
+        exoPlayer.prepare()
+        lifecycle.addObserver(playerViewLifecycleObserver)
+        onDispose {
+            lifecycle.removeObserver(playerViewLifecycleObserver)
+            exoPlayer.release()
+        }
+    }
     AndroidView(
         modifier = modifier,
         factory = {
-            PlayerView(context)
-                .apply {
-                    setControllerVisibilityListener {
-                        state.isControllerVisible = it == View.VISIBLE
-                    }
-                    state.restoreState(exoPlayer)
-                    player = exoPlayer
+            playerView.apply {
+                setControllerVisibilityListener {
+                    state.isControllerVisible = it == View.VISIBLE
                 }
-                .also { playerView ->
-                    @Suppress("unused") val playerViewLifecycleObserver =
-                        object : LifecycleObserver {
-
-                            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-                            fun onCreate() {
-                                playerView.onResume()
-                                exoPlayer.playWhenReady = state.autoPlay
-                            }
-
-                            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                            fun onPause() {
-                                state.saveState(exoPlayer)
-                                playerView.onPause()
-                                exoPlayer.playWhenReady = false
-                            }
-                        }
-                    lifecycle.addObserver(playerViewLifecycleObserver)
-                }
+                player = exoPlayer
+            }
         },
     )
 }
@@ -69,7 +74,6 @@ private fun Context.createExoPlayer(url: String): ExoPlayer =
             .Factory(defaultDataSourceFactory)
             .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
             .let { addMediaSource(it) }
-        prepare()
     }
 
 private val Context.defaultDataSourceFactory

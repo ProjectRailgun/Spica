@@ -45,6 +45,7 @@ class ExoPlayerState(
     }
 
     fun restoreState(exoPlayer: ExoPlayer) {
+        exoPlayer.playWhenReady = autoPlay
         exoPlayer.seekTo(window, position)
     }
 
