@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -146,7 +147,17 @@ private fun LoginContent(
     ),
     onSubmitAction: OnSubmitLoginAction,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     var username: String by remember { mutableStateOf("") }
+    val onSubmitLoginAction = {
+        keyboardController?.hide()
+        onSubmitAction(
+            LoginAction.Login(
+                username = username,
+                password = passwordTextFieldState.text,
+            )
+        )
+    }
     Column(
         modifier = run {
             modifier
@@ -196,14 +207,7 @@ private fun LoginContent(
             },
             label = "Password",
             textFieldState = passwordTextFieldState,
-            onImeAction = {
-                onSubmitAction(
-                    LoginAction.Login(
-                        username = username,
-                        password = passwordTextFieldState.text,
-                    )
-                )
-            },
+            onImeAction = onSubmitLoginAction,
         )
         Button(
             modifier = run {
@@ -212,14 +216,7 @@ private fun LoginContent(
                     .padding(top = 24.dp)
                     .padding(horizontal = 16.dp)
             },
-            onClick = {
-                onSubmitAction(
-                    LoginAction.Login(
-                        username = username,
-                        password = passwordTextFieldState.text,
-                    )
-                )
-            },
+            onClick = onSubmitLoginAction,
         ) {
             Text(
                 modifier = run {
