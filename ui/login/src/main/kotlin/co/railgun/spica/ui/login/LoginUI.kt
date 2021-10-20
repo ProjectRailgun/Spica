@@ -1,5 +1,6 @@
 package co.railgun.spica.ui.login
 
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -47,6 +48,7 @@ import co.railgun.spica.ui.component.AppBarAction
 import co.railgun.spica.ui.component.HeightSpacer
 import co.railgun.spica.ui.component.OnSubmitAction
 import co.railgun.spica.ui.component.PasswordTextField
+import co.railgun.spica.ui.component.RequestedOrientation
 import co.railgun.spica.ui.component.SpicaTopAppBar
 import co.railgun.spica.ui.component.TextFieldState
 import co.railgun.spica.ui.component.autofill
@@ -74,6 +76,7 @@ fun LoginUI(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
 ) {
     val uiState: LoginUIState by viewModel.uiState.collectAsState()
+    RequestedOrientation(screenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT)
     LoginUI(
         scaffoldState = scaffoldState,
         uiState = uiState,
