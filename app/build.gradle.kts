@@ -16,6 +16,17 @@ android {
         versionCode = 7
         versionName = "0.9.2"
     }
+    flavorDimensions += "build"
+    productFlavors {
+        create("default") {
+            dimension = "build"
+        }
+        create("preview") {
+            dimension = "build"
+            applicationIdSuffix = ".preview"
+            versionName = "1.0.0-alpha01"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = true
