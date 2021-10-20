@@ -1,7 +1,6 @@
 package co.railgun.spica.ui.bangumi.detail
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,8 +32,6 @@ import co.railgun.spica.ui.component.liftOnScroll
 import co.railgun.spica.ui.navigation.navigateToBangumiPlayer
 import co.railgun.spica.ui.navigation.navigateToLogin
 import com.google.accompanist.insets.ui.Scaffold
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import me.omico.xero.core.lifecycle.viewModel
 
 @Preview
@@ -79,16 +75,18 @@ private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiDetailActi
 @Composable
 private fun BangumiDetailUI(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     uiState: BangumiDetailUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
 ) {
     val onSubmitBackAction = { onSubmitAction(BangumiDetailAction.Back) }
     BackHandler(onBack = onSubmitBackAction)
     LaunchedEffect(uiState) {
-        if (uiState.error !is BangumiDetailUIState.Error.Message) return@LaunchedEffect
-        coroutineScope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(uiState.error.message)
+        when (uiState.error) {
+            is BangumiDetailUIState.Error.Unauthorized ->
+                onSubmitAction(BangumiDetailAction.NavigateToLogin)
+            is BangumiDetailUIState.Error.Message ->
+                scaffoldState.snackbarHostState.showSnackbar(uiState.error.message)
+            else -> return@LaunchedEffect
         }
     }
     Scaffold(
@@ -104,7 +102,11 @@ private fun BangumiDetailUI(
         },
     ) { innerPadding ->
         BangumiDetailContent(
-            modifier = Modifier.padding(innerPadding),
+            modifier = run {
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            },
             uiState = uiState,
             onSubmitAction = onSubmitAction,
         )
@@ -117,50 +119,39 @@ private fun BangumiDetailContent(
     uiState: BangumiDetailUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
 ) {
-    Crossfade(
+    LazyColumn(
         modifier = modifier,
-        targetState = uiState.error,
-    ) { error ->
-        when (error) {
-            is BangumiDetailUIState.Error.None -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    state = LocalLazyListState.current,
-                ) {
-                    if (uiState.summary.isNotBlank()) {
-                        item { ItemTitle(text = "Summary") }
-                        item {
-                            Summary(
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 4.dp,
-                                ),
-                                text = uiState.summary,
-                            )
-                        }
-                        item { HeightSpacer(height = 16.dp) }
-                    }
-                    if (uiState.episodes.count() > 0) {
-                        item { ItemTitle(text = "Episodes") }
-                        itemsIndexed(uiState.episodes) { index, episode ->
-                            Episode(
-                                number = index + 1,
-                                episode = episode,
-                                onclick = {
-                                    if (episode.downloadStatus == DownloadStatus.Downloaded) {
-                                        onSubmitAction(
-                                            BangumiDetailAction.NavigateToBangumiPlayer(episode.id)
-                                        )
-                                    }
-                                },
-                            )
-                        }
-                        item { HeightSpacer(height = 16.dp) }
-                    }
-                }
+        state = LocalLazyListState.current,
+    ) {
+        if (uiState.summary.isNotBlank()) {
+            item { ItemTitle(text = "Summary") }
+            item {
+                Summary(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 4.dp,
+                    ),
+                    text = uiState.summary,
+                )
             }
-            is BangumiDetailUIState.Error.Unauthorized -> onSubmitAction(BangumiDetailAction.NavigateToLogin)
-            else -> return@Crossfade
+            item { HeightSpacer(height = 16.dp) }
+        }
+        if (uiState.episodes.isNotEmpty()) {
+            item { ItemTitle(text = "Episodes") }
+            itemsIndexed(uiState.episodes) { index, episode ->
+                Episode(
+                    number = index + 1,
+                    episode = episode,
+                    onclick = {
+                        if (episode.downloadStatus == DownloadStatus.Downloaded) {
+                            onSubmitAction(
+                                BangumiDetailAction.NavigateToBangumiPlayer(episode.id)
+                            )
+                        }
+                    },
+                )
+            }
+            item { HeightSpacer(height = 16.dp) }
         }
     }
 }
