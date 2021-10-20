@@ -26,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -55,8 +54,6 @@ import co.railgun.spica.ui.component.autofill
 import co.railgun.spica.ui.component.rememberTextFieldState
 import co.railgun.spica.ui.navigation.navigateToHome
 import com.google.accompanist.insets.ui.Scaffold
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -95,15 +92,13 @@ private typealias OnSubmitLoginAction = OnSubmitAction<LoginAction>
 private fun LoginUI(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     uiState: LoginUIState,
     onSubmitAction: OnSubmitLoginAction,
 ) {
     LaunchedEffect(uiState) {
         if (uiState.logged) onSubmitAction(LoginAction.Logged)
-        if (uiState.error !is LoginUIState.Error.Message) return@LaunchedEffect
-        coroutineScope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(uiState.error.message)
+        uiState.loginError?.let { uiError ->
+            scaffoldState.snackbarHostState.showSnackbar(uiError.message)
         }
     }
     Scaffold(
@@ -153,13 +148,15 @@ private fun LoginContent(
     val keyboardController = LocalSoftwareKeyboardController.current
     var username: String by remember { mutableStateOf("") }
     val onSubmitLoginAction = {
-        keyboardController?.hide()
-        onSubmitAction(
-            LoginAction.Login(
-                username = username,
-                password = passwordTextFieldState.text,
+        if (username.isNotBlank() && passwordTextFieldState.text.isNotBlank()) {
+            keyboardController?.hide()
+            onSubmitAction(
+                LoginAction.Login(
+                    username = username,
+                    password = passwordTextFieldState.text,
+                )
             )
-        )
+        }
     }
     Column(
         modifier = run {

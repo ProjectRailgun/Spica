@@ -4,17 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.railgun.spica.data.user.UserState
 import co.railgun.spica.data.user.userRepository
+import co.railgun.spica.ui.UIError
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
 
     private val _pendingActions: MutableSharedFlow<LoginAction> = MutableSharedFlow()
+
+    private val _loggingIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val uiState: StateFlow<LoginUIState> = uiState()
 
@@ -40,16 +44,20 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun uiState(): StateFlow<LoginUIState> =
-        userRepository.state.map { userState ->
+        combine(
+            _loggingIn,
+            userRepository.state,
+        ) {
+            loggingIn,
+            userState,
+            ->
             LoginUIState(
                 logged = userState is UserState.Logged,
-                error = when (userState) {
-                    is UserState.LoginFailed -> LoginUIState.Error.Message(message = userState.message)
-                    is UserState.Error ->
-                        LoginUIState.Error.Message(
-                            message = userState.exception.message ?: "Unknown error."
-                        )
-                    else -> LoginUIState.Error.None
+                loginError = when {
+                    loggingIn -> null
+                    userState is UserState.LoginFailed -> UIError(userState.message)
+                    userState is UserState.Error -> UIError(userState.exception)
+                    else -> null
                 }
             )
         }.stateIn(
@@ -58,6 +66,9 @@ class LoginViewModel : ViewModel() {
             initialValue = LoginUIState.Empty,
         )
 
-    private suspend fun login(username: String, password: String) =
+    private suspend fun login(username: String, password: String) {
+        _loggingIn.emit(true)
         userRepository.login(username, password)
+        _loggingIn.emit(false)
+    }
 }
