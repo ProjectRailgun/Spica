@@ -36,4 +36,6 @@ android {
 
 dependencies {
     implementation(project(":ui"))
+    implementation(platform(firebase.bom))
+    implementation(firebase.crashlyticsKtx)
 }
