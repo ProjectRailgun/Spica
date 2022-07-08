@@ -33,7 +33,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             _pendingActions.collect { action ->
                 when (action) {
-                    HomeAction.Loading -> loading()
+                    HomeAction.Refresh -> refresh()
                     else -> return@collect
                 }
             }
@@ -69,10 +69,10 @@ class HomeViewModel : ViewModel() {
 
     private fun initialize() {
         viewModelScope.launch {
-            loading()
+            refresh()
         }
     }
 
-    private suspend fun loading() =
+    private suspend fun refresh() =
         bangumiRepository.updateBangumiState()
 }

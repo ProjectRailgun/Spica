@@ -1,5 +1,6 @@
 package co.railgun.spica.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -102,7 +103,7 @@ private fun HomeContent(
     val onItemClick: Bangumi.() -> Unit = { onSubmitAction(HomeAction.NavigateToBangumiDetail(id)) }
     if (announcedBangumi.isEmpty() && myBangumi.isEmpty() && onAir.isEmpty()) {
         Box(
-            modifier = modifier,
+            modifier = modifier.clickable { onSubmitAction(HomeAction.Refresh) },
             contentAlignment = Alignment.Center,
         ) {
             Text("No data")
