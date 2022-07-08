@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.railgun.spica.ui.ProvideSpicaPreviewContainer
+import co.railgun.spica.ui.R
 import co.railgun.spica.ui.component.AppBarAction
 import co.railgun.spica.ui.component.HeightSpacer
 import co.railgun.spica.ui.component.OnSubmitAction
