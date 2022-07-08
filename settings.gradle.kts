@@ -3,8 +3,10 @@ rootProject.name = "Spica"
 pluginManagement {
     val versions = object {
         val agePlugin = "1.0.0-SNAPSHOT"
-        val androidGradlePlugin = "7.2.0-alpha02"
-        val gradleVersionsPlugin = "0.39.0"
+        val androidGradlePlugin = "7.2.1"
+        val firebaseCrashlyticsPlugin = "2.8.1"
+        val gmsPlugin = "4.3.10"
+        val gradleVersionsPlugin = "0.42.0"
         val kotlinPlugin = "1.5.31"
         val spotlessPlugin = "5.17.0"
     }
@@ -13,7 +15,11 @@ pluginManagement {
         id("com.android.library") version versions.androidGradlePlugin
         id("com.diffplug.spotless") version versions.spotlessPlugin
         id("com.github.ben-manes.versions") version versions.gradleVersionsPlugin
-        id("me.omico.age") version versions.agePlugin
+        id("com.google.firebase.crashlytics") version versions.firebaseCrashlyticsPlugin
+        id("com.google.gms.google-services") version versions.gmsPlugin
+        id("me.omico.age.project") version versions.agePlugin
+        id("me.omico.age.settings") version versions.agePlugin
+        id("me.omico.age.spotless") version versions.agePlugin
         kotlin("android") version versions.kotlinPlugin
         kotlin("plugin.serialization") version versions.kotlinPlugin
     }
@@ -35,8 +41,6 @@ dependencyResolutionManagement {
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
     }
 }
-
-enableFeaturePreview("VERSION_CATALOGS")
 
 createVersionCatalog("accompanist")
 createVersionCatalog("androidx")

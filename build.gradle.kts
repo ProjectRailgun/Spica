@@ -1,28 +1,31 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import me.omico.age.dsl.configureAndroidCommon
 import me.omico.age.dsl.configureAppSigningConfigsForRelease
-import me.omico.age.dsl.configureSpotlessWithCommonRules
 import me.omico.age.dsl.kotlinCompile
+import me.omico.age.spotless.androidXml
+import me.omico.age.spotless.configureSpotless
+import me.omico.age.spotless.intelliJIDEARunConfiguration
+import me.omico.age.spotless.kotlin
+import me.omico.age.spotless.kotlinGradle
 
 plugins {
     id("com.android.application") apply false
     id("com.android.library") apply false
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions")
-    id("me.omico.age")
+    id("me.omico.age.project")
+    id("me.omico.age.spotless")
     kotlin("android") apply false
-}
-
-buildscript {
-    dependencies {
-        classpath("com.google.gms:google-services:4.3.10")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
-    }
 }
 
 allprojects {
     configureDependencyUpdates()
-    configureSpotlessWithCommonRules()
+    configureSpotless {
+        androidXml()
+        intelliJIDEARunConfiguration()
+        kotlin()
+        kotlinGradle()
+    }
     configureAppSigningConfigsForRelease()
     configureAndroidCommon {
         compileSdk = 31
