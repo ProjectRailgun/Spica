@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":data:bangumi"))
-    api(project(":data:user"))
-    implementation(project(":api"))
+    api(projects.data.bangumi)
+    api(projects.data.user)
+    implementation(projects.api)
 }

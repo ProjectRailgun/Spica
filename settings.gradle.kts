@@ -1,5 +1,7 @@
 rootProject.name = "Spica"
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     val versions = object {
         val agePlugin = "1.0.0-SNAPSHOT"

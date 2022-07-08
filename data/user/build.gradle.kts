@@ -10,5 +10,5 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":api"))
+    compileOnly(projects.api)
 }

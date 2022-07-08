@@ -11,5 +11,5 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":ui:common"))
+    compileOnly(projects.ui.common)
 }

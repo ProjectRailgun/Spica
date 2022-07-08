@@ -10,9 +10,12 @@ android {
 }
 
 dependencies {
-    api(project(":core"))
-    api(project(":data"))
-    api(project(":ui:common:theme"))
+    api(projects.core)
+    api(projects.data)
+    api(projects.ui.common.theme)
+}
+
+dependencies {
     api(accompanist.insets)
     api(accompanist.insetsUi)
     api(accompanist.swipeRefresh)

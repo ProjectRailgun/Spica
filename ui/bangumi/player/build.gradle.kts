@@ -11,7 +11,10 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":ui:common"))
+    compileOnly(projects.ui.common)
+}
+
+dependencies {
     implementation(exoplayer2.core)
     implementation(exoplayer2.dash)
     implementation(exoplayer2.ui)
