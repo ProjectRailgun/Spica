@@ -13,9 +13,7 @@ import androidx.compose.ui.unit.dp
 import co.railgun.spica.data.bangumi.Episode
 import co.railgun.spica.ui.component.EllipsisText
 import co.railgun.spica.ui.component.HeightSpacer
-import coil.annotation.ExperimentalCoilApi
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun Episode(
     modifier: Modifier = Modifier,

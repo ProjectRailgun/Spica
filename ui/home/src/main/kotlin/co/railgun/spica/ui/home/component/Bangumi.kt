@@ -16,10 +16,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import co.railgun.spica.data.bangumi.Bangumi
 import co.railgun.spica.ui.component.HeightSpacer
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun Bangumi(
     modifier: Modifier = Modifier,

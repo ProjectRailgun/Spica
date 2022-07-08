@@ -41,11 +41,7 @@ class BangumiPlayerViewModel(
 
     private fun handlePendingActions() {
         viewModelScope.launch {
-            _pendingActions.collect { action ->
-                when (action) {
-                    else -> return@collect
-                }
-            }
+            _pendingActions.collect {}
         }
     }
 

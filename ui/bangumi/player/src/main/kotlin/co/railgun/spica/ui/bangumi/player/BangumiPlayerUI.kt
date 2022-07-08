@@ -3,7 +3,6 @@ package co.railgun.spica.ui.bangumi.player
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,7 +54,6 @@ fun BangumiPlayUI(
             onSubmitAction = { action ->
                 when (action) {
                     BangumiPlayerAction.Back -> navController.navigateUp()
-                    else -> viewModel.submitAction(action)
                 }
             },
         )
@@ -64,7 +62,6 @@ fun BangumiPlayUI(
 
 private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiPlayerAction>
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BangumiPlayUI(
     systemUiController: SystemUiController = rememberSystemUiController(),
