@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import co.railgun.spica.ui.R
+import co.railgun.spica.ui.common.R
 
 @Composable
 fun PasswordTextField(

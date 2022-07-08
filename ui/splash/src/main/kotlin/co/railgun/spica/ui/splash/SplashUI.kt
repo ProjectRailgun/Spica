@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import co.railgun.spica.ui.R
+import co.railgun.spica.ui.common.R
 
 @Composable
 fun SplashUI(

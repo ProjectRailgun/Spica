@@ -28,6 +28,7 @@ allprojects {
     }
     configureAppSigningConfigsForRelease()
     configureAndroidCommon {
+        namespace = androidNamespace
         compileSdk = 31
         buildToolsVersion = "31.0.0"
         defaultConfig {
@@ -79,3 +80,8 @@ fun isNonStable(version: String): Boolean {
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
 }
+
+val Project.androidNamespace
+    get() = path.replace(":", ".")
+        .let { if (it == ".app") "" else it.replace("-", ".") }
+        .let { "co.railgun.spica$it" }
