@@ -37,9 +37,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-        jcenter()
         mavenCentral()
-        maven(url = "https://jitpack.io")
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
     }
 }
@@ -55,9 +53,6 @@ createVersionCatalog("okhttp4")
 createVersionCatalog("omico")
 createVersionCatalog("protobuf3")
 createVersionCatalog("retrofit2")
-
-// include(":common")
-// include(":mobile")
 
 include(":api")
 include(":app")
