@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.railgun.spica.data.bangumi.UpdateState
 import co.railgun.spica.data.bangumi.bangumiRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
 
     private val _pendingActions: MutableSharedFlow<HomeAction> = MutableSharedFlow()
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
 
     val uiState: StateFlow<HomeUIState> = uiState()
 
@@ -41,17 +43,20 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun uiState(): StateFlow<HomeUIState> = combine(
+        _isLoading,
         bangumiRepository.announcedBangumi,
         bangumiRepository.myBangumi,
         bangumiRepository.onAir,
         bangumiRepository.updateState,
     ) {
+        isLoading,
         announcedBangumi,
         myBangumi,
         onAir,
         updateState,
         ->
         HomeUIState(
+            isLoading = isLoading,
             announcedBangumi = announcedBangumi,
             myBangumi = myBangumi,
             onAir = onAir,
@@ -73,6 +78,9 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private suspend fun refresh() =
+    private suspend fun refresh() {
+        _isLoading.emit(true)
         bangumiRepository.updateBangumiState()
+        _isLoading.emit(false)
+    }
 }
