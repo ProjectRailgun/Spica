@@ -36,7 +36,7 @@ internal fun Episode(
                         .weight(weight = 3f)
                         .fillMaxWidth()
                         .padding(16.dp)
-                }
+                },
             ) {
                 EllipsisText(
                     text = "第 $number 话  ${episode.title}",

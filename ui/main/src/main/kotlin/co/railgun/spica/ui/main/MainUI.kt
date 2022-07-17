@@ -30,7 +30,7 @@ fun MainUI(
     }
     SpicaTheme(
         isDarkTheme = isDarkTheme,
-        content = { MainNavHost() }
+        content = { MainNavHost() },
     )
 }
 
@@ -45,7 +45,7 @@ private fun MainNavHost(
             NavHost(
                 navController = navController,
                 startDestination = Route.splash,
-                builder = { screens.forEach { screen -> screen(screen) } }
+                builder = { screens.forEach { screen -> screen(screen) } },
             )
         }
     }

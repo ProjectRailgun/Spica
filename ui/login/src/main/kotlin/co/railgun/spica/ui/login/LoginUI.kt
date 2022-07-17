@@ -62,7 +62,7 @@ fun PreviewLoginUI() {
     ProvideSpicaPreviewContainer {
         LoginUI(
             uiState = LoginUIState.Empty,
-            onSubmitAction = {}
+            onSubmitAction = {},
         )
     }
 }
@@ -125,7 +125,7 @@ private fun LoginUI(
                             AppCompatDelegate.setDefaultNightMode(mode)
                         },
                     )
-                }
+                },
             )
         },
     ) { innerPadding ->
@@ -155,7 +155,7 @@ private fun LoginContent(
                 LoginAction.Login(
                     username = username,
                     password = passwordTextFieldState.text,
-                )
+                ),
             )
         }
     }
@@ -173,7 +173,7 @@ private fun LoginContent(
                     .padding(vertical = 56.dp)
             },
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = null
+            contentDescription = null,
         )
         OutlinedTextField(
             modifier = run {
@@ -183,7 +183,7 @@ private fun LoginContent(
                     .focusRequester(focusRequester = focusRequest)
                     .autofill(
                         autofillTypes = listOf(AutofillType.Username),
-                        onFill = { username = it }
+                        onFill = { username = it },
                     )
             },
             label = { Text(text = "Username") },
@@ -191,8 +191,8 @@ private fun LoginContent(
             onValueChange = { username = it },
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
-                onDone = { focusRequest.requestFocus() }
-            )
+                onDone = { focusRequest.requestFocus() },
+            ),
         )
         HeightSpacer(height = 16.dp)
         PasswordTextField(
@@ -203,7 +203,7 @@ private fun LoginContent(
                     .focusRequester(focusRequester = focusRequest)
                     .autofill(
                         autofillTypes = listOf(AutofillType.Password),
-                        onFill = { passwordTextFieldState.text = it }
+                        onFill = { passwordTextFieldState.text = it },
                     )
             },
             label = "Password",

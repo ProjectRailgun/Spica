@@ -69,7 +69,7 @@ class ExoPlayerState(
                     window = it[window] as Int,
                     position = it[position] as Long,
                 )
-            }
+            },
         )
     }
 }

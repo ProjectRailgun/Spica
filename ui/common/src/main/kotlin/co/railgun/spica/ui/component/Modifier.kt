@@ -24,7 +24,7 @@ fun Modifier.autofill(
         properties["autofillTypes"] = autofillTypes
         properties["boundingBox"] = boundingBox
         properties["onFill"] = onFill
-    }
+    },
 ) {
     val autofill = LocalAutofill.current
     val autofillTree = LocalAutofillTree.current

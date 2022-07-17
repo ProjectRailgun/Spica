@@ -13,6 +13,6 @@ fun SpicaApiClient.Watch.Favorite.changeFavoriteBangumiStatus(
 ) {
     watchService.changeFavoriteBangumiStatus(
         bangumiId = bangumiId,
-        body = ChangeFavoriteBangumiStatusRequest(status = status.value)
+        body = ChangeFavoriteBangumiStatusRequest(status = status.value),
     )
 }

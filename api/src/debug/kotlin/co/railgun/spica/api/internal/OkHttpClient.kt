@@ -10,7 +10,7 @@ internal val client by lazy {
         .addInterceptor(
             HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
-            }
+            },
         )
         .build()
 }

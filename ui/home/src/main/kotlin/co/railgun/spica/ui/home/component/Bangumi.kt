@@ -44,7 +44,7 @@ internal fun Bangumi(
                     data = bangumi.coverUrl,
                     builder = {
                         crossfade(durationMillis = 300)
-                    }
+                    },
                 ),
                 contentDescription = "Cover",
                 alignment = Alignment.Center,
@@ -56,7 +56,7 @@ internal fun Bangumi(
                         .weight(weight = 3f)
                         .fillMaxWidth()
                         .padding(16.dp)
-                }
+                },
             ) {
                 EllipsisText(
                     text = bangumi.title,

@@ -24,7 +24,7 @@ fun ProvideSpicaPreviewContainer(
         ) {
             ProvideWindowInsets(
                 consumeWindowInsets = consumeWindowInsets,
-                content = content
+                content = content,
             )
         }
     }

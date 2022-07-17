@@ -50,9 +50,9 @@ class BangumiPlayerViewModel(
         _episode,
         _error,
     ) {
-        loading,
-        episode,
-        error,
+            loading,
+            episode,
+            error,
         ->
         BangumiPlayerUIState(
             loading = loading,
@@ -77,7 +77,7 @@ class BangumiPlayerViewModel(
                 _error.emit(
                     BangumiPlayerUIState.Error.Message(
                         message = it.message ?: "Unknown error.",
-                    )
+                    ),
                 )
             }
         _loading.emit(false)

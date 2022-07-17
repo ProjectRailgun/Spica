@@ -20,7 +20,7 @@ fun NavGraphBuilder.screen(screen: Screen) {
             route = route,
             arguments = arguments,
             deepLinks = deepLinks,
-            content = content
+            content = content,
         )
     }
 }

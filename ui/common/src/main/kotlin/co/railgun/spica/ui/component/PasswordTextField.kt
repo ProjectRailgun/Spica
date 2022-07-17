@@ -59,8 +59,8 @@ fun PasswordTextField(
                         id = when {
                             showPassword -> R.string.hide_password
                             else -> R.string.show_password
-                        }
-                    )
+                        },
+                    ),
                 )
             }
         },
@@ -73,7 +73,7 @@ fun PasswordTextField(
         keyboardActions = KeyboardActions(
             onDone = {
                 onImeAction()
-            }
+            },
         ),
         singleLine = true,
     )

@@ -49,11 +49,11 @@ class HomeViewModel : ViewModel() {
         bangumiRepository.onAir,
         bangumiRepository.updateState,
     ) {
-        isLoading,
-        announcedBangumi,
-        myBangumi,
-        onAir,
-        updateState,
+            isLoading,
+            announcedBangumi,
+            myBangumi,
+            onAir,
+            updateState,
         ->
         HomeUIState(
             isLoading = isLoading,

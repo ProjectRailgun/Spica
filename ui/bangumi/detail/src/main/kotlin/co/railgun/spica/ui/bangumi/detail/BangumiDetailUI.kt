@@ -145,7 +145,7 @@ private fun BangumiDetailContent(
                     onclick = {
                         if (episode.downloadStatus == DownloadStatus.Downloaded) {
                             onSubmitAction(
-                                BangumiDetailAction.NavigateToBangumiPlayer(episode.id)
+                                BangumiDetailAction.NavigateToBangumiPlayer(episode.id),
                             )
                         }
                     },

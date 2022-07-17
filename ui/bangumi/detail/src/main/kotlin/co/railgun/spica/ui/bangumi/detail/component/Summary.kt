@@ -50,11 +50,11 @@ fun Summary(
             Modifier
                 .clickable(
                     enabled = expandable && canTextExpand,
-                    onClick = { expanded = !expanded }
+                    onClick = { expanded = !expanded },
                 )
                 .animateContentSize(animationSpec = spring())
                 .then(modifier)
         },
-        onTextLayout = { if (!expanded) canTextExpand = it.hasVisualOverflow }
+        onTextLayout = { if (!expanded) canTextExpand = it.hasVisualOverflow },
     )
 }

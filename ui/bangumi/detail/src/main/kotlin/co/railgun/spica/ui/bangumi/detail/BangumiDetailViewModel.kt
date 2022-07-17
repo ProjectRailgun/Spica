@@ -56,9 +56,9 @@ class BangumiDetailViewModel(
         _bangumi,
         _error,
     ) {
-        loading,
-        bangumi,
-        error,
+            loading,
+            bangumi,
+            error,
         ->
         BangumiDetailUIState(
             loading = loading,
@@ -85,7 +85,7 @@ class BangumiDetailViewModel(
             is Detail.Error -> _error.emit(
                 BangumiDetailUIState.Error.Message(
                     message = bangumiDetail.exception.message ?: "Unknown error.",
-                )
+                ),
             )
             else -> _error.emit(BangumiDetailUIState.Error.Unauthorized)
         }

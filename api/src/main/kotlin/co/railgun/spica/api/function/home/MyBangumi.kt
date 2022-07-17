@@ -14,7 +14,7 @@ suspend fun SpicaApiClient.Home.myBangumi(
     val queryMap = mapOf(
         "page" to page.toString(),
         "count" to count.toString(),
-        "status" to status.value.toString()
+        "status" to status.value.toString(),
     )
     homeService.myBangumi(queryMap)
 }

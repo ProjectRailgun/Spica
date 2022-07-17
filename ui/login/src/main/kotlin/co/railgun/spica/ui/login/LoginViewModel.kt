@@ -48,8 +48,8 @@ class LoginViewModel : ViewModel() {
             _loggingIn,
             userRepository.state,
         ) {
-            loggingIn,
-            userState,
+                loggingIn,
+                userState,
             ->
             LoginUIState(
                 logged = userState is UserState.Logged,
@@ -58,7 +58,7 @@ class LoginViewModel : ViewModel() {
                     userState is UserState.LoginFailed -> UIError(userState.message)
                     userState is UserState.Error -> UIError(userState.exception)
                     else -> null
-                }
+                },
             )
         }.stateIn(
             scope = viewModelScope,

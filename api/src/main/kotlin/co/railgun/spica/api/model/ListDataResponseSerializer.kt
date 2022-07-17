@@ -32,7 +32,7 @@ class ListDataResponseSerializer<T>(
         val json = decoder.json
         require(element is JsonObject && "data" in element.keys && element["data"] is JsonArray) { "Unsupported." }
         return ListDataResponse.Ok(
-            json.decodeFromString(ListSerializer(dataSerializer), element["data"].toString())
+            json.decodeFromString(ListSerializer(dataSerializer), element["data"].toString()),
         )
     }
 

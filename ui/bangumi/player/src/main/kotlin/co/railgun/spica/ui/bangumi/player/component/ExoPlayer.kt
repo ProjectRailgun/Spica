@@ -31,7 +31,9 @@ fun ExoPlayer(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val exoPlayer = remember { context.createExoPlayer(url) }
     val playerView = remember { StyledPlayerView(context) }
-    @Suppress("unused") val playerViewLifecycleObserver = remember {
+
+    @Suppress("unused")
+    val playerViewLifecycleObserver = remember {
         object : LifecycleObserver {
 
             @OnLifecycleEvent(Lifecycle.Event.ON_START)

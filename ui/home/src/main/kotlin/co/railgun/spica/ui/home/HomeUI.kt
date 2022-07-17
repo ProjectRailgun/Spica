@@ -36,7 +36,7 @@ fun PreviewHomeUI() {
     ProvideSpicaPreviewContainer {
         HomeUI(
             uiState = HomeUIState.Empty,
-            onSubmitAction = {}
+            onSubmitAction = {},
         )
     }
 }
