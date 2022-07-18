@@ -10,7 +10,7 @@ pluginManagement {
         val gmsPlugin = "4.3.10"
         val gradleVersionsPlugin = "0.42.0"
         val kotlinPlugin = "1.5.31"
-        val spotlessPlugin = "5.17.0"
+        val spotlessPlugin = "6.8.0"
     }
     plugins {
         id("com.android.application") version versions.androidGradlePlugin
