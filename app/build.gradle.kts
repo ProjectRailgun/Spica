@@ -1,15 +1,8 @@
-import me.omico.age.dsl.withBuildType
-
 plugins {
     id("com.android.application")
     id("com.google.firebase.crashlytics") apply false
     id("com.google.gms.google-services") apply false
     kotlin("android")
-}
-
-withBuildType("release") {
-    apply(plugin = "com.google.gms.google-services")
-    apply(plugin = "com.google.firebase.crashlytics")
 }
 
 android {
@@ -44,6 +37,12 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    applicationVariants.all {
+        if (buildType.name == "release") {
+            apply(plugin = "com.google.gms.google-services")
+            apply(plugin = "com.google.firebase.crashlytics")
+        }
     }
 }
 
