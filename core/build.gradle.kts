@@ -11,9 +11,9 @@ android {
 }
 
 dependencies {
-    compileOnly(androidx.annotation.annotation)
+    compileOnly(androidx.annotation)
     compileOnly(androidx.compose.runtime)
-    compileOnly(androidx.core.coreKtx)
-    compileOnly(androidx.lifecycle.viewmodelCompose)
-    compileOnly(androidx.lifecycle.viewmodelKtx)
+    compileOnly(androidx.core.ktx)
+    compileOnly(androidx.lifecycle.viewmodel.compose)
+    compileOnly(androidx.lifecycle.viewmodel.ktx)
 }

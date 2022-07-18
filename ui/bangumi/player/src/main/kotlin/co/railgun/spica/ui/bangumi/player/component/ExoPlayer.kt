@@ -15,10 +15,9 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.util.Util
 
 @Composable
@@ -61,9 +60,11 @@ fun ExoPlayer(
         modifier = modifier,
         factory = {
             playerView.apply {
-                setControllerVisibilityListener {
-                    state.isControllerVisible = it == View.VISIBLE
-                }
+                setControllerVisibilityListener(
+                    StyledPlayerView.ControllerVisibilityListener { visibility ->
+                        state.isControllerVisible = visibility == View.VISIBLE
+                    },
+                )
                 player = exoPlayer
             }
         },
@@ -71,7 +72,7 @@ fun ExoPlayer(
 }
 
 private fun Context.createExoPlayer(url: String): ExoPlayer =
-    SimpleExoPlayer.Builder(this).build().apply {
+    ExoPlayer.Builder(this).build().apply {
         ProgressiveMediaSource
             .Factory(defaultDataSourceFactory)
             .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
@@ -79,7 +80,7 @@ private fun Context.createExoPlayer(url: String): ExoPlayer =
     }
 
 private val Context.defaultDataSourceFactory
-    get() = DefaultDataSourceFactory(this, exoplayerUserAgent)
+    get() = DefaultHttpDataSource.Factory().setUserAgent(exoplayerUserAgent)
 
 private val Context.exoplayerUserAgent: String
     get() = Util.getUserAgent(this, packageName)

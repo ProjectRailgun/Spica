@@ -2,7 +2,10 @@ package co.railgun.spica.ui.component
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -20,8 +23,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.railgun.spica.ui.common.resources.R
 import co.railgun.spica.ui.theme.topAppBarBackground
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
 
 @Composable
@@ -46,10 +47,7 @@ fun SpicaTopAppBar(
     TopAppBar(
         title = title,
         modifier = modifier,
-        contentPadding = rememberInsetsPaddingValues(
-            insets = LocalWindowInsets.current.statusBars,
-            applyBottom = false,
-        ),
+        contentPadding = WindowInsets.statusBars.asPaddingValues(),
         navigationIcon = navigationIcon,
         actions = actions,
         backgroundColor = backgroundColor,

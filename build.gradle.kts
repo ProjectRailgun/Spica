@@ -39,13 +39,12 @@ allprojects {
             targetCompatibility = JavaVersion.VERSION_11
         }
         composeOptions {
-            kotlinCompilerExtensionVersion = androidx.versions.compose.get()
+            kotlinCompilerExtensionVersion = versions.androidx.compose.compiler
         }
     }
     kotlinCompile {
         kotlinOptions {
             jvmTarget = "11"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
         }
     }
 }

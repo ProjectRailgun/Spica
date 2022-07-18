@@ -1,3 +1,0 @@
-[submodule "gradle/common-version-catalogs"]
-	path = gradle/common-version-catalogs
-	url = https://github.com/Omico/gradle-common-version-catalogs

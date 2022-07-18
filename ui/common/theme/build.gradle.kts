@@ -11,6 +11,10 @@ android {
 }
 
 dependencies {
-    compileOnly(androidx.compose.material)
-    compileOnly(material.material)
+    compileOnly(projects.ui.common.resources)
+}
+
+dependencies {
+    api(material)
+    api(androidx.compose.material)
 }

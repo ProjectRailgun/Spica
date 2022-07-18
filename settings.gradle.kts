@@ -1,30 +1,13 @@
+@file:Suppress("UnstableApiUsage")
+
+import me.omico.gradm.configs
+import me.omico.gradm.gradm
+
 rootProject.name = "Spica"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    val versions = object {
-        val agePlugin = "1.0.0-SNAPSHOT"
-        val androidGradlePlugin = "7.2.1"
-        val firebaseCrashlyticsPlugin = "2.8.1"
-        val gmsPlugin = "4.3.10"
-        val gradleVersionsPlugin = "0.42.0"
-        val kotlinPlugin = "1.5.31"
-        val spotlessPlugin = "6.8.0"
-    }
-    plugins {
-        id("com.android.application") version versions.androidGradlePlugin
-        id("com.android.library") version versions.androidGradlePlugin
-        id("com.diffplug.spotless") version versions.spotlessPlugin
-        id("com.github.ben-manes.versions") version versions.gradleVersionsPlugin
-        id("com.google.firebase.crashlytics") version versions.firebaseCrashlyticsPlugin
-        id("com.google.gms.google-services") version versions.gmsPlugin
-        id("me.omico.age.project") version versions.agePlugin
-        id("me.omico.age.settings") version versions.agePlugin
-        id("me.omico.age.spotless") version versions.agePlugin
-        kotlin("android") version versions.kotlinPlugin
-        kotlin("plugin.serialization") version versions.kotlinPlugin
-    }
     repositories {
         google()
         gradlePluginPortal()
@@ -39,20 +22,26 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
+        maven(url = "https://androidx.dev/storage/compose-compiler/repository")
     }
 }
 
-createVersionCatalog("accompanist")
-createVersionCatalog("androidx")
-createVersionCatalog("coil")
-createVersionCatalog("firebase")
-createVersionCatalog("exoplayer2")
-createVersionCatalog("kotlinx")
-createVersionCatalog("material")
-createVersionCatalog("okhttp4")
-createVersionCatalog("omico")
-createVersionCatalog("protobuf3")
-createVersionCatalog("retrofit2")
+plugins {
+    id("me.omico.age.settings") version "1.0.0-SNAPSHOT"
+    id("me.omico.gradm") version "2.2.0-SNAPSHOT"
+}
+
+buildscript {
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.SECONDS)
+    }
+}
+
+gradm {
+    configs {
+        format = true
+    }
+}
 
 include(":api")
 include(":app")
@@ -70,8 +59,3 @@ include(":ui:home")
 include(":ui:login")
 include(":ui:main")
 include(":ui:splash")
-
-fun createVersionCatalog(name: String) =
-    dependencyResolutionManagement.versionCatalogs.create(name) {
-        from(files("gradle/common-version-catalogs/$name.versions.toml"))
-    }

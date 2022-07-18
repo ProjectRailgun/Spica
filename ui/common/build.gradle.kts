@@ -5,6 +5,7 @@ plugins {
 
 android {
     buildFeatures {
+        buildConfig = false
         compose = true
     }
 }
@@ -21,27 +22,24 @@ dependencies {
     api(accompanist.insetsUi)
     api(accompanist.swipeRefresh)
     api(accompanist.systemUiController)
-    api(androidx.activity.activityCompose)
-    api(androidx.activity.activityKtx)
-    api(androidx.annotation.annotation)
+    api(androidx.activity.compose)
+    api(androidx.activity.ktx)
+    api(androidx.annotation)
     api(androidx.appcompat)
     api(androidx.compose.animation)
     api(androidx.compose.foundation)
-    api(androidx.compose.material)
-    api(androidx.compose.materialIconsCore)
-    api(androidx.compose.materialIconsExtended)
+    api(androidx.compose.material.icons.core)
+    api(androidx.compose.material.icons.extended)
     api(androidx.compose.runtime)
-    api(androidx.compose.runtimeSaveable)
     api(androidx.compose.ui)
-    api(androidx.compose.uiToolingPreview)
-    api(androidx.compose.uiUtil)
-    api(androidx.core.coreKtx)
-    api(androidx.lifecycle.runtimeKtx)
+    api(androidx.compose.ui.tooling.preview)
+    api(androidx.compose.ui.util)
+    api(androidx.core.ktx)
+    api(androidx.lifecycle.runtime.ktx)
     api(androidx.navigation.compose)
-    api(androidx.navigation.runtimeKtx)
-    api(coil.coil)
-    api(coil.coilCompose)
-    api(kotlinx.coroutines.core)
-    api(material.material)
-    debugApi(androidx.compose.uiTooling)
+    api(androidx.navigation.runtime.ktx)
+    api(coil)
+    api(coil.compose)
+    api(kotlinx.coroutines.android)
+    debugApi(androidx.compose.ui.tooling)
 }

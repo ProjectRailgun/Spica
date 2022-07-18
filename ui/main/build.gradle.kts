@@ -11,10 +11,10 @@ android {
 }
 
 dependencies {
-    compileOnly(projects.ui.bangumi.detail)
-    compileOnly(projects.ui.bangumi.player)
-    compileOnly(projects.ui.common)
-    compileOnly(projects.ui.home)
-    compileOnly(projects.ui.login)
-    compileOnly(projects.ui.splash)
+    api(projects.ui.bangumi.detail)
+    api(projects.ui.bangumi.player)
+    api(projects.ui.common)
+    api(projects.ui.home)
+    api(projects.ui.login)
+    api(projects.ui.splash)
 }

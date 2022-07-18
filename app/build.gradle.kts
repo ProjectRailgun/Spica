@@ -50,5 +50,5 @@ android {
 dependencies {
     implementation(projects.ui)
     implementation(platform(firebase.bom))
-    implementation(firebase.crashlyticsKtx)
+    implementation(firebase.crashlytics.ktx)
 }

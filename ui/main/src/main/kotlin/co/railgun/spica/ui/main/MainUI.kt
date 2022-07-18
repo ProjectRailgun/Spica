@@ -12,7 +12,6 @@ import co.railgun.spica.ui.navigation.LocalNavController
 import co.railgun.spica.ui.navigation.Route
 import co.railgun.spica.ui.navigation.screen
 import co.railgun.spica.ui.theme.SpicaTheme
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -41,12 +40,10 @@ private fun MainNavHost(
     CompositionLocalProvider(
         LocalNavController provides navController,
     ) {
-        ProvideWindowInsets {
-            NavHost(
-                navController = navController,
-                startDestination = Route.splash,
-                builder = { screens.forEach { screen -> screen(screen) } },
-            )
-        }
+        NavHost(
+            navController = navController,
+            startDestination = Route.splash,
+            builder = { screens.forEach { screen -> screen(screen) } },
+        )
     }
 }

@@ -40,7 +40,7 @@ class ExoPlayerState(
 
     fun saveState(exoPlayer: ExoPlayer) {
         autoPlay = exoPlayer.playWhenReady
-        window = exoPlayer.currentWindowIndex
+        window = exoPlayer.currentMediaItemIndex
         position = 0L.coerceAtLeast(exoPlayer.contentPosition)
     }
 

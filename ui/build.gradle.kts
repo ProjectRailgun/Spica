@@ -11,11 +11,6 @@ android {
 }
 
 dependencies {
-    api(projects.ui.bangumi.detail)
-    api(projects.ui.bangumi.player)
     api(projects.ui.common)
-    api(projects.ui.home)
-    api(projects.ui.login)
     api(projects.ui.main)
-    api(projects.ui.splash)
 }

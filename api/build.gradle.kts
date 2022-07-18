@@ -14,15 +14,18 @@ android {
 
 dependencies {
     api(kotlin("reflect"))
-    api(androidx.datastore.datastore)
-    api(kotlinx.coroutines.core)
+}
+
+dependencies {
+    api(androidx.datastore)
+    api(kotlinx.coroutines.android)
     api(kotlinx.serialization.json)
-    api(okhttp4.okhttp)
-    api(omico.cloudflareApi.dns)
-    api(omico.cryonics.cryonics)
-    api(protobuf3.protobufKotlin)
+    api(okhttp)
+    api(omico.cloudflare.dns)
+    api(omico.cryonics)
+    api(protobuf.kotlin)
+    api(retrofit2)
     api(retrofit2.converter.kotlinxSerialization)
     api(retrofit2.converter.scalars)
-    api(retrofit2.retrofit)
-    debugApi(okhttp4.interceptor.logging)
+    debugApi(okhttp.interceptor.logging)
 }

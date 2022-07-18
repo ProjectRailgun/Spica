@@ -7,13 +7,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.railgun.spica.ui.navigation.LocalNavController
 import co.railgun.spica.ui.theme.SpicaTheme
-import com.google.accompanist.insets.ProvideWindowInsets
 
 @Composable
 fun ProvideSpicaPreviewContainer(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     navController: NavController = rememberNavController(),
-    consumeWindowInsets: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     SpicaTheme(
@@ -21,11 +19,7 @@ fun ProvideSpicaPreviewContainer(
     ) {
         CompositionLocalProvider(
             LocalNavController provides navController,
-        ) {
-            ProvideWindowInsets(
-                consumeWindowInsets = consumeWindowInsets,
-                content = content,
-            )
-        }
+            content = content,
+        )
     }
 }
