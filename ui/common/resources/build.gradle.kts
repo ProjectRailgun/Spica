@@ -6,11 +6,5 @@ plugins {
 android {
     buildFeatures {
         buildConfig = false
-        compose = true
     }
-}
-
-dependencies {
-    compileOnly(androidx.compose.material)
-    compileOnly(material.material)
 }

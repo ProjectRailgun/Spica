@@ -12,6 +12,7 @@ android {
 dependencies {
     api(projects.core)
     api(projects.data)
+    api(projects.ui.common.resources)
     api(projects.ui.common.theme)
 }
 
