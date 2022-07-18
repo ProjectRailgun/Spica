@@ -42,6 +42,7 @@ android {
         if (buildType.name == "release") {
             apply(plugin = "com.google.gms.google-services")
             apply(plugin = "com.google.firebase.crashlytics")
+            kotlinOptions.allWarningsAsErrors = true
         }
     }
 }
