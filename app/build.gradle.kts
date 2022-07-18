@@ -2,6 +2,8 @@ import me.omico.age.dsl.withBuildType
 
 plugins {
     id("com.android.application")
+    id("com.google.firebase.crashlytics") apply false
+    id("com.google.gms.google-services") apply false
     kotlin("android")
 }
 
