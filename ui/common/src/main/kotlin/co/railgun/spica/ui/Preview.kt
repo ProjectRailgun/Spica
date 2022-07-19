@@ -10,13 +10,11 @@ import co.railgun.spica.ui.theme.SpicaTheme
 
 @Composable
 fun ProvideSpicaPreviewContainer(
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
     navController: NavController = rememberNavController(),
     content: @Composable () -> Unit,
 ) {
-    SpicaTheme(
-        isDarkTheme = isDarkTheme,
-    ) {
+    SpicaTheme(darkTheme = darkTheme) {
         CompositionLocalProvider(
             LocalNavController provides navController,
             content = content,

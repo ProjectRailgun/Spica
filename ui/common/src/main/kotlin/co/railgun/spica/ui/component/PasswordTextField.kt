@@ -3,13 +3,13 @@ package co.railgun.spica.ui.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +44,7 @@ fun PasswordTextField(
                 textFieldState.onFocusChange(focusState.isFocused)
                 if (!focusState.isFocused) textFieldState.enableShowErrors()
             },
-        textStyle = MaterialTheme.typography.body2,
+        textStyle = MaterialTheme.typography.bodyMedium,
         label = { TextFieldLabel(text = label) },
         trailingIcon = {
             IconButton(

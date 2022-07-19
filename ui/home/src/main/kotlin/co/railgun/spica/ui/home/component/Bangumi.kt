@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import co.railgun.spica.ui.component.HeightSpacer
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Bangumi(
     modifier: Modifier = Modifier,
@@ -26,12 +28,14 @@ internal fun Bangumi(
     onclick: () -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .padding(
-                horizontal = 16.dp,
-                vertical = 4.dp,
-            )
-            .clickable(onClick = onclick),
+        modifier = run {
+            modifier
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 4.dp,
+                )
+                .clickable(onClick = onclick)
+        },
     ) {
         Row {
             AsyncImage(
@@ -61,12 +65,12 @@ internal fun Bangumi(
             ) {
                 EllipsisText(
                     text = bangumi.title,
-                    style = MaterialTheme.typography.subtitle1,
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 HeightSpacer(4.dp)
                 EllipsisText(
                     text = bangumi.subTitle,
-                    style = MaterialTheme.typography.subtitle2,
+                    style = MaterialTheme.typography.titleSmall,
                 )
             }
         }

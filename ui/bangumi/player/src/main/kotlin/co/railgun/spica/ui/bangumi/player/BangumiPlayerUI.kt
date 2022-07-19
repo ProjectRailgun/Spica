@@ -1,20 +1,32 @@
 package co.railgun.spica.ui.bangumi.player
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.railgun.spica.ui.ProvideSpicaPreviewContainer
@@ -23,9 +35,7 @@ import co.railgun.spica.ui.bangumi.player.component.ExoPlayerState
 import co.railgun.spica.ui.bangumi.player.component.rememberExoPlayerState
 import co.railgun.spica.ui.component.NavigateUpIcon
 import co.railgun.spica.ui.component.OnSubmitAction
-import co.railgun.spica.ui.component.SpicaTopAppBar
 import co.railgun.spica.ui.theme.SpicaTheme
-import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.omico.xero.core.lifecycle.viewModel
@@ -48,7 +58,7 @@ fun BangumiPlayUI(
     viewModel: BangumiPlayerViewModel = viewModel { BangumiPlayerViewModel(id = id) },
 ) {
     val uiState: BangumiPlayerUIState by viewModel.uiState.collectAsState()
-    SpicaTheme(isDarkTheme = true) {
+    SpicaTheme(darkTheme = true) {
         BangumiPlayUI(
             uiState = uiState,
             onSubmitAction = { action ->
@@ -62,10 +72,12 @@ fun BangumiPlayUI(
 
 private typealias OnSubmitBangumiDetailAction = OnSubmitAction<BangumiPlayerAction>
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun BangumiPlayUI(
     systemUiController: SystemUiController = rememberSystemUiController(),
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
     exoPlayerState: ExoPlayerState = rememberExoPlayerState(),
     uiState: BangumiPlayerUIState,
     onSubmitAction: OnSubmitBangumiDetailAction,
@@ -76,7 +88,7 @@ private fun BangumiPlayUI(
         onDispose {
             systemUiController.setSystemBarsColor(
                 color = Color.Transparent,
-                darkIcons = !isDarkTheme,
+                darkIcons = !darkTheme,
                 isNavigationBarContrastEnforced = false,
             )
         }
@@ -84,17 +96,24 @@ private fun BangumiPlayUI(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AnimatedVisibility(visible = exoPlayerState.isControllerVisible) {
-                SideEffect {
-                    systemUiController.setSystemBarsColor(color = Color.Transparent)
-                    systemUiController.isSystemBarsVisible = exoPlayerState.isControllerVisible
+            AnimatedVisibility(
+                visible = exoPlayerState.isControllerVisible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                ViewCompat.getWindowInsetsController(LocalView.current)?.let {
+                    when {
+                        exoPlayerState.isControllerVisible -> it.show(WindowInsetsCompat.Type.systemBars())
+                        else -> it.hide(WindowInsetsCompat.Type.systemBars())
+                    }
                 }
-                SpicaTopAppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    titleText = uiState.title,
-                    backgroundColor = Color.Transparent,
+                SmallTopAppBar(
+                    modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
+                    title = { Text(text = uiState.title) },
                     navigationIcon = { NavigateUpIcon(onClick = onSubmitBackAction) },
-                    elevation = 0.dp,
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = Color.Transparent,
+                    ),
                 )
             }
         },

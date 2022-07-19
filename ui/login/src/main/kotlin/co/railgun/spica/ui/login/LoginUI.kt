@@ -11,15 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,7 +56,6 @@ import co.railgun.spica.ui.component.TextFieldState
 import co.railgun.spica.ui.component.autofill
 import co.railgun.spica.ui.component.rememberTextFieldState
 import co.railgun.spica.ui.navigation.navigateToHome
-import com.google.accompanist.insets.ui.Scaffold
 
 @Preview
 @Composable
@@ -71,12 +72,10 @@ fun PreviewLoginUI() {
 fun LoginUI(
     navController: NavController = rememberNavController(),
     viewModel: LoginViewModel = viewModel(),
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
 ) {
     val uiState: LoginUIState by viewModel.uiState.collectAsState()
     RequestedOrientation(screenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT)
     LoginUI(
-        scaffoldState = scaffoldState,
         uiState = uiState,
         onSubmitAction = { action ->
             when (action) {
@@ -89,17 +88,18 @@ fun LoginUI(
 
 private typealias OnSubmitLoginAction = OnSubmitAction<LoginAction>
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoginUI(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
     uiState: LoginUIState,
     onSubmitAction: OnSubmitLoginAction,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(uiState) {
         if (uiState.logged) onSubmitAction(LoginAction.Logged)
         uiState.loginError?.let { uiError ->
-            scaffoldState.snackbarHostState.showSnackbar(uiError.message)
+            snackbarHostState.showSnackbar(uiError.message)
         }
     }
     Scaffold(
@@ -107,27 +107,24 @@ private fun LoginUI(
             Modifier
                 .fillMaxSize()
         },
-        scaffoldState = scaffoldState,
         topBar = {
-            SpicaTopAppBar(
-                elevation = 0.dp,
-                actions = {
-                    AppBarAction(
-                        imageVector = when {
-                            isDarkTheme -> Icons.Rounded.LightMode
-                            else -> Icons.Rounded.DarkMode
-                        },
-                        onClick = {
-                            val mode = when {
-                                isDarkTheme -> AppCompatDelegate.MODE_NIGHT_NO
-                                else -> AppCompatDelegate.MODE_NIGHT_YES
-                            }
-                            AppCompatDelegate.setDefaultNightMode(mode)
-                        },
-                    )
-                },
-            )
+            SpicaTopAppBar {
+                AppBarAction(
+                    imageVector = when {
+                        isDarkTheme -> Icons.Rounded.LightMode
+                        else -> Icons.Rounded.DarkMode
+                    },
+                    onClick = {
+                        val mode = when {
+                            isDarkTheme -> AppCompatDelegate.MODE_NIGHT_NO
+                            else -> AppCompatDelegate.MODE_NIGHT_YES
+                        }
+                        AppCompatDelegate.setDefaultNightMode(mode)
+                    },
+                )
+            }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         LoginContent(
             modifier = Modifier.padding(innerPadding),
@@ -230,7 +227,7 @@ private fun LoginContent(
                 },
                 text = "登录",
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.subtitle2,
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }

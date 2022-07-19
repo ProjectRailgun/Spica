@@ -19,7 +19,6 @@ dependencies {
 
 dependencies {
     api(accompanist.insets)
-    api(accompanist.insetsUi)
     api(accompanist.swipeRefresh)
     api(accompanist.systemUiController)
     api(androidx.activity.compose)
@@ -28,8 +27,11 @@ dependencies {
     api(androidx.appcompat)
     api(androidx.compose.animation)
     api(androidx.compose.foundation)
+    api(androidx.compose.foundation.layout)
     api(androidx.compose.material.icons.core)
     api(androidx.compose.material.icons.extended)
+    api(androidx.compose.material3)
+    api(androidx.compose.material3.windowSizeClass)
     api(androidx.compose.runtime)
     api(androidx.compose.ui)
     api(androidx.compose.ui.tooling.preview)
@@ -41,6 +43,7 @@ dependencies {
     api(androidx.navigation.runtime.ktx)
     api(coil)
     api(coil.compose)
+    api(material)
     api(kotlinx.coroutines.android)
     debugApi(androidx.compose.ui.tooling)
 }

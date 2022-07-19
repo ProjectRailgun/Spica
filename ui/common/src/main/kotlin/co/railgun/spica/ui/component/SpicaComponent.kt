@@ -6,24 +6,19 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material.AppBarDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.railgun.spica.ui.common.resources.R
-import co.railgun.spica.ui.theme.topAppBarBackground
-import com.google.accompanist.insets.ui.TopAppBar
 
 @Composable
 fun SpicaTopAppBar(
@@ -39,19 +34,14 @@ fun SpicaTopAppBar(
             )
         }
     },
-    backgroundColor: Color = MaterialTheme.colors.topAppBarBackground,
-    navigationIcon: @Composable (() -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {},
-    elevation: Dp = AppBarDefaults.TopAppBarElevation,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable (RowScope.() -> Unit) = {},
 ) {
-    TopAppBar(
+    MediumTopAppBar(
         title = title,
-        modifier = modifier,
-        contentPadding = WindowInsets.statusBars.asPaddingValues(),
+        modifier = modifier.padding(WindowInsets.statusBars.asPaddingValues()),
         navigationIcon = navigationIcon,
         actions = actions,
-        backgroundColor = backgroundColor,
-        elevation = elevation,
     )
 }
 

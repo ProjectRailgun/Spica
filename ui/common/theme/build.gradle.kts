@@ -15,6 +15,8 @@ dependencies {
 }
 
 dependencies {
-    api(material)
-    api(androidx.compose.material)
+    compileOnly(accompanist.systemUiController)
+    compileOnly(androidx.compose.material3)
+    compileOnly(androidx.core.splashScreen)
+    compileOnly(material)
 }

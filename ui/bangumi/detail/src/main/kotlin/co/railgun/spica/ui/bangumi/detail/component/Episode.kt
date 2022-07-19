@@ -5,8 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -14,6 +15,7 @@ import co.railgun.spica.data.bangumi.Episode
 import co.railgun.spica.ui.component.EllipsisText
 import co.railgun.spica.ui.component.HeightSpacer
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Episode(
     modifier: Modifier = Modifier,
@@ -40,12 +42,12 @@ internal fun Episode(
             ) {
                 EllipsisText(
                     text = "第 $number 话  ${episode.title}",
-                    style = MaterialTheme.typography.subtitle1,
+                    style = MaterialTheme.typography.titleSmall,
                 )
                 HeightSpacer(4.dp)
                 EllipsisText(
                     text = episode.subTitle,
-                    style = MaterialTheme.typography.subtitle2,
+                    style = MaterialTheme.typography.titleSmall,
                 )
             }
         }

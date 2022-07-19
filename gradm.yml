@@ -97,10 +97,10 @@ dependencies:
       foundation:
         alias: androidx.compose.foundation
         version: ${versions.androidx.compose}
-    androidx.compose.material:
-      material:
-        alias: androidx.compose.material
+      foundation-layout:
+        alias: androidx.compose.foundation.layout
         version: ${versions.androidx.compose}
+    androidx.compose.material:
       material-icons-core:
         alias: androidx.compose.material.icons.core
         version: ${versions.androidx.compose}
@@ -184,9 +184,6 @@ dependencies:
     com.google.accompanist:
       accompanist-insets:
         alias: accompanist.insets
-        version: ${versions.accompanist}
-      accompanist-insets-ui:
-        alias: accompanist.insetsUi
         version: ${versions.accompanist}
       accompanist-permissions:
         alias: accompanist.permissions
