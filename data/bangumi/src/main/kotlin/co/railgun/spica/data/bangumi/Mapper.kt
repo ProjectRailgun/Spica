@@ -10,6 +10,7 @@ fun ApiBangumi.toData(): Bangumi =
         title = nameCn,
         subTitle = name,
         bgmId = bgmId,
+        coverColor = coverColor,
         coverUrl = cover,
         eps = eps,
         summary = summary,

@@ -47,6 +47,7 @@ internal fun Bangumi(
                 },
                 model = run {
                     ImageRequest.Builder(LocalContext.current)
+                        .placeholder(bangumi.placeholder)
                         .data(bangumi.coverUrl)
                         .crossfade(true)
                         .build()
