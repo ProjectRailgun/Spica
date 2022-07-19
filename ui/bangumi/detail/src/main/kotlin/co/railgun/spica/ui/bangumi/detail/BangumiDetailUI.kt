@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import co.railgun.spica.data.bangumi.Episode.DownloadStatus
 import co.railgun.spica.ui.ProvideSpicaPreviewContainer
 import co.railgun.spica.ui.bangumi.detail.component.Episode
 import co.railgun.spica.ui.bangumi.detail.component.Summary
@@ -143,11 +142,8 @@ private fun BangumiDetailContent(
                     number = index + 1,
                     episode = episode,
                     onclick = {
-                        if (episode.downloadStatus == DownloadStatus.Downloaded) {
-                            onSubmitAction(
-                                BangumiDetailAction.NavigateToBangumiPlayer(episode.id),
-                            )
-                        }
+                        if (!episode.canWatch) return@Episode
+                        onSubmitAction(BangumiDetailAction.NavigateToBangumiPlayer(episode.id))
                     },
                 )
             }
