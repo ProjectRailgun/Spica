@@ -35,6 +35,7 @@ dependencies {
     api(androidx.compose.ui.tooling.preview)
     api(androidx.compose.ui.util)
     api(androidx.core.ktx)
+    api(androidx.core.splashScreen)
     api(androidx.lifecycle.runtime.ktx)
     api(androidx.navigation.compose)
     api(androidx.navigation.runtime.ktx)
