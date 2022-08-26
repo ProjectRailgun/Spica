@@ -1,8 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import me.omico.gradm.configs
-import me.omico.gradm.gradm
-
 rootProject.name = "Spica"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -10,7 +7,15 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
         google()
-        gradlePluginPortal()
+        gradlePluginPortal {
+            content {
+                includeGroupByRegex("com.diffplug.spotless.*")
+                includeGroupByRegex("com.github.ben-manes.*")
+                includeGroupByRegex("com.gradle.*")
+                includeGroupByRegex("org.gradle.*")
+                includeGroupByRegex("org.jetbrains.kotlin.*")
+            }
+        }
         mavenCentral()
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
     }
@@ -27,13 +32,21 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("me.omico.age.settings") version "1.0.0-SNAPSHOT"
-    id("me.omico.gradm") version "2.2.0-SNAPSHOT"
+    id("com.gradle.enterprise") version "3.11.1"
+    id("me.omico.gradm") version "2.5.0-SNAPSHOT"
 }
 
 buildscript {
     configurations.all {
         resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.SECONDS)
+    }
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishAlwaysIf(!gradle.startParameter.isOffline)
     }
 }
 
