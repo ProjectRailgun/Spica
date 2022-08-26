@@ -29,8 +29,8 @@ allprojects {
     configureAppSigningConfigsForRelease()
     configureAndroidCommon {
         namespace = androidNamespace
-        compileSdk = 32
-        buildToolsVersion = "32.0.0"
+        compileSdk = 33
+        buildToolsVersion = "33.0.0"
         defaultConfig {
             minSdk = 26
         }
